@@ -41,9 +41,7 @@
 			<!-- Any section element inside of this container is displayed as a slide -->
 			<div class="slides">
         <section data-background="#ffffff">
-					<h1>OOP</h1>
-					<h2>Object-Oriented Programming</h2>
-          <h3>For Drupal developers</h3>
+					<h1>Creating a Drupal 8 module</h1>
 					<p>
 						<small><a href="https://drupal.org/u/pfrenssen">Pieter Frenssen</a> / <a href="http://twitter.com/pfrenssen">@pfrenssen</a></small>
 					</p>
@@ -51,85 +49,62 @@
 				</section>
 
 				<section>
-					<h2>What is OOP?</h2>
-					<h3>Object-Oriented Programming</h3>
-          <p>A way of programming that revolves around using objects to structure data and logic.</p>
+					<h2>Stuff you need</h2>
+          <ul>
+            <li>IDE or text editor</li>
+            <li>LAMP stack</li>
+            <li>Drupal 8</li>
+            <li>drush (git master)</li>
+            <li>DrupalConsole</li>
+          </ul>
 				</section>
 
 				<section>
-					<h2>Objects</h2>
+					<h2>Sanity check</h2>
+          <ul>
+            <li>Log in to Drupal in the browser</li>
+            <li><pre><code class="hljs">$ drush st</code></pre></li>
+            <li><pre><code class="hljs">$ drupal list</code></pre></li>
+          </ul>
+				</section>
+
+				<section>
+					<h2>Engage developer mode</h2>
+				</section>
+
+				<section>
+					<h2>Generate skeleton</h2>
+          <pre><code class="hljs">
+            $ drupal generate:module
+          </code></pre>
+				</section>
+
+				<section>
+					<h2>composer.json</h2>
 					<p>
 					</p>
 				</section>
 
 				<section>
-					<h2>Classes</h2>
+					<h2>Generate a block</h2>
 					<p>
 					</p>
 				</section>
 
 				<section>
-					<h2>Instantiating</h2>
+					<h2>PSR-4</h2>
 					<p>
 					</p>
 				</section>
 
 				<section>
-					<h2>Properties</h2>
+					<h2>Namespacing</h2>
 					<p>
 					</p>
 				</section>
 
 				<section>
-					<h2>Methods</h2>
-					<p>
-					</p>
-				</section>
-
-				<section>
-					<h2>Inheritance</h2>
-					<p>
-					</p>
-				</section>
-
-				<section>
-					<h2>Abstract classes</h2>
-					<p>
-					</p>
-				</section>
-
-				<section>
-					<h2>Traits</h2>
-					<p>
-					</p>
-				</section>
-
-				<section>
-					<h2>Visibility</h2>
-					<p>
-					</p>
-				</section>
-
-				<section>
-					<h2>Interfaces</h2>
-					<p>
-					</p>
-				</section>
-
-				<section>
-					<h2>Namespaces</h2>
-					<p>
-					</p>
-				</section>
-
-				<section>
-					<h2>Autoloading</h2>
-					<p>
-					</p>
-				</section>
-
-				<section>
-					<h2>Dependency Injection</h2>
+					<h2>Annotations</h2>
 					<p>
 					</p>
 				</section>
