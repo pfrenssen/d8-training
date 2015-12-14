@@ -54,7 +54,7 @@
             <li>IDE or text editor</li>
             <li>LAMP stack</li>
             <li>Drupal 8</li>
-            <li>drush (git master)</li>
+            <li>drush (master branch)</li>
             <li>DrupalConsole</li>
           </ul>
 				</section>
@@ -62,31 +62,67 @@
 				<section>
 					<h2>Sanity check</h2>
           <ul>
-            <li>Log in to Drupal in the browser</li>
-            <li><pre><code class="hljs">$ drush st</code></pre></li>
-            <li><pre><code class="hljs">$ drupal list</code></pre></li>
+            <li>Open Drupal in the browser</li>
+            <li>$ drush st</li>
+            <li>$ drupal list</li>
           </ul>
 				</section>
 
 				<section>
-					<h2>Engage developer mode</h2>
+					<h2>D8 developer mode</h2>
+          <ul><li>Display error messages</li>
+          <li>Disable CSS/JS aggregation</li>
+          <li>Disable render cache</li>
+          <li>Allow installing test modules</li></ul>
 				</section>
 
 				<section>
-					<h2>Generate skeleton</h2>
+					<h2>Engage developer mode</h2>
+          <h3>Copy:</h3>
+          <code class="hljs">sites/example.settings.local.php</code>
+          <h3>To:</h3>
+          <code class="hljs">sites/default/settings.local.php</code>
+				</section>
+
+				<section>
+          <h3>sites/default/settings.php</h3>
+          <pre><code class="hljs">
+# if (file_exists(__DIR__ . '/settings.local.php')) {
+#   include __DIR__ . '/settings.local.php';
+# }
+          </code></pre>
+          <h3>Uncomment these lines</h3>
+				</section>
+
+				<section>
+					<h2>More development options</h2>
+          <h3>sites/default/services.yml</h3>
+          <ul><li>Twig debugging</li>
+          <li>Twig auto-recompile</li>
+          <li>Disable Twig cache</li>
+          <li>Advanced caching options</li>
+          <li>...</li></ul>
+				</section>
+
+				<section>
+					<h2>Let's get started</h2>
+          <h3>Fire up your consoles!</h3>
+				</section>
+
+				<section>
+					<h2>Generate module skeleton</h2>
           <pre><code class="hljs">
             $ drupal generate:module
+            Enter the new module name:
+            > One
           </code></pre>
 				</section>
 
 				<section>
-					<h2>info.yml</h2>
-				</section>
-
-				<section>
-					<h2>composer.json</h2>
-					<p>
-					</p>
+					<h2>Generated files</h2>
+          <ul><li>one.info.yml</li>
+          <li>one.module</li>
+          <li>composer.json</li></ul>
 				</section>
 
 				<section>
