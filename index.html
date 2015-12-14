@@ -126,9 +126,88 @@
 				</section>
 
 				<section>
+					<h2>Enable it!</h2>
+          <p>Manage &gt; Extend</p>
+				</section>
+
+				<section>
+					<h2>Create a form</h2>
+          <pre><code class="hljs">
+            $ drupal generate:form
+
+            Module name: one
+            Form class: OneSubscriptionForm
+            Type: email
+            Input label: Your e-mail
+            Machine name: email
+            Description: Subscribe to our newsletter.
+          </code></pre>
+				</section>
+
+				<section>
+					<h2>Generated code</h2>
+          <p>src/Form/OneSubscriptionForm.php</p>
+          <pre><code class="hljs">
+class OneSubscriptionForm extends FormBase {
+
+  public function getFormId() {
+    return 'one_subscription_form';
+  }
+
+  public function buildForm(array $form, FormStateInterface $form_state) {
+    $form['email'] = ...
+
+    return $form;
+  }
+
+  public function submitForm(array &$form, FormStateInterface $form_state) {
+  }
+          </code></pre>
+				</section>
+
+				<section>
 					<h2>Generate a block</h2>
-					<p>
-					</p>
+          <pre><code class="hljs">
+            $ drupal generate:plugin:block
+
+            Module name: one
+            Form class: OneSubscriptionBlock
+            Theme region: sidebar_first
+            Form structure: no
+          </code></pre>
+				</section>
+
+				<section>
+					<h2>Generated code</h2>
+          <p>src/Plugin/Block/OneSubscriptionBlock.php</p>
+          <pre><code class="hljs">
+/**
+ * @Block(
+ *  id = "one_subscription_block",
+ *  admin_label = @Translation("One subscription block"),
+ * )
+ */
+class OneSubscriptionBlock extends BlockBase {
+
+  public function build() {
+    $build = [];
+    $build['one_subscription_block']['#markup'] = 'Implement OneSubscriptionBlock.';
+
+    return $build;
+  }
+          </code></pre>
+				</section>
+
+				<section>
+					<h2>Show our form in the block</h2>
+          <pre><code class="hljs">
+  public function build() {
+    return \Drupal::formBuilder()->getForm(
+      'Drupal\one\Form\OneSubscriptionForm'
+    );
+  }
+          </code></pre>
+          <p>See <code>SearchBlock::build()</code></p>
 				</section>
 
 				<section>
