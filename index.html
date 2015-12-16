@@ -1,63 +1,63 @@
 <!doctype html>
 <html lang="en">
 
-	<head>
-		<meta charset="utf-8">
+  <head>
+    <meta charset="utf-8">
 
-		<title>reveal.js – The HTML Presentation Framework</title>
+    <title>reveal.js – The HTML Presentation Framework</title>
 
-		<meta name="description" content="A framework for easily creating beautiful presentations using HTML">
-		<meta name="author" content="Hakim El Hattab">
+    <meta name="description" content="A framework for easily creating beautiful presentations using HTML">
+    <meta name="author" content="Hakim El Hattab">
 
-		<meta name="apple-mobile-web-app-capable" content="yes">
-		<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 
-		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
 
-		<link rel="stylesheet" href="css/reveal.css">
-		<link rel="stylesheet" href="css/theme/solarized.css" id="theme">
+    <link rel="stylesheet" href="css/reveal.css">
+    <link rel="stylesheet" href="css/theme/solarized.css" id="theme">
 
-		<!-- Code syntax highlighting -->
-		<link rel="stylesheet" href="lib/css/zenburn.css">
+    <!-- Code syntax highlighting -->
+    <link rel="stylesheet" href="lib/css/zenburn.css">
 
-		<!-- Printing and PDF exports -->
-		<script>
-			var link = document.createElement( 'link' );
-			link.rel = 'stylesheet';
-			link.type = 'text/css';
-			link.href = window.location.search.match( /print-pdf/gi ) ? 'css/print/pdf.css' : 'css/print/paper.css';
-			document.getElementsByTagName( 'head' )[0].appendChild( link );
-		</script>
+    <!-- Printing and PDF exports -->
+    <script>
+      var link = document.createElement( 'link' );
+      link.rel = 'stylesheet';
+      link.type = 'text/css';
+      link.href = window.location.search.match( /print-pdf/gi ) ? 'css/print/pdf.css' : 'css/print/paper.css';
+      document.getElementsByTagName( 'head' )[0].appendChild( link );
+    </script>
 
-		<!--[if lt IE 9]>
-		<script src="lib/js/html5shiv.js"></script>
-		<![endif]-->
-	</head>
+    <!--[if lt IE 9]>
+    <script src="lib/js/html5shiv.js"></script>
+    <![endif]-->
+  </head>
 
-	<body>
+  <body>
 
-		<div class="reveal">
+    <div class="reveal">
 
-			<!-- Any section element inside of this container is displayed as a slide -->
-			<div class="slides">
+      <!-- Any section element inside of this container is displayed as a slide -->
+      <div class="slides">
         <section data-background="#ffffff">
-					<h1>OOP</h1>
-					<h2>Object-Oriented Programming</h2>
+          <h1>OOP</h1>
+          <h2>Object-Oriented Programming</h2>
           <h3>For Drupal developers</h3>
-					<p>
-						<small><a href="https://drupal.org/u/pfrenssen">Pieter Frenssen</a> / <a href="http://twitter.com/pfrenssen">@pfrenssen</a></small>
-					</p>
+          <p>
+            <small><a href="https://drupal.org/u/pfrenssen">Pieter Frenssen</a> / <a href="http://twitter.com/pfrenssen">@pfrenssen</a></small>
+          </p>
           <img src="./one-agency.png" style="width: 100px; height: 100px; border: none; box-shadow: none;">
-				</section>
+        </section>
 
-				<section>
-					<h2>What is OOP?</h2>
-					<h3>Object-Oriented Programming</h3>
+        <section>
+          <h2>What is OOP?</h2>
+          <h3>Object-Oriented Programming</h3>
           <p>A way of programming that revolves around using objects to structure data and logic.</p>
-				</section>
+        </section>
 
-				<section>
-					<h2>Objects</h2>
+        <section>
+          <h2>Objects</h2>
           <pre><code class="hljs">
             $user = new stdClass();
             $user->name = 'Pieter';
@@ -66,10 +66,10 @@
           <pre><code class="hljs">
             $user = (object) array('name' => 'Pieter');
           </code></pre>
-				</section>
+        </section>
 
-				<section>
-					<h2>Classes</h2>
+        <section>
+          <h2>Classes</h2>
           <pre><code class="hljs">
             class User {
 
@@ -85,18 +85,18 @@
 
             }
           </code></pre>
-				</section>
+        </section>
 
-				<section>
-					<h2>Instantiating a class</h2>
+        <section>
+          <h2>Instantiating a class</h2>
           <pre><code class="hljs">
             $user = new User;
             $user->setName('Pieter');
           </code></pre>
-				</section>
+        </section>
 
-				<section>
-					<h2>Properties</h2>
+        <section>
+          <h2>Properties</h2>
           <pre><code class="hljs">
             class User {
 
@@ -112,10 +112,10 @@
 
             }
           </code></pre>
-				</section>
+        </section>
 
-				<section>
-					<h2>Methods</h2>
+        <section>
+          <h2>Methods</h2>
           <pre><code class="hljs">
             class User {
 
@@ -132,10 +132,167 @@
 
             }
           </code></pre>
-				</section>
+        </section>
 
-				<section>
-					<h2>Constructor</h2>
+        <section>
+          <h2>Visibility</h2>
+          <ul>
+            <li>public</li>
+            <li>protected</li>
+            <li>private</li>
+          </ul>
+        </section>
+
+        <section>
+          <h2>Static methods</h2>
+          <pre><code class="hljs">
+    class Unicode {
+
+      public static function strlen($text) {
+        if (static::getStatus() == static::STATUS_MULTIBYTE) {
+          return mb_strlen($text);
+        }
+        else {
+          // Do not count UTF-8 continuation bytes.
+          return strlen(preg_replace("/[\x80-\xBF]/", '', $text));
+        }
+      }
+
+    }
+          </code></pre>
+          <p>"$this" can't be used.</p>
+        </section>
+
+        <section>
+          <h2>Inheritance</h2>
+          <pre><code class="hljs">
+ class Node extends ContentEntityBase {
+
+   public static function preDelete($storage, $entities) {
+     parent::preDelete($storage, $entities);
+
+     // Ensure that all nodes deleted are
+     // removed from the search index.
+     if (\Drupal::moduleHandler()->moduleExists('search')) {
+       foreach ($entities as $entity) {
+         search_index_clear('node_search', $entity->nid->value);
+       }
+     }
+   }
+
+ }
+          </code></pre>
+        </section>
+
+        <section>
+          <h2>Abstract classes</h2>
+          <pre><code class="hljs">
+    abstract class ContentEntityBase {
+
+      public function postCreate(EntityStorageInterface $storage) {
+        $this->newRevision = TRUE;
+      }
+
+    }
+          </code></pre>
+        </section>
+
+        <section>
+          <h2>Traits</h2>
+          <pre><code class="hljs">
+    trait RandomGeneratorTrait {
+
+      protected $randomGenerator;
+
+      public function randomString($length = 8) {
+        return $this->getRandomGenerator()->string($length);
+      }
+
+      protected function getRandomGenerator() {
+        if (!is_object($this->randomGenerator)) {
+          $this->randomGenerator = new Random();
+        }
+        return $this->randomGenerator;
+      }
+
+    }
+          </code></pre>
+        </section>
+
+        <section>
+          <h2>Using a trait</h2>
+          <pre><code class="hljs">
+    class MyUnitTest extends UnitTestCase {
+
+      use RandomGeneratorTrait;
+
+      function testMyClass() {
+        $string = $this->randomString(20);
+      }
+
+    }
+          </code></pre>
+        </section>
+
+        <section>
+          <h2>Interfaces</h2>
+          <pre><code class="hljs">
+        interface UserInterface {
+
+          public function getUsername();
+          public function getHashedPassword();
+          public function getEmail();
+
+          public function setUsername($name);
+          public function setPassword($password);
+          public function setEmail($email);
+
+          public function isActive();
+          public function getLastLoginTime();
+
+        }
+          </code></pre>
+        </section>
+
+        <section>
+          <h2>Using an interface</h2>
+          <pre><code class="hljs">
+        class User implements UserInterface {
+
+          public function getUsername() {
+            return $this->username;
+          }
+
+          public function setUsername($name) {
+            $this->username = $name;
+          }
+
+        }
+          </code></pre>
+        </section>
+
+        <section>
+          <h2>Namespaces</h2>
+          <pre><code class="hljs">
+  namespace Drupal\node\Entity;
+
+  use Drupal\Core\Entity\ContentEntityBase;
+  use Drupal\node\NodeInterface;
+
+  class Node extends ContentEntityBase implements NodeInterface {
+
+    /**
+     * @var \Drupal\user\UserInterface
+     */
+    protected $author;
+
+  }
+          </code></pre>
+        </section>
+
+
+        <section>
+          <h2>Constructor</h2>
           <pre><code class="hljs">
             class User {
 
@@ -153,128 +310,197 @@
           <pre><code class="hljs">
             $user = new User('Pieter', 'pieter@one-agency.be');
           </code></pre>
-				</section>
+        </section>
 
-				<section>
-					<h2>Magic methods</h2>
-           __construct(), __destruct(), __call(), __callStatic(), __get(), __set(), __isset(), __unset(), __sleep(), __wakeup(), __toString(), __invoke(), __set_state(), __clone() and __debugInfo() a
+        <section>
+          <h2>Magic methods</h2>
+          <ul>
+            <li>__construct(), __destruct()</li>
+            <li> __call(), __callStatic()</li>
+            <li>__get(), __set()</li>
+            <li>__isset(), __unset()</li>
+            <li>__sleep(), __wakeup(), __clone()</li>
+            <li> __toString()</li>
+            <li>...</li>
+          </ul>
+        </section>
+
+        <section>
+          <h2>__destruct()</h2>
           <pre><code class="hljs">
-            class User {
-              public function __construct();
-              public function __destruct();
+            class Database {
 
-              public function __call();
-              public function __callStatic();
+              public function __destruct() {
+                // Free up the memory used by the latest result.
+                $this->freeResult();
 
-              public function __get();
-              public function __set();
+                // Close the database connection.
+                $this->getConnection()->close();
+              }
 
-              public function __isset();
-              public function __unset();
             }
           </code></pre>
-				</section>
+        </section>
 
-				<section>
-					<h2>Magic methods</h2>
+        <section>
+          <h2>__call()</h2>
           <pre><code class="hljs">
-            class User {
-              public function __destruct()
-            }
+ class EntityWrapper {
+
+   /**
+    * Passes unknown calls through to the wrapped Entity object.
+    */
+   public function __call($method, $args) {
+     return call_user_func_array([$this->entity, $method], $args);
+   }
+
+ }
           </code></pre>
-				</section>
+        </section>
 
-				<section>
-					<h2>Static methods</h2>
-					<p>
-					</p>
-				</section>
+        <section>
+          <h2>__get()</h2>
+          <pre><code class="hljs">
+        class Wysiwyg {
 
-				<section>
-					<h2>Inheritance</h2>
-					<p>
-					</p>
-				</section>
+          public function __get($property) {
+            if ($this->editor->hasButton($property)) {
+              return $this->editor->getButton($property);
+            }
+            throw new ButtonNotPresentException($property);
+          }
 
-				<section>
-					<h2>Abstract classes</h2>
-					<p>
-					</p>
-				</section>
+        }
+          </code></pre>
+        </section>
 
-				<section>
-					<h2>Traits</h2>
-					<p>
-					</p>
-				</section>
+        <section>
+          <h2>__set()</h2>
+          <pre><code class="hljs">
+        class Configuration {
 
-				<section>
-					<h2>Visibility</h2>
-					<p>
-					</p>
-				</section>
+          protected array $settings = array();
 
-				<section>
-					<h2>Interfaces</h2>
-					<p>
-					</p>
-				</section>
+          public function __set($property, $value) {
+            // Validate any unknown properties and
+            // store them in $settings.
+            if ($this->validateSetting($property, $value)) {
+              $this->settings[$property] = $value;
+            }
+            else {
+              throw new NoSuchPropertyException($property);
+            }
+          }
 
-				<section>
-					<h2>Namespaces</h2>
-					<p>
-					</p>
-				</section>
+        }
+          </code></pre>
+        </section>
 
-				<section>
-					<h2>Autoloading</h2>
-					<p>
-					</p>
-				</section>
+        <section>
+          <h2>__toString()</h2>
+          <pre><code class="hljs">
+        class Form {
 
-				<section>
-					<h2>Dependency Injection</h2>
-					<p>
-					</p>
-				</section>
+          public function __toString() {
+            return $this->renderForm();
+          }
 
-				<section style="text-align: left;">
-					<h2>Conclusion</h2>
-					<p>
-					</p>
-				</section>
+        }
+          </code></pre>
+        </section>
 
-			</div>
+        <section>
+          <h2>Dependency Injection</h2>
+          <pre><code class="hljs">
+class UserLoginForm extends FormBase {
 
-		</div>
+  protected $userStorage;
 
-		<script src="lib/js/head.min.js"></script>
-		<script src="js/reveal.js"></script>
+  protected $renderer;
 
-		<script>
+  public function __construct($user_storage, $renderer) {
+    $this->userStorage = $user_storage;
+    $this->renderer = $renderer;
+  }
 
-			// Full list of configuration options available at:
-			// https://github.com/hakimel/reveal.js#configuration
-			Reveal.initialize({
-				controls: true,
-				progress: true,
-				history: true,
-				center: true,
+}
+          </code></pre>
+        </section>
 
-				transition: 'slide', // none/fade/slide/convex/concave/zoom
+        <section>
+          <h2>No Dependency Injection</h2>
+          <pre><code class="hljs">
+class UserLoginForm extends FormBase {
 
-				// Optional reveal.js plugins
-				dependencies: [
-					{ src: 'lib/js/classList.js', condition: function() { return !document.body.classList; } },
-					{ src: 'plugin/markdown/marked.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
-					{ src: 'plugin/markdown/markdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
-					{ src: 'plugin/highlight/highlight.js', async: true, callback: function() { hljs.initHighlightingOnLoad(); } },
-					{ src: 'plugin/zoom-js/zoom.js', async: true },
-					{ src: 'plugin/notes/notes.js', async: true }
-				]
-			});
+  protected $userStorage;
 
-		</script>
+  protected $renderer;
 
-	</body>
+  public function __construct() {
+    $this->userStorage = new UserStorageInterface();
+    $this->renderer = new RendererInterface();
+  }
+
+}
+          </code></pre>
+        </section>
+
+        <section>
+          <h2>Factory methods</h2>
+          <pre><code class="hljs">
+class UserLoginForm extends FormBase {
+
+  public function __construct(UserStorageInterface $user_storage, RendererInterface $renderer) {
+    $this->userStorage = $user_storage;
+    $this->renderer = $renderer;
+  }
+
+  public static function create(ContainerInterface $container) {
+    return new static(
+      $container->get('entity.manager')->getStorage('user'),
+      $container->get('renderer')
+    );
+  }
+
+}
+          </code></pre>
+        </section>
+
+        <section>
+          <h2>Questions?</h2>
+        </section>
+
+      </div>
+
+    </div>
+
+    <script src="lib/js/head.min.js"></script>
+    <script src="js/reveal.js"></script>
+
+    <script>
+
+      // Full list of configuration options available at:
+      // https://github.com/hakimel/reveal.js#configuration
+      Reveal.initialize({
+        controls: true,
+        progress: true,
+        history: true,
+        center: true,
+
+        transition: 'slide', // none/fade/slide/convex/concave/zoom
+
+        // Optional reveal.js plugins
+        dependencies: [
+          { src: 'lib/js/classList.js', condition: function() { return !document.body.classList; } },
+          { src: 'plugin/markdown/marked.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+          { src: 'plugin/markdown/markdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+          { src: 'plugin/highlight/highlight.js', async: true, callback: function() { hljs.initHighlightingOnLoad(); } },
+          { src: 'plugin/zoom-js/zoom.js', async: true },
+          { src: 'plugin/notes/notes.js', async: true }
+        ]
+      });
+
+    </script>
+
+  </body>
 </html>
