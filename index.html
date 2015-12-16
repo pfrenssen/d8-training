@@ -53,19 +53,28 @@
           <ul>
             <li>IDE or text editor</li>
             <li>LAMP stack</li>
-            <li>Drupal 8</li>
-            <li>drush (master branch)</li>
-            <li>DrupalConsole</li>
+            <li>Composer</li>
           </ul>
+				</section>
+
+				<section>
+					<h2>Starting a D8 project</h2>
+          <p><a href="https://github.com/drupal-composer/drupal-project">https://github.com/drupal-composer/drupal-project</a></p>
+          <pre><code class="hljs">
+     $ composer create-project drupal-composer/drupal-project \
+       --stability=dev mydir
+          </code></pre>
 				</section>
 
 				<section>
 					<h2>Sanity check</h2>
           <ul>
             <li>Open Drupal in the browser</li>
-            <li>$ drush st</li>
-            <li>$ drupal list</li>
           </ul>
+          <pre><code class="hljs">
+          $ drush st
+          $ drupal
+          </code></pre>
 				</section>
 
 				<section>
@@ -127,7 +136,7 @@
 
 				<section>
 					<h2>Enable it!</h2>
-          <p>Manage &gt; Extend</p>
+          <p>Go to "Manage &gt; Extend"</p>
 				</section>
 
 				<section>
@@ -211,21 +220,60 @@ class OneSubscriptionBlock extends BlockBase {
 				</section>
 
 				<section>
-					<h2>PSR-4</h2>
-					<p>
-					</p>
+					<h2>Add a submit button</h2>
+          <pre><code class="hljs">
+  public function buildForm(array $form, FormStateInterface $form_state) {
+    $form['email'] = ...
+
+    $form['submit'] = array(
+      '#type' => 'submit',
+      '#value' => $this->t('Submit'),
+    );
+
+    return $form;
+  }
+          </code></pre>
 				</section>
 
 				<section>
-					<h2>Namespacing</h2>
-					<p>
-					</p>
+					<h2>Add a submit handler</h2>
+          <pre><code class="hljs">
+  public function submitForm(array &$form, FormStateInterface $form_state) {
+    // @todo Save it to the database.
+    drupal_set_message($this->t('Thanks for subscribing.'));
+  }
+          </code></pre>
 				</section>
 
 				<section>
-					<h2>Annotations</h2>
-					<p>
-					</p>
+					<h2>Generate a configuration form</h2>
+          <pre><code class="hljs">
+            $ drupal generate:form:config
+
+            Module name: one
+            Form class: OneConfigurationForm
+            Type: checkbox
+            Input label: Enable newsletter subscription
+          </code></pre>
+				</section>
+
+				<section>
+					<h2>Working with config</h2>
+          <p>List all config</p>
+          <pre><code class="hljs">
+            $ drush config-list (cli)
+          </code></pre>
+          <p>Show config</p>
+          <pre><code class="hljs">
+            $ drush cget one.oneconfiguration
+          </code></pre>
+          <p>Export config</p>
+          <pre><code class="hljs">
+            $ cd modules/custom/one
+            $ mkdir -p config/install
+            $ drush cget one.oneconfiguration >
+                config/install/one.oneconfiguration.yml
+          </code></pre>
 				</section>
 
 				<section style="text-align: left;">
