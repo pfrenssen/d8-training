@@ -58,30 +58,134 @@
 
 				<section>
 					<h2>Objects</h2>
-					<p>
-					</p>
+          <pre><code class="hljs">
+            $user = new stdClass();
+            $user->name = 'Pieter';
+          </code></pre>
+
+          <pre><code class="hljs">
+            $user = (object) array('name' => 'Pieter');
+          </code></pre>
 				</section>
 
 				<section>
 					<h2>Classes</h2>
-					<p>
-					</p>
+          <pre><code class="hljs">
+            class User {
+
+              protected $name;
+
+              public function setName($name) {
+                $this->name = $name;
+              }
+
+              public function getName() {
+                return $this->name;
+              }
+
+            }
+          </code></pre>
 				</section>
 
 				<section>
-					<h2>Instantiating</h2>
-					<p>
-					</p>
+					<h2>Instantiating a class</h2>
+          <pre><code class="hljs">
+            $user = new User;
+            $user->setName('Pieter');
+          </code></pre>
 				</section>
 
 				<section>
 					<h2>Properties</h2>
-					<p>
-					</p>
+          <pre><code class="hljs">
+            class User {
+
+              protected $string;
+
+              protected UserValidation $validationHandler;
+
+              protected $email = 'info@example.com';
+
+              protected $active = FALSE;
+
+              protected array $array = [];
+
+            }
+          </code></pre>
 				</section>
 
 				<section>
 					<h2>Methods</h2>
+          <pre><code class="hljs">
+            class User {
+
+              protected $name;
+
+              public function getName() {
+                return $this->name();
+              }
+
+              public function save() {
+                // Save the user record to the database.
+                return $this;
+              }
+
+            }
+          </code></pre>
+				</section>
+
+				<section>
+					<h2>Constructor</h2>
+          <pre><code class="hljs">
+            class User {
+
+              protected $name;
+              protected $email;
+
+              public function __construct($name, $email) {
+                $this->name = $name;
+                $this->email = $email;
+              }
+
+            }
+          </code></pre>
+
+          <pre><code class="hljs">
+            $user = new User('Pieter', 'pieter@one-agency.be');
+          </code></pre>
+				</section>
+
+				<section>
+					<h2>Magic methods</h2>
+           __construct(), __destruct(), __call(), __callStatic(), __get(), __set(), __isset(), __unset(), __sleep(), __wakeup(), __toString(), __invoke(), __set_state(), __clone() and __debugInfo() a
+          <pre><code class="hljs">
+            class User {
+              public function __construct();
+              public function __destruct();
+
+              public function __call();
+              public function __callStatic();
+
+              public function __get();
+              public function __set();
+
+              public function __isset();
+              public function __unset();
+            }
+          </code></pre>
+				</section>
+
+				<section>
+					<h2>Magic methods</h2>
+          <pre><code class="hljs">
+            class User {
+              public function __destruct()
+            }
+          </code></pre>
+				</section>
+
+				<section>
+					<h2>Static methods</h2>
 					<p>
 					</p>
 				</section>
