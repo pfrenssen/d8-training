@@ -1,78 +1,78 @@
 <!doctype html>
 <html lang="en">
 
-	<head>
-		<meta charset="utf-8">
+  <head>
+    <meta charset="utf-8">
 
-		<title>reveal.js – The HTML Presentation Framework</title>
+    <title>reveal.js – The HTML Presentation Framework</title>
 
-		<meta name="description" content="A framework for easily creating beautiful presentations using HTML">
-		<meta name="author" content="Hakim El Hattab">
+    <meta name="description" content="A framework for easily creating beautiful presentations using HTML">
+    <meta name="author" content="Hakim El Hattab">
 
-		<meta name="apple-mobile-web-app-capable" content="yes">
-		<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 
-		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
 
-		<link rel="stylesheet" href="css/reveal.css">
-		<link rel="stylesheet" href="css/theme/solarized.css" id="theme">
+    <link rel="stylesheet" href="css/reveal.css">
+    <link rel="stylesheet" href="css/theme/solarized.css" id="theme">
 
-		<!-- Code syntax highlighting -->
-		<link rel="stylesheet" href="lib/css/zenburn.css">
+    <!-- Code syntax highlighting -->
+    <link rel="stylesheet" href="lib/css/zenburn.css">
 
-		<!-- Printing and PDF exports -->
-		<script>
-			var link = document.createElement( 'link' );
-			link.rel = 'stylesheet';
-			link.type = 'text/css';
-			link.href = window.location.search.match( /print-pdf/gi ) ? 'css/print/pdf.css' : 'css/print/paper.css';
-			document.getElementsByTagName( 'head' )[0].appendChild( link );
-		</script>
+    <!-- Printing and PDF exports -->
+    <script>
+      var link = document.createElement( 'link' );
+      link.rel = 'stylesheet';
+      link.type = 'text/css';
+      link.href = window.location.search.match( /print-pdf/gi ) ? 'css/print/pdf.css' : 'css/print/paper.css';
+      document.getElementsByTagName( 'head' )[0].appendChild( link );
+    </script>
 
-		<!--[if lt IE 9]>
-		<script src="lib/js/html5shiv.js"></script>
-		<![endif]-->
-	</head>
+    <!--[if lt IE 9]>
+    <script src="lib/js/html5shiv.js"></script>
+    <![endif]-->
+  </head>
 
-	<body>
+  <body>
 
-		<div class="reveal">
+    <div class="reveal">
 
-			<!-- Any section element inside of this container is displayed as a slide -->
-			<div class="slides">
+      <!-- Any section element inside of this container is displayed as a slide -->
+      <div class="slides">
         <section data-background="#ffffff">
-					<h1>Creating a Drupal 8 module</h1>
-					<p>
-						<small><a href="https://drupal.org/u/pfrenssen">Pieter Frenssen</a> / <a href="http://twitter.com/pfrenssen">@pfrenssen</a></small>
-					</p>
+          <h1>Creating a Drupal 8 module</h1>
+          <p>
+            <small><a href="https://drupal.org/u/pfrenssen">Pieter Frenssen</a> / <a href="http://twitter.com/pfrenssen">@pfrenssen</a></small>
+          </p>
           <img src="./one-agency.png" style="width: 100px; height: 100px; border: none; box-shadow: none;">
-				</section>
+        </section>
 
-				<section>
-					<h2>Stuff you need</h2>
+        <section>
+          <h2>Stuff you need</h2>
           <ul>
             <li>IDE or text editor</li>
             <li>LAMP stack</li>
             <li>Composer</li>
           </ul>
-				</section>
+        </section>
 
-				<section>
-					<h2>Let's get started</h2>
+        <section>
+          <h2>Let's get started</h2>
           <h3>Fire up your consoles!</h3>
-				</section>
+        </section>
 
-				<section>
-					<h2>Starting a D8 project</h2>
+        <section>
+          <h2>Starting a D8 project</h2>
           <p><a href="https://github.com/drupal-composer/drupal-project">https://github.com/drupal-composer/drupal-project</a></p>
           <pre><code class="hljs">
      $ composer create-project drupal-composer/drupal-project \
        --stability=dev mydir
           </code></pre>
-				</section>
+        </section>
 
-				<section>
-					<h2>Folder structure</h2>
+        <section>
+          <h2>Folder structure</h2>
           <ul>
             <li>drush/ - commands + config</li>
             <li>scripts/ - indeed</li>
@@ -80,15 +80,15 @@
             <li>vendor/bin/ - tools</li>
             <li>web/ - our website!</li>
           </ul>
-				</section>
+        </section>
 
-				<section>
-					<h2>Configure webserver</h2>
+        <section>
+          <h2>Configure webserver</h2>
           <p>Use the "web/" folder as site root</p>
-				</section>
+        </section>
 
-				<section>
-					<h2>Sanity check</h2>
+        <section>
+          <h2>Sanity check</h2>
           <ul>
             <li>Open Drupal in the browser</li>
           </ul>
@@ -96,25 +96,25 @@
           $ ./vendor/bin/drush st
           $ ./vendor/bin/console
           </code></pre>
-				</section>
+        </section>
 
-				<section>
-					<h2>D8 developer mode</h2>
+        <section>
+          <h2>D8 developer mode</h2>
           <ul><li>Display error messages</li>
           <li>Disable CSS/JS aggregation</li>
           <li>Disable render cache</li>
           <li>Allow installing test modules</li></ul>
-				</section>
+        </section>
 
-				<section>
-					<h2>Engage developer mode</h2>
+        <section>
+          <h2>Engage developer mode</h2>
           <h3>Copy:</h3>
           <code class="hljs">sites/example.settings.local.php</code>
           <h3>To:</h3>
           <code class="hljs">sites/default/settings.local.php</code>
-				</section>
+        </section>
 
-				<section>
+        <section>
           <h3>sites/default/settings.php</h3>
           <pre><code class="hljs">
 # if (file_exists(__DIR__ . '/settings.local.php')) {
@@ -122,32 +122,32 @@
 # }
           </code></pre>
           <h3>Uncomment these lines</h3>
-				</section>
+        </section>
 
-				<section>
-					<h2>More development options</h2>
+        <section>
+          <h2>More development options</h2>
           <h3>sites/default/services.yml</h3>
           <ul><li>Twig debugging</li>
           <li>Twig auto-recompile</li>
           <li>Disable Twig cache</li>
           <li>Advanced caching options</li>
           <li>...</li></ul>
-				</section>
+        </section>
 
-				<section>
-					<h2>Install a contrib module</h2>
+        <section>
+          <h2>Install a contrib module</h2>
           <pre><code class="hljs">
             $ composer require drupal/ds
           </code></pre>
           <p>Downloads Display Suite + dependencies</p>
-				</section>
+        </section>
 
-				<section>
-					<h2>Create a custom module</h2>
-				</section>
+        <section>
+          <h2>Create a custom module</h2>
+        </section>
 
-				<section>
-					<h2>Generate module skeleton</h2>
+        <section>
+          <h2>Generate module skeleton</h2>
           <pre><code class="hljs">
             $ cd web/
             $ ../vendor/bin/console generate:module
@@ -158,27 +158,27 @@
             Module dependencies:
             > views
           </code></pre>
-				</section>
+        </section>
 
-				<section>
-					<h2>Generated files</h2>
+        <section>
+          <h2>Generated files</h2>
           <ul><li>one.info.yml</li>
           <li>one.module</li>
           <li>composer.json</li></ul>
-				</section>
+        </section>
 
-				<section>
-					<h2>Enable it!</h2>
+        <section>
+          <h2>Enable it!</h2>
           <p>Go to "Manage &gt; Extend"</p>
-				</section>
+        </section>
 
-				<section>
-					<h2>You did it!</h2>
+        <section>
+          <h2>You did it!</h2>
           <p><img src="module-enabled.png" style="border: none" /></p>
-				</section>
+        </section>
 
-				<section>
-					<h2>Create a form</h2>
+        <section>
+          <h2>Create a form</h2>
           <pre><code class="hljs">
             $ ../vendor/bin/console generate:form
 
@@ -189,10 +189,10 @@
             Machine name: email
             Description: Subscribe to our newsletter.
           </code></pre>
-				</section>
+        </section>
 
-				<section>
-					<h2>Generated code</h2>
+        <section>
+          <h2>Generated code</h2>
           <p>src/Form/OneSubscriptionForm.php</p>
           <pre><code class="hljs">
 class OneSubscriptionForm extends FormBase {
@@ -210,10 +210,10 @@ class OneSubscriptionForm extends FormBase {
   public function submitForm(array &$form, FormStateInterface $form_state) {
   }
           </code></pre>
-				</section>
+        </section>
 
-				<section>
-					<h2>Generate a block</h2>
+        <section>
+          <h2>Generate a block</h2>
           <pre><code class="hljs">
             $ ../vendor/bin/console generate:plugin:block
 
@@ -222,10 +222,10 @@ class OneSubscriptionForm extends FormBase {
             Theme region: sidebar_first
             Form structure: no
           </code></pre>
-				</section>
+        </section>
 
-				<section>
-					<h2>Generated code</h2>
+        <section>
+          <h2>Generated code</h2>
           <p>src/Plugin/Block/OneSubscriptionBlock.php</p>
           <pre><code class="hljs">
 /**
@@ -243,10 +243,10 @@ class OneSubscriptionBlock extends BlockBase {
     return $build;
   }
           </code></pre>
-				</section>
+        </section>
 
-				<section>
-					<h2>Show our form in the block</h2>
+        <section>
+          <h2>Show our form in the block</h2>
           <pre><code class="hljs">
   public function build() {
     return \Drupal::formBuilder()->getForm(
@@ -255,10 +255,10 @@ class OneSubscriptionBlock extends BlockBase {
   }
           </code></pre>
           <p>See <code>SearchBlock::build()</code></p>
-				</section>
+        </section>
 
-				<section>
-					<h2>Add a submit button</h2>
+        <section>
+          <h2>Add a submit button</h2>
           <pre><code class="hljs">
   public function buildForm(array $form, FormStateInterface $form_state) {
     $form['email'] = ...
@@ -271,25 +271,25 @@ class OneSubscriptionBlock extends BlockBase {
     return $form;
   }
           </code></pre>
-				</section>
+        </section>
 
-				<section>
-					<h2>Add a submit handler</h2>
+        <section>
+          <h2>Add a submit handler</h2>
           <pre><code class="hljs">
   public function submitForm(array &$form, FormStateInterface $form_state) {
     // @todo Save it to the database.
     drupal_set_message($this->t('Thanks for subscribing.'));
   }
           </code></pre>
-				</section>
+        </section>
 
-				<section>
-					<h2>Try it!</h2>
+        <section>
+          <h2>Try it!</h2>
           <p>Visit the frontpage</p>
-				</section>
+        </section>
 
-				<section>
-					<h2>Generate a configuration form</h2>
+        <section>
+          <h2>Generate a configuration form</h2>
           <pre><code class="hljs">
             $ ../vendor/bin/console generate:form:config
 
@@ -298,21 +298,21 @@ class OneSubscriptionBlock extends BlockBase {
             Type: checkbox
             Input label: Enable newsletter subscription
           </code></pre>
-				</section>
+        </section>
 
-				<section>
-					<h2>Generated files</h2>
+        <section>
+          <h2>Generated files</h2>
           <ul><li>one.routing.yml</li>
           <li>src/Form/OneConfigurationForm</li>
-				</section>
+        </section>
 
-				<section>
-					<h2>Try it!</h2>
+        <section>
+          <h2>Try it!</h2>
           <p>admin/config/one/oneconfiguration</p>
-				</section>
+        </section>
 
-				<section>
-					<h2>New section in configuration overview</h2>
+        <section>
+          <h2>New section in configuration overview</h2>
           <h3>one.routing.yml</h3>
           <pre><code class="hljs">
     one.admin_config:
@@ -325,10 +325,10 @@ class OneSubscriptionBlock extends BlockBase {
         _permission: 'access administration pages'
           </code></pre>
           <p>See <code>system.routing.yml</code></p>
-				</section>
+        </section>
 
-				<section>
-					<h2>New section in configuration overview</h2>
+        <section>
+          <h2>New section in configuration overview</h2>
           <h3>one.links.menu.yml</h3>
           <pre><code class="hljs">
         one.admin_config:
@@ -346,18 +346,18 @@ class OneSubscriptionBlock extends BlockBase {
           weight: 0
           </code></pre>
           <p>See <code>system.links.menu.yml</code></p>
-				</section>
+        </section>
 
-				<section>
-					<h2>Try it!</h2>
+        <section>
+          <h2>Try it!</h2>
           <pre><code class="hljs">
             $ ../vendor/bin/drush cr
           </code></pre>
           <p>admin/config</p>
-				</section>
+        </section>
 
-				<section>
-					<h2>Working with config</h2>
+        <section>
+          <h2>Working with config</h2>
           <p>List all config</p>
           <pre><code class="hljs">
             $ ../vendor/bin/drush config-list (cli)
@@ -366,10 +366,10 @@ class OneSubscriptionBlock extends BlockBase {
           <pre><code class="hljs">
             $ ../vendor/bin/drush cget one.oneconfiguration
           </code></pre>
-				</section>
+        </section>
 
-				<section>
-					<h2>Save default configuration</h2>
+        <section>
+          <h2>Save default configuration</h2>
           <p>one/config/install/myconfig.yml</p>
           <pre><code class="hljs">
             $ cd modules/custom/one
@@ -377,59 +377,112 @@ class OneSubscriptionBlock extends BlockBase {
             $ ../vendor/bin/drush cget one.oneconfiguration >
                 config/install/one.oneconfiguration.yml
           </code></pre>
-				</section>
+        </section>
 
-				<section>
-					<h2>Default configuration</h2>
+        <section>
+          <h2>Default configuration</h2>
           <p>config/install/one.oneconfiguration.yml</p>
           <pre><code class="hljs">
-						enable_newsletter_subscription: 1
+            enable_newsletter_subscription: 1
           </code></pre>
-				</section>
+        </section>
 
-				<section>
-					<h2>Create a content type</h2>
+        <section>
+          <h2>Create a content type</h2>
           <p>admin/structure/types/add</p>
           <p>Name: Newsletter</p>
-				</section>
+        </section>
 
-				<section style="text-align: left;">
-					<h2>Conclusion</h2>
-					<p>
-					</p>
-				</section>
+        <section>
+          <h2>Export content type</h2>
+          <pre><code class="hljs">
+          $ ../vendor/bin/drush cli | grep newsletter
+          core.entity_form_display.node.newsletter.default
+          core.entity_view_display.node.newsletter.default
+          core.entity_view_display.node.newsletter.teaser
+          field.field.node.newsletter.body
+          language.content_settings.node.newsletter
+          node.type.newsletter
+          </code></pre>
+          <p>Too much work to do it manually!</p>
+        </section>
 
-			</div>
+        <section>
+          <h2>Install config_devel</h2>
+          <p>composer.json</p>
+          <pre><code class="hljs">
+          "require-dev": {
+              "drupal/config_devel": "^8.1@beta"
+          }
+          </code></pre>
+          <pre><code class="hljs">
+          $ composer update
+          </code></pre>
+          <p>Development modules go in "require-dev"</p>
+        </section>
 
-		</div>
+        <section>
+          <h2>Specify config to export</h2>
+          <p>one.info.yml</p>
+          <pre><code class="hljs">
+     config_devel:
+       - core.entity_form_display.node.newsletter.default
+       - core.entity_view_display.node.newsletter.default
+       - core.entity_view_display.node.newsletter.teaser
+       - field.field.node.newsletter.body
+       - language.content_settings.node.newsletter
+       - node.type.newsletter
+       - one.oneconfiguration
+          </code></pre>
+          <pre><code class="hljs">
+  $ drush cli | grep newsletter >> modules/custom/one.info.yml
+          </code></pre>
+        </section>
 
-		<script src="lib/js/head.min.js"></script>
-		<script src="js/reveal.js"></script>
+        <section>
+          <h2>Export config</h2>
+          <pre><code class="hljs">
+      $ ../vendor/bin/drush cd-em one
+      $ ls modules/custom/one/config/install
+          </code></pre>
+          <p>Wow! Much easier!!</p>
+        </section>
 
-		<script>
+        <section>
+          <h2>Questions?</h2>
+        </section>
 
-			// Full list of configuration options available at:
-			// https://github.com/hakimel/reveal.js#configuration
-			Reveal.initialize({
-				controls: true,
-				progress: true,
-				history: true,
-				center: true,
+      </div>
 
-				transition: 'slide', // none/fade/slide/convex/concave/zoom
+    </div>
 
-				// Optional reveal.js plugins
-				dependencies: [
-					{ src: 'lib/js/classList.js', condition: function() { return !document.body.classList; } },
-					{ src: 'plugin/markdown/marked.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
-					{ src: 'plugin/markdown/markdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
-					{ src: 'plugin/highlight/highlight.js', async: true, callback: function() { hljs.initHighlightingOnLoad(); } },
-					{ src: 'plugin/zoom-js/zoom.js', async: true },
-					{ src: 'plugin/notes/notes.js', async: true }
-				]
-			});
+    <script src="lib/js/head.min.js"></script>
+    <script src="js/reveal.js"></script>
 
-		</script>
+    <script>
 
-	</body>
+      // Full list of configuration options available at:
+      // https://github.com/hakimel/reveal.js#configuration
+      Reveal.initialize({
+        controls: true,
+        progress: true,
+        history: true,
+        center: true,
+
+        transition: 'slide', // none/fade/slide/convex/concave/zoom
+
+        // Optional reveal.js plugins
+        dependencies: [
+          { src: 'lib/js/classList.js', condition: function() { return !document.body.classList; } },
+          { src: 'plugin/markdown/marked.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+          { src: 'plugin/markdown/markdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+          { src: 'plugin/highlight/highlight.js', async: true, callback: function() { hljs.initHighlightingOnLoad(); } },
+          { src: 'plugin/zoom-js/zoom.js', async: true },
+          { src: 'plugin/notes/notes.js', async: true }
+        ]
+      });
+
+    </script>
+
+  </body>
 </html>
