@@ -50,6 +50,15 @@
         </section>
 
         <section>
+          <h2>Drupal 8 yay!</h2>
+          <ul>
+            <li>Drupal <strike>8.0.0</strike> 8.0.1 released!</li>
+            <li>Same philosophy, completely rewritten</li>
+            <li>Core is useful out of the box</li>
+          </ul>
+        </section>
+
+        <section>
           <h2>Content management</h2>
           <ul>
             <li>Improved node form</li>
@@ -108,9 +117,15 @@
         <section>
           <h2>Theming</h2>
           <ul>
-            <li></li>
-            <li></li>
-            <li></li>
+            <li>Twig</li>
+            <li>Templates &lt;=&gt; theme functions</li>
+            <li>Autoescaping</li>
+            <li>New 'Classy' base theme</li>
+            <li>Breakpoints</li>
+            <li>Libraries</li>
+            <li>Theme debugging</li>
+            <li>SMACSS, HTML5</li>
+            <li>#ids + unneeded divs removed</li>
           </ul>
         </section>
 
@@ -122,6 +137,7 @@
             <li>Keyboard navigation</li>
             <li>Screen readers</li>
             <li>Color contrasts</li>
+            <li>'Visually hidden'</li>
           </ul>
         </section>
 
@@ -130,11 +146,43 @@
           <ul>
             <li>Complete OOP rewrite</li>
             <li>Modern PHP practices</li>
-            <li>Plugin system</li>
+            <li>'Normal' PHP code</li>
+            <li>PHP 7 ready</li>
+          </ul>
+        </section>
+
+        <section>
+          <h2>Development 2.0</h2>
+          <ul>
+            <li>Classes (4500+)</li>
+            <li>Interfaces (450+)</li>
+            <li>YAML</li>
+            <li>Annotations</li>
+            <li>Namespaces</li>
+            <li>Autoloader</li>
+          </ul>
+        </section>
+
+        <section>
+          <h2>Development 3.0</h2>
+          <ul>
             <li>New routing system</li>
-            <li>Config</li>
+            <li>New plugin system</li>
+            <li>Configuration management</li>
+            <li>Overhauled entity + field API</li>
+            <li>Database independent</li>
             <li>Granular caching</li>
             <li>4 test frameworks in core</li>
+          </ul>
+        </section>
+
+        <section>
+          <h2>Development 4.0</h2>
+          <ul>
+            <li>Dependency injection</li>
+            <li>Service container</li>
+            <li>Events (+ hooks)</li>
+            <li>Controllers</li>
           </ul>
         </section>
 
@@ -143,6 +191,8 @@
           <ul>
             <li>Symfony, Twig, Guzzle, Mink</li>
             <li>Composer, PHPUnit, Doctrine</li>
+          </ul>
+          <ul>
             <li>Backbone, jQuery, jQuery UI</li>
             <li>Modernizr, CKEditor</li>
           </ul>
@@ -159,401 +209,32 @@
         </section>
 
         <section>
-          <h2>Classes</h2>
-          <pre><code class="hljs">
-            class User {
-
-              protected $name;
-
-              public function setName($name) {
-                $this->name = $name;
-              }
-
-              public function getName() {
-                return $this->name;
-              }
-
-            }
-          </code></pre>
-        </section>
-
-        <section>
-          <h2>Instantiating a class</h2>
-          <pre><code class="hljs">
-            $user = new User;
-            $user->setName('Pieter');
-          </code></pre>
-        </section>
-
-        <section>
-          <h2>Properties</h2>
-          <pre><code class="hljs">
-            class User {
-
-              protected $string;
-
-              protected UserValidation $validationHandler;
-
-              protected $email = 'info@example.com';
-
-              protected $active = FALSE;
-
-              protected array $array = [];
-
-            }
-          </code></pre>
-        </section>
-
-        <section>
-          <h2>Methods</h2>
-          <pre><code class="hljs">
-            class User {
-
-              protected $name;
-
-              public function getName() {
-                return $this->name();
-              }
-
-              public function save() {
-                // Save the user record to the database.
-                return $this;
-              }
-
-            }
-          </code></pre>
-        </section>
-
-        <section>
-          <h2>Visibility</h2>
+          <h2>Directory structure</h2>
           <ul>
-            <li>public</li>
-            <li>protected</li>
-            <li>private</li>
+            <li>Core files in 'core/' folder</li>
+            <li>Modules, themes in root</li>
+            <li>PSR-4</li>
+            <li>Standardised folder structure</li>
           </ul>
         </section>
 
         <section>
-          <h2>Static methods</h2>
-          <pre><code class="hljs">
-    class Unicode {
-
-      public static function strlen($text) {
-        if (static::getStatus() == static::STATUS_MULTIBYTE) {
-          return mb_strlen($text);
-        }
-        else {
-          // Do not count UTF-8 continuation bytes.
-          return strlen(preg_replace("/[\x80-\xBF]/", '', $text));
-        }
-      }
-
-    }
-          </code></pre>
-          <p>"$this" can't be used.</p>
-        </section>
-
-        <section>
-          <h2>Inheritance</h2>
-          <pre><code class="hljs">
- class Node extends ContentEntityBase {
-
-   public static function preDelete($storage, $entities) {
-     parent::preDelete($storage, $entities);
-
-     // Ensure that all nodes deleted are
-     // removed from the search index.
-     if (\Drupal::moduleHandler()->moduleExists('search')) {
-       foreach ($entities as $entity) {
-         search_index_clear('node_search', $entity->nid->value);
-       }
-     }
-   }
-
- }
-          </code></pre>
-        </section>
-
-        <section>
-          <h2>Abstract classes</h2>
-          <pre><code class="hljs">
-    abstract class ContentEntityBase {
-
-      public function postCreate(EntityStorageInterface $storage) {
-        $this->newRevision = TRUE;
-      }
-
-    }
-          </code></pre>
-        </section>
-
-        <section>
-          <h2>Traits</h2>
-          <pre><code class="hljs">
-    trait RandomGeneratorTrait {
-
-      protected $randomGenerator;
-
-      public function randomString($length = 8) {
-        return $this->getRandomGenerator()->string($length);
-      }
-
-      protected function getRandomGenerator() {
-        if (!is_object($this->randomGenerator)) {
-          $this->randomGenerator = new Random();
-        }
-        return $this->randomGenerator;
-      }
-
-    }
-          </code></pre>
-        </section>
-
-        <section>
-          <h2>Using a trait</h2>
-          <pre><code class="hljs">
-    class MyUnitTest extends UnitTestCase {
-
-      use RandomGeneratorTrait;
-
-      function testMyClass() {
-        $string = $this->randomString(20);
-      }
-
-    }
-          </code></pre>
-        </section>
-
-        <section>
-          <h2>Interfaces</h2>
-          <pre><code class="hljs">
-        interface UserInterface {
-
-          public function getUsername();
-          public function getHashedPassword();
-          public function getEmail();
-
-          public function setUsername($name);
-          public function setPassword($password);
-          public function setEmail($email);
-
-          public function isActive();
-          public function getLastLoginTime();
-
-        }
-          </code></pre>
-        </section>
-
-        <section>
-          <h2>Using an interface</h2>
-          <pre><code class="hljs">
-        class User implements UserInterface {
-
-          public function getUsername() {
-            return $this->username;
-          }
-
-          public function setUsername($name) {
-            $this->username = $name;
-          }
-
-        }
-          </code></pre>
-        </section>
-
-        <section>
-          <h2>Namespaces</h2>
-          <pre><code class="hljs">
-  namespace Drupal\node\Entity;
-
-  use Drupal\Core\Entity\ContentEntityBase;
-  use Drupal\node\NodeInterface;
-
-  class Node extends ContentEntityBase implements NodeInterface {
-
-    /**
-     * @var \Drupal\user\UserInterface
-     */
-    protected $author;
-
-  }
-          </code></pre>
-        </section>
-
-
-        <section>
-          <h2>Constructor</h2>
-          <pre><code class="hljs">
-            class User {
-
-              protected $name;
-              protected $email;
-
-              public function __construct($name, $email) {
-                $this->name = $name;
-                $this->email = $email;
-              }
-
-            }
-          </code></pre>
-
-          <pre><code class="hljs">
-            $user = new User('Pieter', 'pieter@one-agency.be');
-          </code></pre>
-        </section>
-
-        <section>
-          <h2>Magic methods</h2>
+          <h2>About entities</h2>
           <ul>
-            <li>__construct(), __destruct()</li>
-            <li> __call(), __callStatic()</li>
-            <li>__get(), __set()</li>
-            <li>__isset(), __unset()</li>
-            <li>__sleep(), __wakeup(), __clone()</li>
-            <li> __toString()</li>
-            <li>...</li>
+            <li>Drupal 8 &lt;3 entities!</li>
+            <li>Content entities</li>
+            <li>Config entities</li>
           </ul>
         </section>
 
         <section>
-          <h2>__destruct()</h2>
-          <pre><code class="hljs">
-            class Database {
-
-              public function __destruct() {
-                // Free up the memory used by the latest result.
-                $this->freeResult();
-
-                // Close the database connection.
-                $this->getConnection()->close();
-              }
-
-            }
-          </code></pre>
-        </section>
-
-        <section>
-          <h2>__call()</h2>
-          <pre><code class="hljs">
- class EntityWrapper {
-
-   /**
-    * Passes unknown calls through to the wrapped Entity object.
-    */
-   public function __call($method, $args) {
-     return call_user_func_array([$this->entity, $method], $args);
-   }
-
- }
-          </code></pre>
-        </section>
-
-        <section>
-          <h2>__get()</h2>
-          <pre><code class="hljs">
-        class Wysiwyg {
-
-          public function __get($property) {
-            if ($this->editor->hasButton($property)) {
-              return $this->editor->getButton($property);
-            }
-            throw new ButtonNotPresentException($property);
-          }
-
-        }
-          </code></pre>
-        </section>
-
-        <section>
-          <h2>__set()</h2>
-          <pre><code class="hljs">
-        class Configuration {
-
-          protected array $settings = array();
-
-          public function __set($property, $value) {
-            // Validate any unknown properties and
-            // store them in $settings.
-            if ($this->validateSetting($property, $value)) {
-              $this->settings[$property] = $value;
-            }
-            else {
-              throw new NoSuchPropertyException($property);
-            }
-          }
-
-        }
-          </code></pre>
-        </section>
-
-        <section>
-          <h2>__toString()</h2>
-          <pre><code class="hljs">
-        class Form {
-
-          public function __toString() {
-            return $this->renderForm();
-          }
-
-        }
-          </code></pre>
-        </section>
-
-        <section>
-          <h2>Dependency Injection</h2>
-          <pre><code class="hljs">
-class UserLoginForm extends FormBase {
-
-  protected $userStorage;
-
-  protected $renderer;
-
-  public function __construct($user_storage, $renderer) {
-    $this->userStorage = $user_storage;
-    $this->renderer = $renderer;
-  }
-
-}
-          </code></pre>
-        </section>
-
-        <section>
-          <h2>No Dependency Injection</h2>
-          <pre><code class="hljs">
-class UserLoginForm extends FormBase {
-
-  protected $userStorage;
-
-  protected $renderer;
-
-  public function __construct() {
-    $this->userStorage = new UserStorageInterface();
-    $this->renderer = new RendererInterface();
-  }
-
-}
-          </code></pre>
-        </section>
-
-        <section>
-          <h2>Factory methods</h2>
-          <pre><code class="hljs">
-class UserLoginForm extends FormBase {
-
-  public function __construct(UserStorageInterface $user_storage, RendererInterface $renderer) {
-    $this->userStorage = $user_storage;
-    $this->renderer = $renderer;
-  }
-
-  public static function create(ContainerInterface $container) {
-    return new static(
-      $container->get('entity.manager')->getStorage('user'),
-      $container->get('renderer')
-    );
-  }
-
-}
-          </code></pre>
+          <h2>About config</h2>
+          <ul>
+            <li>Exportable to YAML</li>
+            <li>Full-site export/import</li>
+            <li>Defined using a schema</li>
+            <li>Default config for modules</li>
+          </ul>
         </section>
 
         <section>
