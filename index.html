@@ -72,13 +72,29 @@
 				</section>
 
 				<section>
+					<h2>Folder structure</h2>
+          <ul>
+            <li>drush/ - commands + config</li>
+            <li>scripts/ - indeed</li>
+            <li>vendor/ - dependencies</li>
+            <li>vendor/bin/ - tools</li>
+            <li>web/ - our website!</li>
+          </ul>
+				</section>
+
+				<section>
+					<h2>Configure webserver</h2>
+          <p>Use the "web/" folder as site root</p>
+				</section>
+
+				<section>
 					<h2>Sanity check</h2>
           <ul>
             <li>Open Drupal in the browser</li>
           </ul>
           <pre><code class="hljs">
-          $ drush st
-          $ drupal
+          $ ./vendor/bin/drush st
+          $ ./vendor/bin/console
           </code></pre>
 				</section>
 
@@ -119,9 +135,22 @@
 				</section>
 
 				<section>
+					<h2>Install a contrib module</h2>
+          <pre><code class="hljs">
+            $ composer require drupal/ds
+          </code></pre>
+          <p>Downloads Display Suite + dependencies</p>
+				</section>
+
+				<section>
+					<h2>Create a custom module</h2>
+				</section>
+
+				<section>
 					<h2>Generate module skeleton</h2>
           <pre><code class="hljs">
-            $ drupal generate:module
+            $ cd web/
+            $ ../vendor/bin/console generate:module
             Enter the new module name:
             > One
             Add module dependencies:
@@ -149,16 +178,12 @@
 				</section>
 
 				<section>
-					<h2>Questions?</h2>
-				</section>
-
-				<section>
 					<h2>Create a form</h2>
           <pre><code class="hljs">
-            $ drupal generate:form
+            $ ../vendor/bin/console generate:form
 
             Module name: one
-            Form class: OneSubscriptionForm
+            Form class: SubscriptionForm
             Type: email
             Input label: Your e-mail
             Machine name: email
@@ -190,7 +215,7 @@ class OneSubscriptionForm extends FormBase {
 				<section>
 					<h2>Generate a block</h2>
           <pre><code class="hljs">
-            $ drupal generate:plugin:block
+            $ ../vendor/bin/console generate:plugin:block
 
             Module name: one
             Form class: OneSubscriptionBlock
@@ -259,9 +284,14 @@ class OneSubscriptionBlock extends BlockBase {
 				</section>
 
 				<section>
+					<h2>Try it!</h2>
+          <p>Visit the frontpage</p>
+				</section>
+
+				<section>
 					<h2>Generate a configuration form</h2>
           <pre><code class="hljs">
-            $ drupal generate:form:config
+            $ ../vendor/bin/console generate:form:config
 
             Module name: one
             Form class: OneConfigurationForm
@@ -271,22 +301,96 @@ class OneSubscriptionBlock extends BlockBase {
 				</section>
 
 				<section>
+					<h2>Generated files</h2>
+          <ul><li>one.routing.yml</li>
+          <li>src/Form/OneConfigurationForm</li>
+				</section>
+
+				<section>
+					<h2>Try it!</h2>
+          <p>admin/config/one/oneconfiguration</p>
+				</section>
+
+				<section>
+					<h2>New section in configuration overview</h2>
+          <h3>one.routing.yml</h3>
+          <pre><code class="hljs">
+    one.admin_config:
+      path: '/admin/config/one'
+      defaults:
+        _controller: '\Drupal\system\Controller\SystemController::
+                      systemAdminMenuBlockPage'
+        _title: 'One'
+      requirements:
+        _permission: 'access administration pages'
+          </code></pre>
+          <p>See <code>system.routing.yml</code></p>
+				</section>
+
+				<section>
+					<h2>New section in configuration overview</h2>
+          <h3>one.links.menu.yml</h3>
+          <pre><code class="hljs">
+        one.admin_config:
+          route_name: one.admin_config
+          title: 'Custom'
+          parent: system.admin_config
+          description: 'Custom modules for the One.'
+          weight: -50
+        
+        one.one_configuration_form:
+          route_name: one.one_configuration_form
+          title: 'One'
+          parent: one.admin_config
+          description: 'Configure One.'
+          weight: 0
+          </code></pre>
+          <p>See <code>system.links.menu.yml</code></p>
+				</section>
+
+				<section>
+					<h2>Try it!</h2>
+          <pre><code class="hljs">
+            $ ../vendor/bin/drush cr
+          </code></pre>
+          <p>admin/config</p>
+				</section>
+
+				<section>
 					<h2>Working with config</h2>
           <p>List all config</p>
           <pre><code class="hljs">
-            $ drush config-list (cli)
+            $ ../vendor/bin/drush config-list (cli)
           </code></pre>
           <p>Show config</p>
           <pre><code class="hljs">
-            $ drush cget one.oneconfiguration
+            $ ../vendor/bin/drush cget one.oneconfiguration
           </code></pre>
-          <p>Export config</p>
+				</section>
+
+				<section>
+					<h2>Save default configuration</h2>
+          <p>one/config/install/myconfig.yml</p>
           <pre><code class="hljs">
             $ cd modules/custom/one
             $ mkdir -p config/install
-            $ drush cget one.oneconfiguration >
+            $ ../vendor/bin/drush cget one.oneconfiguration >
                 config/install/one.oneconfiguration.yml
           </code></pre>
+				</section>
+
+				<section>
+					<h2>Default configuration</h2>
+          <p>config/install/one.oneconfiguration.yml</p>
+          <pre><code class="hljs">
+						enable_newsletter_subscription: 1
+          </code></pre>
+				</section>
+
+				<section>
+					<h2>Create a content type</h2>
+          <p>admin/structure/types/add</p>
+          <p>Name: Newsletter</p>
 				</section>
 
 				<section style="text-align: left;">
