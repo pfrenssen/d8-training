@@ -449,6 +449,43 @@ class OneSubscriptionBlock extends BlockBase {
         </section>
 
         <section>
+          <h2>Writing a custom controller</h2>
+          <p>Controller = page callback in D7</p>
+        </section>
+
+        <section>
+          <h2>Adding a permission</h2>
+          <p>one.permissions.yml</p>
+          <pre><code class="hljs">
+        view latest newsletter:
+          title: 'View the latest newsletter'
+          </code></pre>
+          <p>See <code>node.permissions.yml</code></p>
+        </section>
+
+        <section>
+          <h2>Add the route for the controller</h2>
+          <p>one.routing.yml</p>
+          <pre><code class="hljs">
+        one.latest_newsletter:
+          path: '/newsletter/latest'
+          defaults:
+            _controller: '\Drupal\one\Controller\OneController::
+                          latestNewsletterPage'
+            _title: 'Latest newsletter'
+          requirements:
+            _permission: 'view latest newsletter'
+          </code></pre>
+          <p>See <code>node.routing.yml</code></p>
+        </section>
+
+        <section>
+          <h2>Add the controller</h2>
+          <p>src/Controller/OneController.php</p>
+          <a href="http://pastebin.com/NvDjGhtP">http://pastebin.com/NvDjGhtP</a>
+        </section>
+
+        <section>
           <h2>Questions?</h2>
         </section>
 
