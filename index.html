@@ -41,7 +41,7 @@
       <!-- Any section element inside of this container is displayed as a slide -->
       <div class="slides">
         <section data-background="#ffffff">
-          <h1>Creating a Drupal 8 module</h1>
+          <h1>Drupal 7 to Drupal 8</h1>
           <p>
             <small><a href="https://drupal.org/u/pfrenssen">Pieter Frenssen</a> / <a href="http://twitter.com/pfrenssen">@pfrenssen</a></small>
           </p>
@@ -54,11 +54,12 @@
             <li>IDE or text editor</li>
             <li>LAMP stack</li>
             <li>Composer</li>
+            <li>Git</li>
           </ul>
         </section>
 
         <section>
-          <h2>Let's get started</h2>
+          <h2>D8 Quickstart</h2>
           <h3>Fire up your consoles!</h3>
         </section>
 
@@ -66,7 +67,7 @@
           <h2>Starting a D8 project</h2>
           <p><a href="https://github.com/drupal-composer/drupal-project">https://github.com/drupal-composer/drupal-project</a></p>
           <pre><code class="hljs">
-     $ composer create-project drupal-composer/drupal-project \
+  $ composer create-project drupal-composer/drupal-project \
        --stability=dev mydir
           </code></pre>
         </section>
@@ -135,354 +136,150 @@
         </section>
 
         <section>
-          <h2>Install a contrib module</h2>
-          <pre><code class="hljs">
-            $ composer require drupal/ds
+          <h2>Finding information</h2>
+        </section>
+
+        <section>
+          <h2>Documentation</h2>
+          <ul>
+            <li><a href="https://www.drupal.org/node/2182165">Getting started with Drupal 8</li>
+            <li><a href="https://www.drupal.org/developing/modules/8">Creating Drupal 8 modules</li>
+            <li><a href="https://www.drupal.org/developing/api/8">Drupal 8 APIs</li>
+            <li><a href="https://www.drupal.org/theme-guide/8">Theming Drupal 8</li>
+          </ul>
+        </section>
+
+        <section>
+          <h2>Change records</h2>
+          <h3><a href="https://www.drupal.org/list-changes">https://www.drupal.org/list-changes</a></h3>
+          <ul>
+            <li>Documents all changes in Drupal 8</li>
+            <li>Search for keywords</li>
+            <li>"Before" and "after" code examples</li>
+            <li>Link to issue that introduced change</li>
+          </ul>
+        </section>
+
+        <section>
+          <h2>Getting help</h2>
+          <ul>
+            <li><a href="https://drupal.stackexchange.com/">Stack Exchange</a></li>
+            <li><a href="https://www.drupal.org/irc">IRC</a></li>
+            <li><a href="https://twitter.com/hashtag/Drupal8">Twitter</a></li>
+            <li>Issue queues</li>
+            <li>Core tests</li>
+            <li>Google</li>
+          </ul>
+        </section>
+
+        <section data-background="#F8FCC1">
+          <h2>Converting modules to D8</h2>
+          <p>https://www.drupal.org/update/modules/7/8</p>
+        </section>
+
+        <section data-background="#F8FCC1">
+          <h3>Upgrade cycle</h3>
+          <ol start="0">
+            <li>Enable the module</li>
+            <li>Check what breaks</li>
+            <li>Find change record</li>
+            <li>Fix</li>
+            <li>GOTO 1</li>
+          </ol>
+        </section>
+
+        <section data-background="#F8FCC1">
+          <h2>First things first</h2>
+          <h3>mymodule.info -> mymodule.info.yml</h3>
+          <p>Drupal 7:</p>
+          <pre><code data-trim contenteditable>
+name = Example
+description = My module.
+core = 7.x
+files[] = myfile.php
+dependencies[] = views
           </code></pre>
-          <p>Downloads Display Suite + dependencies</p>
-        </section>
-
-        <section>
-          <h2>Create a custom module</h2>
-        </section>
-
-        <section>
-          <h2>Generate module skeleton</h2>
-          <pre><code class="hljs">
-            $ cd web/
-            $ ../vendor/bin/console generate:module
-            Enter the new module name:
-            > One
-            Add module dependencies:
-            > yes
-            Module dependencies:
-            > views
-          </code></pre>
-        </section>
-
-        <section>
-          <h2>Generated files</h2>
-          <ul><li>one.info.yml</li>
-          <li>one.module</li>
-          <li>composer.json</li></ul>
-        </section>
-
-        <section>
-          <h2>Enable it!</h2>
-          <p>Go to "Manage &gt; Extend"</p>
-        </section>
-
-        <section>
-          <h2>You did it!</h2>
-          <p><img src="module-enabled.png" style="border: none" /></p>
-        </section>
-
-        <section>
-          <h2>Create a form</h2>
-          <pre><code class="hljs">
-            $ ../vendor/bin/console generate:form
-
-            Module name: one
-            Form class: SubscriptionForm
-            Type: email
-            Input label: Your e-mail
-            Machine name: email
-            Description: Subscribe to our newsletter.
-          </code></pre>
-        </section>
-
-        <section>
-          <h2>Generated code</h2>
-          <p>src/Form/OneSubscriptionForm.php</p>
-          <pre><code class="hljs">
-class OneSubscriptionForm extends FormBase {
-
-  public function getFormId() {
-    return 'one_subscription_form';
-  }
-
-  public function buildForm(array $form, FormStateInterface $form_state) {
-    $form['email'] = ...
-
-    return $form;
-  }
-
-  public function submitForm(array &$form, FormStateInterface $form_state) {
-  }
+          <p>Drupal 8:</p>
+          <pre><code data-trim contenteditable>
+name: Example
+type: module
+description: 'My module.'
+core: 8.x
+dependencies:
+  - views
           </code></pre>
         </section>
 
-        <section>
-          <h2>Generate a block</h2>
-          <pre><code class="hljs">
-            $ ../vendor/bin/console generate:plugin:block
+        <section data-background="#F8FCC1">
+          <h3>Convert hook_menu() to routes</h3>
+          <p>https://www.drupal.org/node/2291273</p>
+        </section>
 
-            Module name: one
-            Form class: OneSubscriptionBlock
-            Theme region: sidebar_first
-            Form structure: no
-          </code></pre>
+        <section data-background="#F8FCC1">
+          <h3>Convert page callbacks to controllers</h3>
+          <p>https://www.drupal.org/node/1953342</p>
+        </section>
+
+        <section data-background="#F8FCC1">
+          <h3>Convert variables to config</h3>
+          <p>https://www.drupal.org/node/1667896</p>
+        </section>
+
+        <section data-background="#F8FCC1">
+          <h3>Convert procedural code to OOP</h3>
+          <p>dependency injection</p>
+        </section>
+
+        <section data-background="#F8FCC1">
+          <h3>Convert custom blocks</h3>
+        </section>
+
+        <section data-background="#F8FCC1">
+          <h3>Convert forms</h3>
+        </section>
+
+        <section data-background="#F8FCC1">
+          <h3>Convert install file</h3>
+        </section>
+
+        <section data-background="#F8FCC1">
+          <h3>Convert procedural API to services</h3>
+        </section>
+
+        <section data-background="#F8FCC1">
+          <h3>Convert hooks to event listeners</h3>
+        </section>
+
+        <section data-background="#F8FCC1">
+          <h3>Convert tests</h3>
+          <p>https://www.drupal.org/node/2118119</p>
         </section>
 
         <section>
-          <h2>Generated code</h2>
-          <p>src/Plugin/Block/OneSubscriptionBlock.php</p>
-          <pre><code class="hljs">
-/**
- * @Block(
- *  id = "one_subscription_block",
- *  admin_label = @Translation("One subscription block"),
- * )
- */
-class OneSubscriptionBlock extends BlockBase {
-
-  public function build() {
-    $build = [];
-    $build['one_subscription_block']['#markup'] = 'Implement OneSubscriptionBlock.';
-
-    return $build;
-  }
-          </code></pre>
+          <h2>Drupal</h2>
+          <h2>Module</h2>
+          <h2>Upgrader</h2>
         </section>
 
         <section>
-          <h2>Show our form in the block</h2>
-          <pre><code class="hljs">
-  public function build() {
-    return \Drupal::formBuilder()->getForm(
-      'Drupal\one\Form\OneSubscriptionForm'
-    );
-  }
-          </code></pre>
-          <p>See <code>SearchBlock::build()</code></p>
+          <h2>Drupal Module Upgrader</h2>
+          <ul>
+            <li>drush dmu-analyze</li>
+            <li>drush dmu-upgrade</li>
+          </ul>
         </section>
 
         <section>
-          <h2>Add a submit button</h2>
-          <pre><code class="hljs">
-  public function buildForm(array $form, FormStateInterface $form_state) {
-    $form['email'] = ...
-
-    $form['submit'] = array(
-      '#type' => 'submit',
-      '#value' => $this->t('Submit'),
-    );
-
-    return $form;
-  }
-          </code></pre>
+          <h2>Converting themes to D8</h2>
+          <p>https://www.drupal.org/node/2023177</p>
         </section>
 
         <section>
-          <h2>Add a submit handler</h2>
-          <pre><code class="hljs">
-  public function submitForm(array &$form, FormStateInterface $form_state) {
-    // @todo Save it to the database.
-    drupal_set_message($this->t('Thanks for subscribing.'));
-  }
-          </code></pre>
-        </section>
-
-        <section>
-          <h2>Try it!</h2>
-          <p>Visit the frontpage</p>
-        </section>
-
-        <section>
-          <h2>Generate a configuration form</h2>
-          <pre><code class="hljs">
-            $ ../vendor/bin/console generate:form:config
-
-            Module name: one
-            Form class: OneConfigurationForm
-            Type: checkbox
-            Input label: Enable newsletter subscription
-          </code></pre>
-        </section>
-
-        <section>
-          <h2>Generated files</h2>
-          <ul><li>one.routing.yml</li>
-          <li>src/Form/OneConfigurationForm</li>
-        </section>
-
-        <section>
-          <h2>Try it!</h2>
-          <p>admin/config/one/oneconfiguration</p>
-        </section>
-
-        <section>
-          <h2>New section in configuration overview</h2>
-          <h3>one.routing.yml</h3>
-          <pre><code class="hljs">
-    one.admin_config:
-      path: '/admin/config/one'
-      defaults:
-        _controller: '\Drupal\system\Controller\SystemController::
-                      systemAdminMenuBlockPage'
-        _title: 'One'
-      requirements:
-        _permission: 'access administration pages'
-          </code></pre>
-          <p>See <code>system.routing.yml</code></p>
-        </section>
-
-        <section>
-          <h2>New section in configuration overview</h2>
-          <h3>one.links.menu.yml</h3>
-          <pre><code class="hljs">
-        one.admin_config:
-          route_name: one.admin_config
-          title: 'Custom'
-          parent: system.admin_config
-          description: 'Custom modules for the One.'
-          weight: -50
-        
-        one.one_configuration_form:
-          route_name: one.one_configuration_form
-          title: 'One'
-          parent: one.admin_config
-          description: 'Configure One.'
-          weight: 0
-          </code></pre>
-          <p>See <code>system.links.menu.yml</code></p>
-        </section>
-
-        <section>
-          <h2>Try it!</h2>
-          <pre><code class="hljs">
-            $ ../vendor/bin/drush cr
-          </code></pre>
-          <p>admin/config</p>
-        </section>
-
-        <section>
-          <h2>Working with config</h2>
-          <p>List all config</p>
-          <pre><code class="hljs">
-            $ ../vendor/bin/drush config-list (cli)
-          </code></pre>
-          <p>Show config</p>
-          <pre><code class="hljs">
-            $ ../vendor/bin/drush cget one.oneconfiguration
-          </code></pre>
-        </section>
-
-        <section>
-          <h2>Save default configuration</h2>
-          <p>one/config/install/myconfig.yml</p>
-          <pre><code class="hljs">
-            $ cd modules/custom/one
-            $ mkdir -p config/install
-            $ ../vendor/bin/drush cget one.oneconfiguration >
-                config/install/one.oneconfiguration.yml
-          </code></pre>
-        </section>
-
-        <section>
-          <h2>Default configuration</h2>
-          <p>config/install/one.oneconfiguration.yml</p>
-          <pre><code class="hljs">
-            enable_newsletter_subscription: 1
-          </code></pre>
-        </section>
-
-        <section>
-          <h2>Create a content type</h2>
-          <p>admin/structure/types/add</p>
-          <p>Name: Newsletter</p>
-        </section>
-
-        <section>
-          <h2>Export content type</h2>
-          <pre><code class="hljs">
-          $ ../vendor/bin/drush cli | grep newsletter
-          core.entity_form_display.node.newsletter.default
-          core.entity_view_display.node.newsletter.default
-          core.entity_view_display.node.newsletter.teaser
-          field.field.node.newsletter.body
-          language.content_settings.node.newsletter
-          node.type.newsletter
-          </code></pre>
-          <p>Too much work to do it manually!</p>
-        </section>
-
-        <section>
-          <h2>Install config_devel</h2>
-          <p>composer.json</p>
-          <pre><code class="hljs">
-          "require-dev": {
-              "drupal/config_devel": "^8.1@beta"
-          }
-          </code></pre>
-          <pre><code class="hljs">
-          $ composer update
-          </code></pre>
-          <p>Development modules go in "require-dev"</p>
-        </section>
-
-        <section>
-          <h2>Specify config to export</h2>
-          <p>one.info.yml</p>
-          <pre><code class="hljs">
-     config_devel:
-       - core.entity_form_display.node.newsletter.default
-       - core.entity_view_display.node.newsletter.default
-       - core.entity_view_display.node.newsletter.teaser
-       - field.field.node.newsletter.body
-       - language.content_settings.node.newsletter
-       - node.type.newsletter
-       - one.oneconfiguration
-          </code></pre>
-          <pre><code class="hljs">
-  $ drush cli | grep newsletter >> modules/custom/one.info.yml
-          </code></pre>
-        </section>
-
-        <section>
-          <h2>Export config</h2>
-          <pre><code class="hljs">
-      $ ../vendor/bin/drush cd-em one
-      $ ls modules/custom/one/config/install
-          </code></pre>
-          <p>Wow! Much easier!!</p>
-        </section>
-
-        <section>
-          <h2>Writing a custom controller</h2>
-          <p>Controller = page callback in D7</p>
-        </section>
-
-        <section>
-          <h2>Adding a permission</h2>
-          <p>one.permissions.yml</p>
-          <pre><code class="hljs">
-        view latest newsletter:
-          title: 'View the latest newsletter'
-          </code></pre>
-          <p>See <code>node.permissions.yml</code></p>
-        </section>
-
-        <section>
-          <h2>Add the route for the controller</h2>
-          <p>one.routing.yml</p>
-          <pre><code class="hljs">
-        one.latest_newsletter:
-          path: '/newsletter/latest'
-          defaults:
-            _controller: '\Drupal\one\Controller\OneController::
-                          latestNewsletterPage'
-            _title: 'Latest newsletter'
-          requirements:
-            _permission: 'view latest newsletter'
-          </code></pre>
-          <p>See <code>node.routing.yml</code></p>
-        </section>
-
-        <section>
-          <h2>Add the controller</h2>
-          <p>src/Controller/OneController.php</p>
-          <a href="http://pastebin.com/NvDjGhtP">http://pastebin.com/NvDjGhtP</a>
+          <h2>Converting D7 projects to D8</h2>
+          <ul>
+            <li>Migrate</li>
+            <li>drush make -&gt; composer</li>
+          </ul>
         </section>
 
         <section>
@@ -505,8 +302,10 @@ class OneSubscriptionBlock extends BlockBase {
         progress: true,
         history: true,
         center: true,
+        width: 1280,
+        height: 800,
 
-        transition: 'slide', // none/fade/slide/convex/concave/zoom
+        transition: 'convex', // none/fade/slide/convex/concave/zoom
 
         // Optional reveal.js plugins
         dependencies: [
