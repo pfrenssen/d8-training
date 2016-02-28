@@ -49,6 +49,12 @@
         </section>
 
         <section>
+          <h2>Slides</h2>
+          <p><a href="https://github.com/pfrenssen/d8-training">https://github.com/pfrenssen/d8-training</a></p>
+          <p>branch: d7-to-d8</p>
+        </section>
+
+        <section>
           <h2>Stuff you need</h2>
           <ul>
             <li>IDE or text editor</li>
@@ -67,8 +73,7 @@
           <h2>Starting a D8 project</h2>
           <p><a href="https://github.com/drupal-composer/drupal-project">https://github.com/drupal-composer/drupal-project</a></p>
           <pre><code class="hljs">
-  $ composer create-project drupal-composer/drupal-project \
-       --stability=dev mydir
+  $ composer create-project drupal-composer/drupal-project --stability=dev mydir
           </code></pre>
         </section>
 
@@ -123,6 +128,25 @@
 # }
           </code></pre>
           <h3>Uncomment these lines</h3>
+        </section>
+
+        <section data-background="#F8FCC1">
+          <h3>Create a module</h3>
+          <pre><code data-trim contenteditable>
+$ mkdir modules/one
+$ vim modules/one/one.info.yml
+          </code></pre>
+
+          <pre><code data-trim contenteditable>
+name: One
+description: Training module
+core: 8.x
+type: module
+          </code></pre>
+
+          <pre><code data-trim contenteditable>
+$ drush en one
+          </code></pre>
         </section>
 
         <section>
@@ -208,7 +232,247 @@ dependencies:
 
         <section data-background="#F8FCC1">
           <h3>Convert hook_menu() to routes</h3>
-          <p>https://www.drupal.org/node/2291273</p>
+          <ul>
+            <li>Convert hook_menu() items to `module.routing.yml`</li>
+            <li>Convert page callbacks to ControllerBase</li>
+            <li>Convert form builders to FormBase</li>
+            <li>Convert local tasks and actions</li>
+            <li>Convert menu links and contextual links</li>
+            <li>Convert hook_menu_alter() to RouteSubscriber</li>
+          </ul>
+        </section>
+
+        <section data-background="#F8FCC1">
+          <h3>module.routing.yml</h3>
+          <pre><code data-trim>
+function book_menu() {
+  $items['admin/content/book'] = array(
+    'title' => 'Books',
+    'description' => "Manage your site's book outlines.",
+    'page callback' => 'book_admin_overview',
+    'access arguments' => array('administer book outlines'),
+    'type' => MENU_LOCAL_TASK,
+    'file' => 'book.admin.inc',
+  );
+  return $items;
+}
+          </code></pre>
+          <pre><code data-trim contenteditable>
+book.admin:
+  path: '/admin/content/book'
+  defaults:
+    _controller: '\Drupal\book\Controller\BookController::adminOverview'
+    _title: 'Books'
+  requirements:
+    _permission: 'administer book outlines'
+          </code></pre>
+        </section>
+
+        <section data-background="#F8FCC1">
+          <h3>Convert page callbacks to ControllerBase</h3>
+          <p>one.routing.yml</p>
+          <pre><code data-trim contenteditable>
+one.helloworld:
+  path: '/hello'
+  defaults:
+    _controller: '\Drupal\one\Controller\OneController::helloWorld'
+    _title: 'Hey there'
+  requirements:
+    _permission: 'access content'
+          </code></pre>
+          <p>src/Controller/OneController.php</p>
+          <pre><code data-trim contenteditable>
+namespace Drupal\one\Controller;
+
+use Drupal\Core\Controller\ControllerBase;
+
+class OneController extends ControllerBase {
+
+  public function helloWorld() {
+    return ['#markup' => 'Hello world!'];
+  }
+
+}
+          </code></pre>
+        </section>
+
+        <section data-background="#F8FCC1">
+          <h3>Convert form builders to FormBase</h3>
+          <p>one.routing.yml</p>
+          <pre><code data-trim contenteditable>
+one.helloworldform:
+  path: '/helloform'
+  defaults:
+    _form: '\Drupal\one\Form\HelloForm'
+  requirements:
+    _permission: 'access content'
+          </code></pre>
+        </section>
+
+        <section data-background="#F8FCC1">
+          <p>src/Form/HelloForm.php</p>
+          <pre><code data-trim contenteditable>
+namespace Drupal\one\Form;
+
+use Drupal\Core\Form\FormBase;
+use Drupal\Core\Form\FormStateInterface;
+
+class HelloForm extends FormBase {
+
+  public function getFormId() {
+    return 'hello_form';
+  }
+
+  public function buildForm(array $form, FormStateInterface $form_state) {
+    return [
+      'subject' => [
+        '#type' => 'radios',
+        '#title' => $this->t('Hello'),
+        '#options' => [
+          'world' => $this->t('World'),
+          'kitty' => $this->t('Kitty'),
+          'dog' => $this->t('Yes this is dog'),
+        ],
+      ],
+      'submit' => [
+        '#type' => 'submit',
+        '#value' => $this->t('Submit'),
+      ],
+    ];
+  }
+
+  public function submitForm(array &$form, FormStateInterface $form_state) {
+    $subject = $form_state->getValue('subject');
+    drupal_set_message($this->t('Hello @subject!', ['@subject' => $subject]));
+  }
+
+}
+          </code></pre>
+        </section>
+
+        <section data-background="#F8FCC1">
+          <h3>Convert local tasks (aka tabs)</h3>
+          <p>In Drupal 7:</p>
+          <pre><code data-trim contenteditable>
+function taxonomy_menu() {
+  $items['taxonomy/term/%taxonomy_term/view'] = array(
+    'title' => 'View',
+    'type' => MENU_DEFAULT_LOCAL_TASK,
+  );
+  $items['taxonomy/term/%taxonomy_term/edit'] = array(
+    'title' => 'Edit',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('taxonomy_form_term', 2, NULL),
+    'access callback' => 'taxonomy_term_edit_access',
+    'access arguments' => array(2),
+    'type' => MENU_LOCAL_TASK,
+  );
+	return $items;
+}
+          </code></pre>
+        </section>
+
+        <section data-background="#F8FCC1">
+          <h3>Convert local tasks (aka tabs)</h3>
+          <p>taxonomy.links.task.yml</p>
+          <pre><code data-trim contenteditable>
+entity.taxonomy_term.canonical:
+  title: 'View'
+  route_name: entity.taxonomy_term.canonical
+  base_route: entity.taxonomy_term.canonical
+
+entity.taxonomy_term.edit_form:
+  title: 'Edit'
+  route_name: entity.taxonomy_term.edit_form
+  base_route: entity.taxonomy_term.canonical
+          </code></pre>
+          <p>taxonomy.routing.yml</p>
+          <pre><code data-trim contenteditable>
+entity.taxonomy_term.canonical:
+  path: '/taxonomy/term/{taxonomy_term}'
+  defaults:
+    ...
+
+entity.taxonomy_term.edit_form:
+  path: '/taxonomy/term/{taxonomy_term}/edit'
+  defaults:
+    ...
+          </code></pre>
+        </section>
+
+        <section data-background="#F8FCC1">
+          <h3>Convert local actions</h3>
+          <ul>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+          </ul>
+        </section>
+
+        <section data-background="#F8FCC1">
+          <h3>Convert menu links</h3>
+          <ul>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+          </ul>
+        </section>
+
+        <section data-background="#F8FCC1">
+          <h3>Convert contextual links</h3>
+          <pre><code data-trim contenteditable>
+function block_menu() {
+ $items['admin/structure/block/manage/%/%/configure'] = array(
+    'title' => 'Configure block',
+    'type' => MENU_DEFAULT_LOCAL_TASK,
+    'context' => MENU_CONTEXT_INLINE,
+  );
+	return $items;
+}
+          </code></pre>
+          <p>block.links.contextual.yml</p>
+          <pre><code data-trim contenteditable>
+block_configure:
+  title: 'Configure block'
+  route_name: 'entity.block.edit_form'
+  group: 'block'
+          </code></pre>
+        </section>
+
+        <section data-background="#F8FCC1">
+          <h3>Showing the contextual links</h3>
+          <p>\Drupal\Block\BlockViewBuilder</p>
+          <pre><code data-trim contenteditable>
+    $block = [
+      '#theme' => 'block',
+      '#contextual_links' => [
+        'block' => [
+          'route_parameters' => ['block' => $entity->id()],
+        ],
+      ],
+   ];
+          </code></pre>
+        </section>
+
+        <section data-background="#F8FCC1">
+          <h3>Convert hook_menu_alter() to RouteSubscriber</h3>
+          <ul>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+          </ul>
+        </section>
+
+
+        <section data-background="#F8FCC1">
+          <h2>More info on routing</h2>
+          <h3>Routing system in Drupal 8</h3>
+          <p><a href="https://www.drupal.org/developing/api/8/routing">https://www.drupal.org/developing/api/8/routing</a></p>
+          <h3>Tutorial for converting hook_menu()</h3>
+          <p><a href="https://www.drupal.org/node/2118147">https://www.drupal.org/node/2118147</a></p>
         </section>
 
         <section data-background="#F8FCC1">
@@ -232,6 +496,10 @@ dependencies:
 
         <section data-background="#F8FCC1">
           <h3>Convert forms</h3>
+        </section>
+
+        <section data-background="#F8FCC1">
+          <h3>Convert permissions</h3>
         </section>
 
         <section data-background="#F8FCC1">
