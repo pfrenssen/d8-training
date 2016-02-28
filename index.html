@@ -130,25 +130,6 @@
           <h3>Uncomment these lines</h3>
         </section>
 
-        <section data-background="#F8FCC1">
-          <h3>Create a module</h3>
-          <pre><code data-trim contenteditable>
-$ mkdir modules/one
-$ vim modules/one/one.info.yml
-          </code></pre>
-
-          <pre><code data-trim contenteditable>
-name: One
-description: Training module
-core: 8.x
-type: module
-          </code></pre>
-
-          <pre><code data-trim contenteditable>
-$ drush en one
-          </code></pre>
-        </section>
-
         <section>
           <h2>More development options</h2>
           <h3>sites/default/services.yml</h3>
@@ -231,6 +212,26 @@ dependencies:
         </section>
 
         <section data-background="#F8FCC1">
+          <h3>Create a module</h3>
+          <pre><code data-trim contenteditable>
+$ mkdir modules/one
+$ vim modules/one/one.info.yml
+          </code></pre>
+
+          <pre><code data-trim contenteditable>
+name: One
+description: Training module
+type: module
+core: 8.x
+          </code></pre>
+
+          <pre><code data-trim contenteditable>
+$ drush en one
+          </code></pre>
+        </section>
+
+
+        <section data-background="#F8FCC1">
           <h3>Convert hook_menu() to routes</h3>
           <ul>
             <li>Convert hook_menu() items to `module.routing.yml`</li>
@@ -266,6 +267,172 @@ book.admin:
   requirements:
     _permission: 'administer book outlines'
           </code></pre>
+        </section>
+
+        <section data-background="#F8FCC1">
+          <h3>Convert local tasks (aka tabs)</h3>
+          <p>In Drupal 7:</p>
+          <pre><code data-trim contenteditable>
+function taxonomy_menu() {
+  $items['taxonomy/term/%taxonomy_term/view'] = array(
+    'title' => 'View',
+    'type' => MENU_DEFAULT_LOCAL_TASK,
+  );
+  $items['taxonomy/term/%taxonomy_term/edit'] = array(
+    'title' => 'Edit',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('taxonomy_form_term', 2, NULL),
+    'access callback' => 'taxonomy_term_edit_access',
+    'access arguments' => array(2),
+    'type' => MENU_LOCAL_TASK,
+  );
+  return $items;
+}
+          </code></pre>
+        </section>
+
+        <section data-background="#F8FCC1">
+          <h3>Convert local tasks (aka tabs)</h3>
+          <p>taxonomy.links.task.yml</p>
+          <pre><code data-trim contenteditable>
+entity.taxonomy_term.canonical:
+  title: 'View'
+  route_name: entity.taxonomy_term.canonical
+  base_route: entity.taxonomy_term.canonical
+
+entity.taxonomy_term.edit_form:
+  title: 'Edit'
+  route_name: entity.taxonomy_term.edit_form
+  base_route: entity.taxonomy_term.canonical
+          </code></pre>
+          <p>taxonomy.routing.yml</p>
+          <pre><code data-trim contenteditable>
+entity.taxonomy_term.canonical:
+  path: '/taxonomy/term/{taxonomy_term}'
+  defaults:
+    ...
+
+entity.taxonomy_term.edit_form:
+  path: '/taxonomy/term/{taxonomy_term}/edit'
+  defaults:
+    ...
+          </code></pre>
+        </section>
+
+        <section data-background="#F8FCC1">
+          <h3>Convert local actions</h3>
+          <pre><code data-trim contenteditable>
+function taxonomy_menu() {
+  $items['admin/structure/taxonomy/add'] = array(
+    'title' => 'Add vocabulary',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('taxonomy_form_vocabulary'),
+    'access arguments' => array('administer taxonomy'),
+    'type' => MENU_LOCAL_ACTION,
+  );
+  return $items;
+}
+          </code></pre>
+          <p>taxonomy.links.action.yml</p>
+          <pre><code data-trim contenteditable>
+entity.taxonomy_vocabulary.add_form:
+  route_name: entity.taxonomy_vocabulary.add_form
+  title: 'Add vocabulary'
+  appears_on:
+    - entity.taxonomy_vocabulary.collection
+          </code></pre>
+        </section>
+
+        <section data-background="#F8FCC1">
+          <h3>Convert menu links</h3>
+          <pre><code data-trim contenteditable>
+function taxonomy_menu() {
+  $items['admin/structure/taxonomy'] = array(
+    'title' => 'Taxonomy',
+    'description' => 'Manage tagging, categorization, and classification of your content.',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('taxonomy_overview_vocabularies'),
+    'access arguments' => array('administer taxonomy'),
+    'type' => MENU_NORMAL_ITEM,
+  );
+  return $items;
+}
+          </code></pre>
+          <p>taxonomy.links.menu.yml</p>
+          <pre><code data-trim contenteditable>
+entity.taxonomy_vocabulary.collection:
+  title: Taxonomy
+  parent: system.admin_structure
+  description: 'Manage tagging, categorization, and classification of your content.'
+  route_name: entity.taxonomy_vocabulary.collection
+          </code></pre>
+        </section>
+
+        <section data-background="#F8FCC1">
+          <h3>Convert contextual links</h3>
+          <pre><code data-trim contenteditable>
+function block_menu() {
+ $items['admin/structure/block/manage/%/%/configure'] = array(
+    'title' => 'Configure block',
+    'type' => MENU_DEFAULT_LOCAL_TASK,
+    'context' => MENU_CONTEXT_INLINE,
+  );
+  return $items;
+}
+          </code></pre>
+          <p>block.links.contextual.yml</p>
+          <pre><code data-trim contenteditable>
+block_configure:
+  title: 'Configure block'
+  route_name: 'entity.block.edit_form'
+  group: 'block'
+          </code></pre>
+        </section>
+
+        <section data-background="#F8FCC1">
+          <h3>Showing the contextual links</h3>
+          <p>\Drupal\Block\BlockViewBuilder</p>
+          <pre><code data-trim contenteditable>
+$block = [
+  '#theme' => 'block',
+  '#contextual_links' => [
+    'block' => [
+      'route_parameters' => ['block' => $entity->id()],
+    ],
+  ],
+];
+          </code></pre>
+        </section>
+
+        <section data-background="#F8FCC1">
+          <h3>Convert hook_menu_alter() to RouteSubscriber</h3>
+          <pre><code data-trim contenteditable>
+namespace Drupal\system\EventSubscriber;
+
+use Drupal\Core\Routing\RouteSubscriberBase;
+use Symfony\Component\Routing\RouteCollection;
+
+class AdminRouteSubscriber extends RouteSubscriberBase {
+
+  protected function alterRoutes(RouteCollection $collection) {
+    foreach ($collection->all() as $route) {
+      if (strpos($route->getPath(), '/admin') === 0 && !$route->hasOption('_admin_route')) {
+        $route->setOption('_admin_route', TRUE);
+      }
+    }
+  }
+
+}
+          </code></pre>
+        </section>
+
+
+        <section data-background="#F8FCC1">
+          <h2>More info on routing</h2>
+          <h3>Routing system in Drupal 8</h3>
+          <p><a href="https://www.drupal.org/developing/api/8/routing">https://www.drupal.org/developing/api/8/routing</a></p>
+          <h3>Tutorial for converting hook_menu()</h3>
+          <p><a href="https://www.drupal.org/node/2118147">https://www.drupal.org/node/2118147</a></p>
         </section>
 
         <section data-background="#F8FCC1">
@@ -351,172 +518,135 @@ class HelloForm extends FormBase {
         </section>
 
         <section data-background="#F8FCC1">
-          <h3>Convert local tasks (aka tabs)</h3>
-          <p>In Drupal 7:</p>
-          <pre><code data-trim contenteditable>
-function taxonomy_menu() {
-  $items['taxonomy/term/%taxonomy_term/view'] = array(
-    'title' => 'View',
-    'type' => MENU_DEFAULT_LOCAL_TASK,
-  );
-  $items['taxonomy/term/%taxonomy_term/edit'] = array(
-    'title' => 'Edit',
-    'page callback' => 'drupal_get_form',
-    'page arguments' => array('taxonomy_form_term', 2, NULL),
-    'access callback' => 'taxonomy_term_edit_access',
-    'access arguments' => array(2),
-    'type' => MENU_LOCAL_TASK,
-  );
-	return $items;
-}
-          </code></pre>
-        </section>
-
-        <section data-background="#F8FCC1">
-          <h3>Convert local tasks (aka tabs)</h3>
-          <p>taxonomy.links.task.yml</p>
-          <pre><code data-trim contenteditable>
-entity.taxonomy_term.canonical:
-  title: 'View'
-  route_name: entity.taxonomy_term.canonical
-  base_route: entity.taxonomy_term.canonical
-
-entity.taxonomy_term.edit_form:
-  title: 'Edit'
-  route_name: entity.taxonomy_term.edit_form
-  base_route: entity.taxonomy_term.canonical
-          </code></pre>
-          <p>taxonomy.routing.yml</p>
-          <pre><code data-trim contenteditable>
-entity.taxonomy_term.canonical:
-  path: '/taxonomy/term/{taxonomy_term}'
-  defaults:
-    ...
-
-entity.taxonomy_term.edit_form:
-  path: '/taxonomy/term/{taxonomy_term}/edit'
-  defaults:
-    ...
-          </code></pre>
-        </section>
-
-        <section data-background="#F8FCC1">
-          <h3>Convert local actions</h3>
-          <ul>
-            <li></li>
-            <li></li>
-            <li></li>
-            <li></li>
-          </ul>
-        </section>
-
-        <section data-background="#F8FCC1">
-          <h3>Convert menu links</h3>
-          <ul>
-            <li></li>
-            <li></li>
-            <li></li>
-            <li></li>
-          </ul>
-        </section>
-
-        <section data-background="#F8FCC1">
-          <h3>Convert contextual links</h3>
-          <pre><code data-trim contenteditable>
-function block_menu() {
- $items['admin/structure/block/manage/%/%/configure'] = array(
-    'title' => 'Configure block',
-    'type' => MENU_DEFAULT_LOCAL_TASK,
-    'context' => MENU_CONTEXT_INLINE,
-  );
-	return $items;
-}
-          </code></pre>
-          <p>block.links.contextual.yml</p>
-          <pre><code data-trim contenteditable>
-block_configure:
-  title: 'Configure block'
-  route_name: 'entity.block.edit_form'
-  group: 'block'
-          </code></pre>
-        </section>
-
-        <section data-background="#F8FCC1">
-          <h3>Showing the contextual links</h3>
-          <p>\Drupal\Block\BlockViewBuilder</p>
-          <pre><code data-trim contenteditable>
-    $block = [
-      '#theme' => 'block',
-      '#contextual_links' => [
-        'block' => [
-          'route_parameters' => ['block' => $entity->id()],
-        ],
-      ],
-   ];
-          </code></pre>
-        </section>
-
-        <section data-background="#F8FCC1">
-          <h3>Convert hook_menu_alter() to RouteSubscriber</h3>
-          <ul>
-            <li></li>
-            <li></li>
-            <li></li>
-            <li></li>
-          </ul>
-        </section>
-
-
-        <section data-background="#F8FCC1">
-          <h2>More info on routing</h2>
-          <h3>Routing system in Drupal 8</h3>
-          <p><a href="https://www.drupal.org/developing/api/8/routing">https://www.drupal.org/developing/api/8/routing</a></p>
-          <h3>Tutorial for converting hook_menu()</h3>
-          <p><a href="https://www.drupal.org/node/2118147">https://www.drupal.org/node/2118147</a></p>
-        </section>
-
-        <section data-background="#F8FCC1">
-          <h3>Convert page callbacks to controllers</h3>
-          <p>https://www.drupal.org/node/1953342</p>
-        </section>
-
-        <section data-background="#F8FCC1">
           <h3>Convert variables to config</h3>
-          <p>https://www.drupal.org/node/1667896</p>
+          <pre><code data-trim contenteditable>
+variable_get('mymodule_mysetting', TRUE);
+variable_set('mymodule_mysetting', $my_value);
+          </code></pre>
+          <pre><code data-trim contenteditable>
+\Drupal::config('mymodule.settings')->get('mysetting');
+\Drupal::config('mymodule.settings')->set('mysetting', $my_value)->save();
+          </code></pre>
         </section>
 
         <section data-background="#F8FCC1">
-          <h3>Convert procedural code to OOP</h3>
-          <p>dependency injection</p>
+          <h3>Default config</h3>
+          <p>config/install/mymodule.settings.yml</p>
+          <pre><code data-trim contenteditable>
+mysetting: true
+          </code></pre>
         </section>
 
         <section data-background="#F8FCC1">
-          <h3>Convert custom blocks</h3>
+          <h2>More info on config</h2>
+          <h3>Configuration management architecture</h3>
+          <p><a href="https://groups.drupal.org/node/191283">https://groups.drupal.org/node/191283</a></p>
+          <h3>Configuration API</h3>
+          <p><a href="https://www.drupal.org/developing/api/8/configuration">https://www.drupal.org/developing/api/8/configuration</a></p>
         </section>
 
         <section data-background="#F8FCC1">
-          <h3>Convert forms</h3>
+          <h3>Convert procedural code to services</h3>
+          <p>one.services.yml</p>
+          <pre><code data-trim contenteditable>
+services:
+  one.myservice:
+    class: Drupal\one\MyService
+          </code></pre>
+          <p>Examples: core.services.yml</p>
+        </section>
+
+        <section data-background="#F8FCC1">
+          <h3>Convert blocks</h3>
+          <pre><code data-trim contenteditable>
+function search_block_info() {
+  $blocks['form']['info'] = t('Search form');
+  $blocks['form']['cache'] = DRUPAL_NO_CACHE;
+  $blocks['form']['properties']['administrative'] = TRUE;
+  return $blocks;
+}
+
+function search_block_view($delta = '') {
+  if (user_access('search content')) {
+    $block['content'] = drupal_get_form('search_block_form');
+    return $block;
+  }
+}
+          </code></pre>
+        </section>
+
+        <section data-background="#F8FCC1">
+          <h3>Convert blocks</h3>
+          <pre><code data-trim contenteditable>
+/**
+ * @Block(
+ *   id = "search_form_block",
+ *   admin_label = @Translation("Search form"),
+ *   category = @Translation("Forms")
+ * )
+ */
+class SearchBlock extends BlockBase {
+  protected function blockAccess(AccountInterface $account) {
+    return AccessResult::allowedIfHasPermission($account, 'search content');
+  }
+
+  public function build() {
+    return \Drupal::formBuilder()->getForm('Drupal\search\Form\SearchBlockForm');
+  }
+
+}
+          </code></pre>
         </section>
 
         <section data-background="#F8FCC1">
           <h3>Convert permissions</h3>
-        </section>
-
-        <section data-background="#F8FCC1">
-          <h3>Convert install file</h3>
-        </section>
-
-        <section data-background="#F8FCC1">
-          <h3>Convert procedural API to services</h3>
-        </section>
-
-        <section data-background="#F8FCC1">
-          <h3>Convert hooks to event listeners</h3>
+          <pre><code data-trim contenteditable>
+function node_permission() {
+  return array(
+    'access content' => array(
+      'title' => t('View published content'),
+    ),
+  );
+}
+          </code></pre>
+          <p>node.permissions.yml</p>
+          <pre><code data-trim contenteditable>
+access content:
+  title: 'View published content'
+          </code></pre>
         </section>
 
         <section data-background="#F8FCC1">
           <h3>Convert tests</h3>
-          <p>https://www.drupal.org/node/2118119</p>
+          <ul>
+            <li>WebTestBase</li>
+            <li>KernelTestBase</li>
+            <li>UnitTestCase</li>
+            <li>BrowserTestBase</li>
+            <li>JavascriptTestBase (soon&trade;)</li>
+          </ul>
+        </section>
+
+        <section>
+          <h2>Converting themes to D8</h2>
+          <ul>
+            <li>Twig</li>
+            <li>Theme functions are dead</li>
+            <li>Template + preprocess for everything</li>
+          </ul>
+          <p><a href="https://www.drupal.org/node/2025313">Twig conversion process</a></p>
+        </section>
+
+        <section>
+          <h2>Converting D7 projects to D8</h2>
+          <ul>
+            <li>Migrate</li>
+            <li>drush make -&gt; composer</li>
+          </ul>
+        </section>
+
+        <section>
+          <h2>Questions?</h2>
         </section>
 
         <section>
@@ -533,25 +663,7 @@ block_configure:
           </ul>
         </section>
 
-        <section>
-          <h2>Converting themes to D8</h2>
-          <p>https://www.drupal.org/node/2023177</p>
-        </section>
-
-        <section>
-          <h2>Converting D7 projects to D8</h2>
-          <ul>
-            <li>Migrate</li>
-            <li>drush make -&gt; composer</li>
-          </ul>
-        </section>
-
-        <section>
-          <h2>Questions?</h2>
-        </section>
-
       </div>
-
     </div>
 
     <script src="lib/js/head.min.js"></script>
