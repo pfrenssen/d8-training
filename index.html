@@ -525,7 +525,10 @@ variable_set('mymodule_mysetting', $my_value);
           </code></pre>
           <pre><code data-trim contenteditable>
 \Drupal::config('mymodule.settings')->get('mysetting');
-\Drupal::config('mymodule.settings')->set('mysetting', $my_value)->save();
+\Drupal::service('config.factory')
+  ->getEditable('mymodule.settings')
+  ->set('mysetting', $my_value)
+  ->save();
           </code></pre>
         </section>
 
@@ -617,6 +620,22 @@ access content:
         </section>
 
         <section data-background="#F8FCC1">
+          <h3>Convert permissions</h3>
+          <p>one.permissions.yml</p>
+          <pre><code data-trim contenteditable>
+view hello form:
+  title: 'View the hello form'
+          </code></pre>
+          <p>one.routing.yml</p>
+          <pre><code data-trim contenteditable>
+one.helloworldform:
+  ...
+  requirements:
+    _permission: 'view hello form'
+          </code></pre>
+        </section>
+
+        <section data-background="#F8FCC1">
           <h3>Convert tests</h3>
           <ul>
             <li>WebTestBase</li>
@@ -650,17 +669,12 @@ access content:
         </section>
 
         <section>
-          <h2>Drupal</h2>
-          <h2>Module</h2>
-          <h2>Upgrader</h2>
-        </section>
-
-        <section>
           <h2>Drupal Module Upgrader</h2>
           <ul>
             <li>drush dmu-analyze</li>
             <li>drush dmu-upgrade</li>
           </ul>
+          <p>Demo with the 'Language icons' module</p>
         </section>
 
       </div>
