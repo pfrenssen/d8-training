@@ -41,7 +41,7 @@
       <!-- Any section element inside of this container is displayed as a slide -->
       <div class="slides">
         <section data-background="#ffffff">
-          <h1>Drupal 7 to Drupal 8</h1>
+          <h1>D8 Configuration management</h1>
           <p>
             <small><a href="https://drupal.org/u/pfrenssen">Pieter Frenssen</a> / <a href="http://twitter.com/pfrenssen">@pfrenssen</a></small>
           </p>
@@ -51,597 +51,326 @@
         <section>
           <h2>Slides</h2>
           <p><a href="https://github.com/pfrenssen/d8-training">https://github.com/pfrenssen/d8-training</a></p>
-          <p>branch: d7-to-d8</p>
+          <p>branch: d8-cmi</p>
         </section>
 
         <section>
-          <h2>Stuff you need</h2>
+          <h2>History</h2>
           <ul>
-            <li>IDE or text editor</li>
-            <li>LAMP stack</li>
-            <li>Composer</li>
-            <li>Git</li>
+            <li>Variables</li>
+            <li>Features</li>
+            <li>CMI</li>
+            <li>Configuration System</li>
           </ul>
         </section>
 
         <section>
-          <h2>D8 Quickstart</h2>
-          <h3>Fire up your consoles!</h3>
-        </section>
-
-        <section>
-          <h2>Starting a D8 project</h2>
-          <p><a href="https://github.com/drupal-composer/drupal-project">https://github.com/drupal-composer/drupal-project</a></p>
-          <pre><code class="hljs">
-  $ composer create-project drupal-composer/drupal-project --stability=dev mydir
-          </code></pre>
-        </section>
-
-        <section>
-          <h2>Folder structure</h2>
+          <h2>Using the UI</h2>
           <ul>
-            <li>drush/ - commands + config</li>
-            <li>scripts/ - indeed</li>
-            <li>vendor/ - dependencies</li>
-            <li>vendor/bin/ - tools</li>
-            <li>web/ - our website!</li>
+            <li>Config &gt; Configuration Synchronisation</li>
+            <li>Import, Export, Sync</li>
+            <li>Single items or full archive</li>
+            <li>Allows to quickly copy/paste</li>
+            <li>Allows to review changes</li>
           </ul>
         </section>
 
         <section>
-          <h2>Configure webserver</h2>
-          <p>Use the "web/" folder as site root</p>
+          <h2>Config files</h2>
+          <p>system.site.yml</p>
+          <pre><code data-trim contenteditable>
+uuid: bbd7689e-0acd-44d3-ba0f-158102d117dd
+name: My Site
+mail: admin@example.com
+slogan: 'My slogan'
+page:
+  403: '/my/403/page'
+  404: '/my/404/page'
+  front: /user/login
+admin_compact_mode: false
+weight_select_max: 100
+langcode: en
+default_langcode: en
+          </code></pre>
         </section>
 
         <section>
-          <h2>Sanity check</h2>
+          <h2>The active store</h2>
           <ul>
-            <li>Open Drupal in the browser</li>
+            <li>Currently active configuration</li>
+            <li>Defaults to SQL storage</li>
+            <li>Don't mess with it</li>
           </ul>
-          <pre><code class="hljs">
-          $ ./vendor/bin/drush st
-          $ ./vendor/bin/console
+        </section>
+
+        <section>
+          <h2>Active store is configurable</h2>
+          <ul>
+            <li>SQL storage</li>
+            <li>File storage</li>
+            <li>MongoDB</li>
+            <li>Redis</li>
+          </ul>
+        </section>
+
+        <section>
+          <h2>The sync folder</h2>
+          <ul>
+            <li>sites/default/files/config_HASH</li>
+            <li>Can be changed in settings.php</li>
+          </ul>
+        </section>
+
+        <section>
+          <h2>Simple config</h2>
+          <ul>
+            <li>Similar to D7</li>
+            <li>Replaces variable_get/set()</li>
+            <li>Uses basic data types</li>
+          </ul>
+        </section>
+
+        <section data-background="#F8FCC1">
+          <h3>Working with simple config</h3>
+          <p>config/install/mymodule.settings.yml</p>
+          <pre><code data-trim contenteditable>
+promo_active: false
+highlights:
+  show: true
+  count: 3
+          </code></pre>
+        </section>
+
+        <section data-background="#F8FCC1">
+          <p>config/install/mymodule.schema.yml</p>
+          <pre><code data-trim contenteditable>
+mymodule.settings:
+  type: config_object
+  label: 'Settings for my module'
+  mapping:
+    promo_active:
+      type: boolean
+      label: 'If we are running a promotion'
+    highlights:
+      type: mapping
+      label: 'Configuration for highlighted products'
+      mapping:
+        show_highlighted_products:
+          type: boolean
+          label: 'Show highlighted products'
+        highlights_count:
+          type: integer
+          label: 'The number of highlighted products'
+          </code></pre>
+        </section>
+
+        <section data-background="#F8FCC1">
+          <p>Reading configuration</p>
+          <pre><code data-trim contenteditable>
+// This returns immutable (read-only) config.
+$config = \Drupal::config('mymodule.settings');
+$promo  = $config->get('promo_active');
+$show   = $config->get('highlights.show');
+$count  = $config->get('highlights.count');
+          </code></pre>
+        </section>
+
+        <section data-background="#F8FCC1">
+          <p>Writing configuration</p>
+          <pre><code data-trim contenteditable>
+// This returns mutable (editable) config.
+$config = \Drupal::service('config.factory')->getEditable('mymodule.settings');
+$config->set('show_highlighted_products', FALSE);
+$config->set('highlights_count', 5);
+$config->save();
+
+// It's chainable.
+\Drupal::service('config.factory')
+  ->getEditable('mymodule.settings')
+  ->set('show_highlighted_products', FALSE)
+  ->set('highlights_count', 5)
+  ->save();
+          </code></pre>
+        </section>
+
+        <section data-background="#F8FCC1">
+          <p>Deleting configuration</p>
+          <pre><code data-trim contenteditable>
+// Get a mutable instance of the configuration set.
+$config = \Drupal::service('config.factory')->getEditable('mymodule.settings');
+// Delete a single entry.
+$config->clear('show_highlighted_products');
+$config->save();
+
+// Delete a full configuration set.
+\Drupal::service('config.factory')
+  ->getEditable('mymodule.settings')
+  ->delete();
           </code></pre>
         </section>
 
         <section>
-          <h2>D8 developer mode</h2>
-          <ul><li>Display error messages</li>
-          <li>Disable CSS/JS aggregation</li>
-          <li>Disable render cache</li>
-          <li>Allow installing test modules</li></ul>
+          <h3>Config entities</h3>
+          <ul>
+            <li>Complex configuration</li>
+            <li>Allows to create 0 or more items</li>
+            <li>Examples: content types, views</li>
+          </ul>
         </section>
 
         <section>
-          <h2>Engage developer mode</h2>
-          <h3>Copy:</h3>
-          <code class="hljs">sites/example.settings.local.php</code>
-          <h3>To:</h3>
-          <code class="hljs">sites/default/settings.local.php</code>
+          <h2>Default config</h2>
+          <ul>
+            <li>Sites own configuration, not modules</li>
+            <li>Stored in config/install</li>
+            <li>Is imported on module install</li>
+            <li>Changes require update hooks</li>
+            <li>Solves reverting to config-in-code</li>
+          </ul>
         </section>
 
         <section>
-          <h3>sites/default/settings.php</h3>
-          <pre><code class="hljs">
-# if (file_exists(__DIR__ . '/settings.local.php')) {
-#   include __DIR__ . '/settings.local.php';
-# }
-          </code></pre>
-          <h3>Uncomment these lines</h3>
+          <h2>Optional config</h2>
+          <ul>
+            <li>Stored in config/optional</li>
+            <li>Config for optional modules</li>
+          </ul>
         </section>
 
         <section>
-          <h2>More development options</h2>
-          <h3>sites/default/services.yml</h3>
-          <ul><li>Twig debugging</li>
-          <li>Twig auto-recompile</li>
-          <li>Disable Twig cache</li>
-          <li>Advanced caching options</li>
-          <li>...</li></ul>
+          <h2>Schemas</h2>
+          <ul>
+            <li>https://www.drupal.org/node/1905070</li>
+            <li></li>
+            <li></li>
+            <li></li>
+          </ul>
         </section>
 
         <section>
-          <h2>Finding information</h2>
-          <p>Where to go when you are stuck?</p>
+          <h3>Deploying</h3>
+          <p>https://groups.drupal.org/node/56228</p>
+
+          <ul>
+            <li>Between instances of the same site</li>
+            <li>Matching UUIDs</li>
+            <li>Flexible workflows</li>
+            <li></li>
+          </ul>
+        </section>
+
+        <section>
+          <h2>UUIDs</h2>
+          <ul>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+          </ul>
+        </section>
+
+        <section>
+          <h2>Workflows</h2>
+          <ul>
+            <li>UI</li>
+            <li>Drush</li>
+            <li>Filesystem</li>
+          </ul>
+        </section>
+
+        <section>
+          <h2>UI workflow</h2>
+          <ul>
+            <li>Export full configuration</li>
+            <li>Upload archive</li>
+            <li>Import configuration</li>
+            <li>Review changes</li>
+          </ul>
+        </section>
+
+        <section>
+          <h2>Drush workflow</h2>
+          <ul>
+            <li>drush config-export</li>
+            <li>Sync config folder with git</li>
+            <li>drush config-import</li>
+          </ul>
+        </section>
+
+        <section>
+          <h2>Filesystem workflow</h2>
+          <ul>
+            <li>Active store in filesystem</li>
+            <li>Activate in settings.php</li>
+            <li>Sync between 'active' and 'staging' folders</li>
+            <li>Import via UI</li>
+          </ul>
+        </section>
+
+        <section>
+          <h2>Dependencies</h2>
+          <ul>
+            <li>Config can declare dependencies</li>
+            <li>Example: Remove blocks when Views is uninstalled</li>
+          </ul>
+        </section>
+
+        <section>
+          <h2>Third party settings</h2>
+          <ul>
+            <li></li>
+            <li></li>
+            <li></li>
+          </ul>
+        </section>
+
+        <section>
+          <h2>Overriding config</h2>
+          <ul>
+            <li>https://www.drupal.org/node/1928898</li>
+            <li></li>
+            <li></li>
+            <li></li>
+          </ul>
+        </section>
+
+        <section>
+          <h2>settings.php</h2>
+          <ul>
+            <li>https://www.drupal.org/node/1928898</li>
+            <li>Override configuration</li>
+            <li></li>
+            <li></li>
+          </ul>
+        </section>
+
+        <section>
+          <h2>Features module</h2>
+          <ul>
+            <li>Back to original use case</li>
+            <li>Bundling of reusable functionality</li>
+            <li>Much lighter in D8</li>
+          </ul>
+        </section>
+
+        <section>
+          <h2>Contrib modules</h2>
+          <ul>
+            <li>config_devel</li>
+            <li>config_readonly</li>
+            <li>config_sync</li>
+            <li>config_tools</li>
+            <li>config_update</li>
+          </ul>
         </section>
 
         <section>
           <h2>Documentation</h2>
           <ul>
-            <li><a href="https://www.drupal.org/node/2182165">Getting started with Drupal 8</li>
-            <li><a href="https://www.drupal.org/developing/modules/8">Creating Drupal 8 modules</li>
-            <li><a href="https://www.drupal.org/developing/api/8">Drupal 8 APIs</li>
-            <li><a href="https://www.drupal.org/theme-guide/8">Theming Drupal 8</li>
-          </ul>
-        </section>
-
-        <section>
-          <h2>Change records</h2>
-          <h3><a href="https://www.drupal.org/list-changes">https://www.drupal.org/list-changes</a></h3>
-          <ul>
-            <li>Documents all changes in Drupal 8</li>
-            <li>Search for keywords</li>
-            <li>"Before" and "after" code examples</li>
-            <li>Link to issue that introduced change</li>
-          </ul>
-        </section>
-
-        <section>
-          <h2>Getting help</h2>
-          <ul>
-            <li><a href="https://drupal.stackexchange.com/">Stack Exchange</a></li>
-            <li><a href="https://www.drupal.org/irc">IRC</a></li>
-            <li><a href="https://twitter.com/hashtag/Drupal8">Twitter</a></li>
-            <li>Issue queues</li>
-            <li>Core tests</li>
-            <li>Google</li>
-          </ul>
-        </section>
-
-        <section data-background="#F8FCC1">
-          <h2>Converting modules to D8</h2>
-          <ol start="0">
-            <li>Enable the module</li>
-            <li>Check what breaks</li>
-            <li>Find change record</li>
-            <li>Fix</li>
-            <li>GOTO 1</li>
-          </ol>
-        </section>
-
-        <section data-background="#F8FCC1">
-          <h2>First things first</h2>
-          <h3>mymodule.info -> mymodule.info.yml</h3>
-          <p>Drupal 7:</p>
-          <pre><code data-trim contenteditable>
-name = Example
-description = My module.
-core = 7.x
-files[] = myfile.php
-dependencies[] = views
-          </code></pre>
-          <p>Drupal 8:</p>
-          <pre><code data-trim contenteditable>
-name: Example
-type: module
-description: 'My module.'
-core: 8.x
-dependencies:
-  - views
-          </code></pre>
-        </section>
-
-        <section data-background="#F8FCC1">
-          <h3>Create a module</h3>
-          <pre><code data-trim contenteditable>
-$ mkdir modules/one
-$ vim modules/one/one.info.yml
-          </code></pre>
-
-          <pre><code data-trim contenteditable>
-name: One
-description: Training module
-type: module
-core: 8.x
-          </code></pre>
-
-          <pre><code data-trim contenteditable>
-$ drush en one
-          </code></pre>
-        </section>
-
-
-        <section data-background="#F8FCC1">
-          <h3>Convert hook_menu() to routes</h3>
-          <ul>
-            <li>Convert hook_menu() items to `module.routing.yml`</li>
-            <li>Convert page callbacks to ControllerBase</li>
-            <li>Convert form builders to FormBase</li>
-            <li>Convert local tasks and actions</li>
-            <li>Convert menu links and contextual links</li>
-            <li>Convert hook_menu_alter() to RouteSubscriber</li>
-          </ul>
-        </section>
-
-        <section data-background="#F8FCC1">
-          <h3>module.routing.yml</h3>
-          <pre><code data-trim>
-function book_menu() {
-  $items['admin/content/book'] = array(
-    'title' => 'Books',
-    'description' => "Manage your site's book outlines.",
-    'page callback' => 'book_admin_overview',
-    'access arguments' => array('administer book outlines'),
-    'type' => MENU_LOCAL_TASK,
-    'file' => 'book.admin.inc',
-  );
-  return $items;
-}
-          </code></pre>
-          <pre><code data-trim contenteditable>
-book.admin:
-  path: '/admin/content/book'
-  defaults:
-    _controller: '\Drupal\book\Controller\BookController::adminOverview'
-    _title: 'Books'
-  requirements:
-    _permission: 'administer book outlines'
-          </code></pre>
-        </section>
-
-        <section data-background="#F8FCC1">
-          <h3>Convert local tasks (aka tabs)</h3>
-          <p>In Drupal 7:</p>
-          <pre><code data-trim contenteditable>
-function taxonomy_menu() {
-  $items['taxonomy/term/%taxonomy_term/view'] = array(
-    'title' => 'View',
-    'type' => MENU_DEFAULT_LOCAL_TASK,
-  );
-  $items['taxonomy/term/%taxonomy_term/edit'] = array(
-    'title' => 'Edit',
-    'page callback' => 'drupal_get_form',
-    'page arguments' => array('taxonomy_form_term', 2, NULL),
-    'access callback' => 'taxonomy_term_edit_access',
-    'access arguments' => array(2),
-    'type' => MENU_LOCAL_TASK,
-  );
-  return $items;
-}
-          </code></pre>
-        </section>
-
-        <section data-background="#F8FCC1">
-          <h3>Convert local tasks (aka tabs)</h3>
-          <p>taxonomy.links.task.yml</p>
-          <pre><code data-trim contenteditable>
-entity.taxonomy_term.canonical:
-  title: 'View'
-  route_name: entity.taxonomy_term.canonical
-  base_route: entity.taxonomy_term.canonical
-
-entity.taxonomy_term.edit_form:
-  title: 'Edit'
-  route_name: entity.taxonomy_term.edit_form
-  base_route: entity.taxonomy_term.canonical
-          </code></pre>
-          <p>taxonomy.routing.yml</p>
-          <pre><code data-trim contenteditable>
-entity.taxonomy_term.canonical:
-  path: '/taxonomy/term/{taxonomy_term}'
-  defaults:
-    ...
-
-entity.taxonomy_term.edit_form:
-  path: '/taxonomy/term/{taxonomy_term}/edit'
-  defaults:
-    ...
-          </code></pre>
-        </section>
-
-        <section data-background="#F8FCC1">
-          <h3>Convert local actions</h3>
-          <pre><code data-trim contenteditable>
-function taxonomy_menu() {
-  $items['admin/structure/taxonomy/add'] = array(
-    'title' => 'Add vocabulary',
-    'page callback' => 'drupal_get_form',
-    'page arguments' => array('taxonomy_form_vocabulary'),
-    'access arguments' => array('administer taxonomy'),
-    'type' => MENU_LOCAL_ACTION,
-  );
-  return $items;
-}
-          </code></pre>
-          <p>taxonomy.links.action.yml</p>
-          <pre><code data-trim contenteditable>
-entity.taxonomy_vocabulary.add_form:
-  route_name: entity.taxonomy_vocabulary.add_form
-  title: 'Add vocabulary'
-  appears_on:
-    - entity.taxonomy_vocabulary.collection
-          </code></pre>
-        </section>
-
-        <section data-background="#F8FCC1">
-          <h3>Convert menu links</h3>
-          <pre><code data-trim contenteditable>
-function taxonomy_menu() {
-  $items['admin/structure/taxonomy'] = array(
-    'title' => 'Taxonomy',
-    'description' => 'Manage tagging, categorization, and classification of your content.',
-    'page callback' => 'drupal_get_form',
-    'page arguments' => array('taxonomy_overview_vocabularies'),
-    'access arguments' => array('administer taxonomy'),
-    'type' => MENU_NORMAL_ITEM,
-  );
-  return $items;
-}
-          </code></pre>
-          <p>taxonomy.links.menu.yml</p>
-          <pre><code data-trim contenteditable>
-entity.taxonomy_vocabulary.collection:
-  title: Taxonomy
-  parent: system.admin_structure
-  description: 'Manage tagging, categorization, and classification of your content.'
-  route_name: entity.taxonomy_vocabulary.collection
-          </code></pre>
-        </section>
-
-        <section data-background="#F8FCC1">
-          <h3>Convert contextual links</h3>
-          <pre><code data-trim contenteditable>
-function block_menu() {
- $items['admin/structure/block/manage/%/%/configure'] = array(
-    'title' => 'Configure block',
-    'type' => MENU_DEFAULT_LOCAL_TASK,
-    'context' => MENU_CONTEXT_INLINE,
-  );
-  return $items;
-}
-          </code></pre>
-          <p>block.links.contextual.yml</p>
-          <pre><code data-trim contenteditable>
-block_configure:
-  title: 'Configure block'
-  route_name: 'entity.block.edit_form'
-  group: 'block'
-          </code></pre>
-        </section>
-
-        <section data-background="#F8FCC1">
-          <h3>Showing the contextual links</h3>
-          <p>\Drupal\Block\BlockViewBuilder</p>
-          <pre><code data-trim contenteditable>
-$block = [
-  '#theme' => 'block',
-  '#contextual_links' => [
-    'block' => [
-      'route_parameters' => ['block' => $entity->id()],
-    ],
-  ],
-];
-          </code></pre>
-        </section>
-
-        <section data-background="#F8FCC1">
-          <h3>Convert hook_menu_alter() to RouteSubscriber</h3>
-          <pre><code data-trim contenteditable>
-namespace Drupal\system\EventSubscriber;
-
-use Drupal\Core\Routing\RouteSubscriberBase;
-use Symfony\Component\Routing\RouteCollection;
-
-class AdminRouteSubscriber extends RouteSubscriberBase {
-
-  protected function alterRoutes(RouteCollection $collection) {
-    foreach ($collection->all() as $route) {
-      if (strpos($route->getPath(), '/admin') === 0 && !$route->hasOption('_admin_route')) {
-        $route->setOption('_admin_route', TRUE);
-      }
-    }
-  }
-
-}
-          </code></pre>
-        </section>
-
-
-        <section data-background="#F8FCC1">
-          <h2>More info on routing</h2>
-          <h3>Routing system in Drupal 8</h3>
-          <p><a href="https://www.drupal.org/developing/api/8/routing">https://www.drupal.org/developing/api/8/routing</a></p>
-          <h3>Tutorial for converting hook_menu()</h3>
-          <p><a href="https://www.drupal.org/node/2118147">https://www.drupal.org/node/2118147</a></p>
-        </section>
-
-        <section data-background="#F8FCC1">
-          <h3>Convert page callbacks to ControllerBase</h3>
-          <p>one.routing.yml</p>
-          <pre><code data-trim contenteditable>
-one.helloworld:
-  path: '/hello'
-  defaults:
-    _controller: '\Drupal\one\Controller\OneController::helloWorld'
-    _title: 'Hey there'
-  requirements:
-    _permission: 'access content'
-          </code></pre>
-          <p>src/Controller/OneController.php</p>
-          <pre><code data-trim contenteditable>
-namespace Drupal\one\Controller;
-
-use Drupal\Core\Controller\ControllerBase;
-
-class OneController extends ControllerBase {
-
-  public function helloWorld() {
-    return ['#markup' => 'Hello world!'];
-  }
-
-}
-          </code></pre>
-        </section>
-
-        <section data-background="#F8FCC1">
-          <h3>Convert form builders to FormBase</h3>
-          <p>one.routing.yml</p>
-          <pre><code data-trim contenteditable>
-one.helloworldform:
-  path: '/helloform'
-  defaults:
-    _form: '\Drupal\one\Form\HelloForm'
-  requirements:
-    _permission: 'access content'
-          </code></pre>
-        </section>
-
-        <section data-background="#F8FCC1">
-          <p>src/Form/HelloForm.php</p>
-          <pre><code data-trim contenteditable>
-namespace Drupal\one\Form;
-
-use Drupal\Core\Form\FormBase;
-use Drupal\Core\Form\FormStateInterface;
-
-class HelloForm extends FormBase {
-
-  public function getFormId() {
-    return 'hello_form';
-  }
-
-  public function buildForm(array $form, FormStateInterface $form_state) {
-    return [
-      'subject' => [
-        '#type' => 'radios',
-        '#title' => $this->t('Hello'),
-        '#options' => [
-          'world' => $this->t('World'),
-          'kitty' => $this->t('Kitty'),
-          'dog' => $this->t('Yes this is dog'),
-        ],
-      ],
-      'submit' => [
-        '#type' => 'submit',
-        '#value' => $this->t('Submit'),
-      ],
-    ];
-  }
-
-  public function submitForm(array &$form, FormStateInterface $form_state) {
-    $subject = $form_state->getValue('subject');
-    drupal_set_message($this->t('Hello @subject!', ['@subject' => $subject]));
-  }
-
-}
-          </code></pre>
-        </section>
-
-        <section data-background="#F8FCC1">
-          <h3>Convert variables to config</h3>
-          <pre><code data-trim contenteditable>
-variable_get('mymodule_mysetting', TRUE);
-variable_set('mymodule_mysetting', $my_value);
-          </code></pre>
-          <pre><code data-trim contenteditable>
-\Drupal::config('mymodule.settings')->get('mysetting');
-\Drupal::config('mymodule.settings')->set('mysetting', $my_value)->save();
-          </code></pre>
-        </section>
-
-        <section data-background="#F8FCC1">
-          <h3>Default config</h3>
-          <p>config/install/mymodule.settings.yml</p>
-          <pre><code data-trim contenteditable>
-mysetting: true
-          </code></pre>
-        </section>
-
-        <section data-background="#F8FCC1">
-          <h2>More info on config</h2>
-          <h3>Configuration management architecture</h3>
-          <p><a href="https://groups.drupal.org/node/191283">https://groups.drupal.org/node/191283</a></p>
-          <h3>Configuration API</h3>
-          <p><a href="https://www.drupal.org/developing/api/8/configuration">https://www.drupal.org/developing/api/8/configuration</a></p>
-        </section>
-
-        <section data-background="#F8FCC1">
-          <h3>Convert procedural code to services</h3>
-          <p>one.services.yml</p>
-          <pre><code data-trim contenteditable>
-services:
-  one.myservice:
-    class: Drupal\one\MyService
-          </code></pre>
-          <p>Examples: core.services.yml</p>
-        </section>
-
-        <section data-background="#F8FCC1">
-          <h3>Convert blocks</h3>
-          <pre><code data-trim contenteditable>
-function search_block_info() {
-  $blocks['form']['info'] = t('Search form');
-  $blocks['form']['cache'] = DRUPAL_NO_CACHE;
-  $blocks['form']['properties']['administrative'] = TRUE;
-  return $blocks;
-}
-
-function search_block_view($delta = '') {
-  if (user_access('search content')) {
-    $block['content'] = drupal_get_form('search_block_form');
-    return $block;
-  }
-}
-          </code></pre>
-        </section>
-
-        <section data-background="#F8FCC1">
-          <h3>Convert blocks</h3>
-          <pre><code data-trim contenteditable>
-/**
- * @Block(
- *   id = "search_form_block",
- *   admin_label = @Translation("Search form"),
- *   category = @Translation("Forms")
- * )
- */
-class SearchBlock extends BlockBase {
-  protected function blockAccess(AccountInterface $account) {
-    return AccessResult::allowedIfHasPermission($account, 'search content');
-  }
-
-  public function build() {
-    return \Drupal::formBuilder()->getForm('Drupal\search\Form\SearchBlockForm');
-  }
-
-}
-          </code></pre>
-        </section>
-
-        <section data-background="#F8FCC1">
-          <h3>Convert permissions</h3>
-          <pre><code data-trim contenteditable>
-function node_permission() {
-  return array(
-    'access content' => array(
-      'title' => t('View published content'),
-    ),
-  );
-}
-          </code></pre>
-          <p>node.permissions.yml</p>
-          <pre><code data-trim contenteditable>
-access content:
-  title: 'View published content'
-          </code></pre>
-        </section>
-
-        <section data-background="#F8FCC1">
-          <h3>Convert tests</h3>
-          <ul>
-            <li>WebTestBase</li>
-            <li>KernelTestBase</li>
-            <li>UnitTestCase</li>
-            <li>BrowserTestBase</li>
-            <li>JavascriptTestBase (soon&trade;)</li>
-          </ul>
-        </section>
-
-        <section>
-          <h2>Converting themes to D8</h2>
-          <ul>
-            <li>Twig</li>
-            <li>Theme functions are dead</li>
-            <li>Template + preprocess for everything</li>
-          </ul>
-          <p><a href="https://www.drupal.org/node/2025313">Twig conversion process</a></p>
-        </section>
-
-        <section>
-          <h2>Converting D7 projects to D8</h2>
-          <ul>
-            <li>Migrate</li>
-            <li>drush make -&gt; composer</li>
+            <li><a href="https://www.drupal.org/documentation/administer/config">Managing configuration in D8</a></li>
+            <li><a href="https://api.drupal.org/api/drupal/core%21core.api.php/group/config_api/8">Configuration API</a></li>
+            <li><a href="https://www.drupal.org/node/1809490">Simple Configuration API</a></li>
+            <li><a href="https://www.chapterthree.com//blog/principles-configuration-management-part-one">Principles of configuration management</a></li>
           </ul>
         </section>
 
@@ -650,19 +379,43 @@ access content:
         </section>
 
         <section>
-          <h2>Drupal</h2>
-          <h2>Module</h2>
-          <h2>Upgrader</h2>
-        </section>
-
-        <section>
-          <h2>Drupal Module Upgrader</h2>
+          <h3>Exercise: simple config</h3>
           <ul>
-            <li>drush dmu-analyze</li>
-            <li>drush dmu-upgrade</li>
+            <li>Build a form with a checkbox</li>
+            <li>Store the value of the checkbox in simple config</li>
+            <li>If the module is enabled, the checkbox defaults to "checked"</li>
           </ul>
         </section>
 
+        <section>
+          <h3>Exercise: simple config</h3>
+          <p>Tips:</p>
+          <ul>
+            <li>Use ConfigFormBase</li>
+            <li>Example: SiteMaintenanceModeForm</li>
+            <li>Don't forget to define a route</li>
+          </ul>
+        </section>
+
+        <section>
+          <h3>Exercise: config entity</h3>
+          <ul>
+            <li>Build a configuration entity</li>
+            <li>Store the value of the checkbox in simple config</li>
+            <li>If the module is enabled, the checkbox defaults to "checked"</li>
+          </ul>
+        </section>
+        
+        <section data-background="#F8FCC1">
+          <h3></h3>
+          <p></p>
+          <pre><code data-trim contenteditable>
+          </code></pre>
+        </section>
+        <section>
+          <h3></h3>
+          <p></p>
+        </section>
       </div>
     </div>
 
