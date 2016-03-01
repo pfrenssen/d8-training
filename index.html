@@ -386,24 +386,51 @@ $mutable = \Drupal::configFactory()->getEditable('mymodule.settings')->get('prom
 
         <section>
           <h2>Contrib modules</h2>
+        </section>
+
+        <section>
+          <h3>Configuration Development</h3>
+          <p><a href="https://www.drupal.org/project/config_devel">https://www.drupal.org/project/config_devel</a></p>
           <ul>
-            <li>config_devel</li>
-            <li>config_inspector</li>
-            <li>config_readonly</li>
-            <li>config_sync</li>
-            <li>config_tools</li>
-            <li>config_update</li>
+            <li>Export config into YAML files</li>
+            <li>"Features" replacement</li>
+            <li>Update config with drush</li>
           </ul>
         </section>
 
         <section>
-          <h2>Documentation</h2>
+          <h3>Configuration inspector</h3>
+          <p><a href="https://www.drupal.org/project/config_inspector">https://www.drupal.org/project/config_inspector</a></p>
           <ul>
-            <li><a href="https://www.drupal.org/documentation/administer/config">Managing configuration in D8</a></li>
-            <li><a href="https://api.drupal.org/api/drupal/core%21core.api.php/group/config_api/8">Configuration API</a></li>
-            <li><a href="https://www.drupal.org/node/1809490">Simple Configuration API</a></li>
-            <li><a href="https://www.chapterthree.com//blog/principles-configuration-management-part-one">Principles of configuration management</a></li>
-            <li><a href="https://www.drupal.org/files/ConfigSchemaCheatSheet1.5.pdf">Config schema cheatsheet (PDF)</a></li>
+            <li>Inspect config schemas</li>
+            <li>Compare data with schemas</li>
+          </ul>
+        </section>
+
+        <section>
+          <h3>Configuration Read-only mode</h3>
+          <p><a href="https://www.drupal.org/project/config_readonly">https://www.drupal.org/project/config_readonly</a></p>
+          <ul>
+            <li>Locks changing config through UI</li>
+            <li>Enable on production</li>
+          </ul>
+        </section>
+
+        <section>
+          <h3>Configuration Tools</h3>
+          <p><a href="https://www.drupal.org/project/config_tools">https://www.drupal.org/project/config_tools</a></p>
+          <ul>
+            <li>Dump active config to files</li>
+            <li>Auto-commit config changes</li>
+          </ul>
+        </section>
+
+        <section>
+          <h3>Configuration Update Manager</h3>
+          <p><a href="https://www.drupal.org/project/config_update">https://www.drupal.org/project/config_update</a></p>
+          <ul>
+            <li>Advanced importing of config</li>
+            <li>Inspect and revert changes</li>
           </ul>
         </section>
 
@@ -429,6 +456,30 @@ $mutable = \Drupal::configFactory()->getEditable('mymodule.settings')->get('prom
             <li>Don't forget to define a route</li>
           </ul>
         </section>
+
+        <section>
+          <h3>Exercise: config entity</h3>
+          <ul>
+            <li>Create a "Promo" config entity</li>
+            <li>Store the name of the promo</li>
+            <li>Store the discount</li>
+            <li>Edit forms</li>
+            <li>Overview</li>
+          </ul>
+          <p><a href="https://www.drupal.org/node/1809494">Creating a config entity type</a></p>
+        </section>
+
+        <section>
+          <h2>Documentation</h2>
+          <ul>
+            <li><a href="https://www.drupal.org/documentation/administer/config">Managing configuration in D8</a></li>
+            <li><a href="https://api.drupal.org/api/drupal/core%21core.api.php/group/config_api/8">Configuration API</a></li>
+            <li><a href="https://www.drupal.org/node/1809490">Simple Configuration API</a></li>
+            <li><a href="https://www.chapterthree.com//blog/principles-configuration-management-part-one">Principles of configuration management</a></li>
+            <li><a href="https://www.drupal.org/files/ConfigSchemaCheatSheet1.5.pdf">Config schema cheatsheet (PDF)</a></li>
+          </ul>
+        </section>
+
       </div>
     </div>
 
