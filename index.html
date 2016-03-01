@@ -347,32 +347,32 @@ class MyModuleSettingsForm extends ConfigFormBase {
         </section>
 
         <section>
-          <h2>Third party settings</h2>
-          <ul>
-            <li></li>
-            <li></li>
-            <li></li>
-          </ul>
-        </section>
-
-        <section>
           <h2>Overriding config</h2>
           <ul>
-            <li>https://www.drupal.org/node/1928898</li>
-            <li></li>
-            <li></li>
-            <li></li>
+            <li>global $config</li>
+            <li>Defined in settings.php</li>
+            <li>Separate layer</li>
+            <li>Not visible in forms</li>
+            <li>ConfigFactoryOverrideInterface</li>
           </ul>
         </section>
 
-        <section>
-          <h2>settings.php</h2>
-          <ul>
-            <li>https://www.drupal.org/node/1928898</li>
-            <li>Override configuration</li>
-            <li></li>
-            <li></li>
-          </ul>
+        <section data-background="#F8FCC1">
+          <h3>Overridden config</h3>
+          <p>settings.php</p>
+          <pre><code data-trim contenteditable>
+$config['mymodule.settings']['promo_active'] = TRUE;
+          </code></pre>
+          <pre><code data-trim contenteditable>
+// Get the overridden value by default.
+$active = \Drupal::config('mymodule.settings')->get('promo_active');
+
+// Get the value without overrides.
+$original = \Drupal::config('mymodule.settings')->getOriginal('promo_active');
+
+// Mutable config is never overridden.
+$mutable = \Drupal::configFactory()->getEditable('mymodule.settings')->get('promo_active');
+          </code></pre>
         </section>
 
         <section>
