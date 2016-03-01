@@ -131,7 +131,7 @@ default_langcode: en
         </section>
 
         <section data-background="#F8FCC1">
-          <h3>Working with simple config</h3>
+          <h3>Example of simple config</h3>
           <p>config/install/mymodule.settings.yml</p>
           <pre><code data-trim contenteditable>
 promo_active: false
@@ -141,7 +141,18 @@ highlights:
           </code></pre>
         </section>
 
+        <section>
+          <h2>Config schema</h2>
+          <ul>
+            <li>Stores metadata about config items</li>
+            <li>Type, label, translatable</li>
+            <li>Very important for multilingual</li>
+          </ul>
+          <p><a href="https://www.drupal.org/node/1905070">Configuration schema documentation</a></p>
+        </section>
+
         <section data-background="#F8FCC1">
+          <h3>Example config schema</h3>
           <p>config/install/mymodule.schema.yml</p>
           <pre><code data-trim contenteditable>
 mymodule.settings:
@@ -180,15 +191,16 @@ $count  = $config->get('highlights.count');
           <pre><code data-trim contenteditable>
 // This returns mutable (editable) config.
 $config = \Drupal::service('config.factory')->getEditable('mymodule.settings');
-$config->set('show_highlighted_products', FALSE);
-$config->set('highlights_count', 5);
+$config->set('promo_active', TRUE);
+$config->set('highlights.show', FALSE);
+$config->set('highlights.count', 5);
 $config->save();
 
 // It's chainable.
 \Drupal::service('config.factory')
   ->getEditable('mymodule.settings')
-  ->set('show_highlighted_products', FALSE)
-  ->set('highlights_count', 5)
+  ->set('highlights.show', FALSE)
+  ->set('highlights.count', 5)
   ->save();
           </code></pre>
         </section>
@@ -199,13 +211,55 @@ $config->save();
 // Get a mutable instance of the configuration set.
 $config = \Drupal::service('config.factory')->getEditable('mymodule.settings');
 // Delete a single entry.
-$config->clear('show_highlighted_products');
+$config->clear('promo_active');
 $config->save();
 
 // Delete a full configuration set.
 \Drupal::service('config.factory')
   ->getEditable('mymodule.settings')
   ->delete();
+          </code></pre>
+        </section>
+
+        <section data-background="#F8FCC1">
+          <h3>ConfigFormBase</h3>
+          <pre><code data-trim contenteditable>
+namespace Drupal\mymodule\Form;
+
+use Drupal\Core\Form\ConfigFormBase;
+use Drupal\Core\Form\FormStateInterface;
+
+class MyModuleSettingsForm extends ConfigFormBase {
+
+  public function getFormID() {
+    return 'mymodule_settings';
+  }
+
+  protected function getEditableConfigNames() {
+    return ['mymodule.settings'];
+  }
+
+  public function buildForm(array $form, FormStateInterface $form_state) {
+    $config = $this->config('mymodule.settings');
+
+    $form['promo_active'] = array(
+      '#type' => 'checkbox',
+      '#title' => t('Promo active'),
+      '#default_value' => $config->get('promo_active'),
+    );
+
+    return parent::buildForm($form, $form_state);
+  }
+
+  public function submitForm(array &$form, FormStateInterface $form_state) {
+    $this->config('mymodule.settings')
+      ->set('promo_active', $form_state->getValue('promo_active'))
+      ->save();
+
+    parent::submitForm($form, $form_state);
+  }
+
+}
           </code></pre>
         </section>
 
@@ -238,34 +292,11 @@ $config->save();
         </section>
 
         <section>
-          <h2>Schemas</h2>
-          <ul>
-            <li>https://www.drupal.org/node/1905070</li>
-            <li></li>
-            <li></li>
-            <li></li>
-          </ul>
-        </section>
-
-        <section>
           <h3>Deploying</h3>
-          <p>https://groups.drupal.org/node/56228</p>
-
           <ul>
             <li>Between instances of the same site</li>
             <li>Matching UUIDs</li>
             <li>Flexible workflows</li>
-            <li></li>
-          </ul>
-        </section>
-
-        <section>
-          <h2>UUIDs</h2>
-          <ul>
-            <li></li>
-            <li></li>
-            <li></li>
-            <li></li>
           </ul>
         </section>
 
@@ -357,6 +388,7 @@ $config->save();
           <h2>Contrib modules</h2>
           <ul>
             <li>config_devel</li>
+            <li>config_inspector</li>
             <li>config_readonly</li>
             <li>config_sync</li>
             <li>config_tools</li>
@@ -371,6 +403,7 @@ $config->save();
             <li><a href="https://api.drupal.org/api/drupal/core%21core.api.php/group/config_api/8">Configuration API</a></li>
             <li><a href="https://www.drupal.org/node/1809490">Simple Configuration API</a></li>
             <li><a href="https://www.chapterthree.com//blog/principles-configuration-management-part-one">Principles of configuration management</a></li>
+            <li><a href="https://www.drupal.org/files/ConfigSchemaCheatSheet1.5.pdf">Config schema cheatsheet (PDF)</a></li>
           </ul>
         </section>
 
@@ -395,26 +428,6 @@ $config->save();
             <li>Example: SiteMaintenanceModeForm</li>
             <li>Don't forget to define a route</li>
           </ul>
-        </section>
-
-        <section>
-          <h3>Exercise: config entity</h3>
-          <ul>
-            <li>Build a configuration entity</li>
-            <li>Store the value of the checkbox in simple config</li>
-            <li>If the module is enabled, the checkbox defaults to "checked"</li>
-          </ul>
-        </section>
-        
-        <section data-background="#F8FCC1">
-          <h3></h3>
-          <p></p>
-          <pre><code data-trim contenteditable>
-          </code></pre>
-        </section>
-        <section>
-          <h3></h3>
-          <p></p>
         </section>
       </div>
     </div>
