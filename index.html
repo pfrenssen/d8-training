@@ -41,7 +41,7 @@
       <!-- Any section element inside of this container is displayed as a slide -->
       <div class="slides">
         <section data-background="#ffffff">
-          <h1>Drupal 7 to Drupal 8</h1>
+          <h1>RESTful web services</h1>
           <p>
             <small><a href="https://drupal.org/u/pfrenssen">Pieter Frenssen</a> / <a href="http://twitter.com/pfrenssen">@pfrenssen</a></small>
           </p>
@@ -51,41 +51,118 @@
         <section>
           <h2>Slides</h2>
           <p><a href="https://github.com/pfrenssen/d8-training">https://github.com/pfrenssen/d8-training</a></p>
-          <p>branch: d7-to-d8</p>
+          <p>branch: rest-api</p>
+        </section>
+
+        <section>
+          <h2>REST?</h2>
+          <h3>REpresentational</h3>
+          <h3>State</h3>
+          <h3>Transfer</h3>
+        </section>
+
+        <section>
+          <h2>What is REST?</h2>
+          <ul>
+            <li>Software architecture</li>
+            <li>Resource based (using URIs)</li>
+            <li>Communication over HTTP</li>
+            <li>Introduced by Roy Fielding in 2000</li>
+          </ul>
+        </section>
+
+        <section>
+          <h2>What is REST?</h2>
+          <h3>The 6 constraints</h3>
+          <ul>
+            <li>Client-server</li>
+            <li>Stateless</li>
+            <li>Cache</li>
+            <li>Uniform interface</li>
+            <li>Layered system</li>
+            <li>Code-on-demand</li>
+          </ul>
+          <p><a href="http://www.ics.uci.edu/~fielding/pubs/dissertation/rest_arch_style.htm">http://www.ics.uci.edu/~fielding/pubs/dissertation/rest_arch_style.htm</a></p>
         </section>
 
         <section>
           <h2>Stuff you need</h2>
           <ul>
-            <li>IDE or text editor</li>
-            <li>LAMP stack</li>
-            <li>Composer</li>
-            <li>Git</li>
+            <li>Drupal 8</li>
+            <li>Drush</li>
+            <li>REST client</li>
           </ul>
         </section>
 
         <section>
-          <h2>D8 Quickstart</h2>
-          <h3>Fire up your consoles!</h3>
-        </section>
-
-        <section>
-          <h2>Starting a D8 project</h2>
-          <p><a href="https://github.com/drupal-composer/drupal-project">https://github.com/drupal-composer/drupal-project</a></p>
-          <pre><code class="hljs">
-  $ composer create-project drupal-composer/drupal-project --stability=dev mydir
-          </code></pre>
-        </section>
-
-        <section>
-          <h2>Folder structure</h2>
+          <h2>Drupal 8</h2>
           <ul>
-            <li>drush/ - commands + config</li>
-            <li>scripts/ - indeed</li>
-            <li>vendor/ - dependencies</li>
-            <li>vendor/bin/ - tools</li>
-            <li>web/ - our website!</li>
+            <li>Use standard profile</li>
+            <li>Enable the REST module</li>
+            <li>Install <a href="https://www.drupal.org/project/restui">REST UI</a> contrib module</li>
           </ul>
+        </section>
+
+        <section>
+          <h2>Drush</h2>
+          <p><a href="https://github.com/drush-ops/drush">https://github.com/drush-ops/drush</a></p>
+        </section>
+
+        <section>
+          <h2>REST client</h2>
+        </section>
+
+        <section>
+          <h3>Postman for Chromium</h3>
+          <p><a href="https://www.getpostman.com/">https://www.getpostman.com/</a></p>
+          <p><img src="postman.png" /></p>
+        </section>
+
+        <section>
+          <h3>HttpRequester for Firefox</h3>
+          <p><a href="https://addons.mozilla.org/firefox/addon/httprequester">https://addons.mozilla.org/firefox/addon/httprequester</a></p>
+          <p><img src="httprequester.png" /></p>
+        </section>
+
+        <section>
+          <h2>RESTful Web Services module</h2>
+          <ul>
+            <li>Part of Drupal 8 core</li>
+            <li>No user interface</li>
+            <li>Only nodes exposed by default</li>
+            <li>Pluggable formats (JSON, XML, ...)</li>
+            <li>Flexible authentication methods</li>
+            <li>Resource plugin type</li>
+            <li>Views plugins</li>
+            <li>Hooks to alter resources and URIs</li>
+          </ul>
+        </section>
+
+        <section>
+          <h2>REST UI module</h2>
+          <ul>
+            <li>User interface for the REST module</li>
+            <li>Supports all content entities</li>
+            <li>Configure supported data formats</li>
+            <li>Configure authentication methods</li>
+            <li>Configure HTTP methods</li>
+            <li>Optional alternative to raw config</li>
+          </ul>
+        </section>
+
+        <section>
+          <h2>Using REST UI</h2>
+          <p>/admin/config/services/rest</p>
+          <p><img src="restui.png" /></p>
+        </section>
+
+        <section>
+          <h2>Permissions</h2>
+          <ul>
+            <li>Available for every enabled entity</li>
+            <li>Separate permission per HTTP method</li>
+          </ul>
+          <p><img src="permissions.png" /></p>
         </section>
 
         <section>
