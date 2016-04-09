@@ -1336,3 +1336,12 @@ html:-moz-full-screen-ancestor {
 
 .zoomed .reveal .roll span:after {
   visibility: hidden; }
+
+.reveal code.inline-code {
+  font-weight: bold;
+  background-color: #586e75;
+  color: #eee;
+  padding: 5px 27px;
+  display: inline-block;
+  margin: 2px;
+}

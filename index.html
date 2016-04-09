@@ -100,6 +100,7 @@
           <ul>
             <li>Drupal 8</li>
             <li>Drush</li>
+            <li>Console</li>
             <li>REST client</li>
           </ul>
         </section>
@@ -119,6 +120,11 @@
         </section>
 
         <section>
+          <h2>Console</h2>
+          <p><a href="https://drupalconsole.com/">https://drupalconsole.com/</a></p>
+        </section>
+
+        <section>
           <h2>REST client</h2>
         </section>
 
@@ -132,6 +138,240 @@
           <h3>HttpRequester for Firefox</h3>
           <p><a href="https://addons.mozilla.org/firefox/addon/httprequester">https://addons.mozilla.org/firefox/addon/httprequester</a></p>
           <p><img src="httprequester.png" /></p>
+        </section>
+
+        <section>
+          <h3>Browser plugin for viewing JSON</h3>
+          <ul>
+            <li>Chromium: <a href="https://chrome.google.com/webstore/detail/json-formatter/bcjindcccaagfpapjjmafapmmgkkhgoa">JSON Formatter</a></li>
+            <li>Firefox: <a href="https://addons.mozilla.org/en-US/firefox/addon/jsonview/?src=search">JSONView</a></li>
+          </ul>
+        </section>
+
+        <section>
+          <h2>REST API first look: drupal.org</h2>
+          <ul>
+            <li>https://www.drupal.org/drupalorg/api</li>
+            <li>Exposes projects, issues, users, nodes, comments, ...</li>
+            <li>Read-only</li>
+            <li>Anonymous access (fair use)</li>
+            <li>Returns data in JSON and XML formats</li>
+            <li>Supports pagination and sorting</li>
+            <li>Built in Drupal 7 with the RESTful Web Services module</li>
+          </ul>
+        </section>
+
+        <section>
+          <h3>An example request</h3>
+          <p><a href="https://www.drupal.org/api-d7/user.json?field_country=Belgium&sort=uid&limit=10">https://www.drupal.org/api-d7/user.json?field_country=Belgium&sort=uid&limit=10</a></p>
+          <ul>
+            <li>A JSON object is returned</li>
+            <li>Contains pagination data and a list of users</li>
+            <li>User objects contain many fields</li>
+            <li>Can be filtered and sorted by field</li>
+            <li>Do all fields make sense?</li>
+          </ul>
+        </section>
+
+        <section>
+          <h2>Exercise: Consuming a REST service</h2>
+          <ul>
+            <li>Use the Drupal.org REST API</li>
+            <li>Retrieve 5 change records with Guzzle</li>
+            <li>Display in a block</li>
+          </ul>
+        </section>
+
+        <section>
+          <h3>Create a module with Drupal Console</h3>
+          <pre><code class="hljs">
+      $ drupal generate:module
+
+      Enter the new module name:
+      > Change records
+
+      Enter module description [My Awesome Module]:
+      > Displays change records from drupal.org.
+
+      Do you confirm generation? (yes/no) [yes]:
+      > yes
+
+      Generated or updated files
+       1 - modules/custom/change_records/change_records.info.yml
+       2 - modules/custom/change_records/composer.json
+          </code></pre>
+          <p>(all default options are omitted)</p>
+        </section>
+
+        <section>
+          <h3>Create a block part 1</h3>
+          <pre><code class="hljs">
+      $ drupal generate:plugin:block
+
+      Enter the module name [devel]:
+      > change_records
+
+      Plugin class name [DefaultBlock]:
+      > ChangeRecordsBlock
+
+      Do you want to load services from the container (yes/no) [no]:
+      > yes
+
+      Enter your service [ ]:
+      > http_client
+          </code></pre>
+        </section>
+
+        <section>
+          <h3>Create a block part 2</h3>
+          <pre><code class="hljs">
+      Do you want to generate a form structure? (yes/no) [yes]:
+      > yes
+
+      Type [ ]:
+      > number
+
+      Input label:
+      > Number of change records to show
+
+      Input machine name [number_of_change_records_to_show]:
+      > limit
+
+      Default value [ ]:
+      > 5
+          </code></pre>
+        </section>
+
+        <section>
+          <h3>Create a block part 3</h3>
+          <pre><code class="hljs">
+      Do you confirm generation? (yes/no) [yes]:
+      > yes
+
+      Generated or updated files
+       1 - modules/custom/change_records/src/Plugin/Block/ChangeRecordsBlock.php
+
+      Rebuilding cache(s), wait a moment please.
+      [OK] Done clearing cache(s).
+          </code></pre>
+        </section>
+
+        <section>
+          <h3>Requesting data from the REST API</h3>
+          <p>src/Plugin/Block/ChangeRecordsBlock.php</p>
+          <pre><code class="hljs">
+  public function build() {
+    $options = [
+      'query' => [
+        'type' => 'changenotice',
+        'limit' => $this->configuration['limit'],
+        'status' => 1,
+        'sort' => 'created',
+        'direction' => 'DESC',
+      ],
+    ];
+    $result = $this->http_client->get('https://www.drupal.org/api-d7/node.json', $options);
+    $change_records = json_decode($result->getBody())->list;
+    // ...
+  }
+          </code></pre>
+        </section>
+
+        <section>
+          <h3>Requesting data from the REST API</h3>
+          <p>src/Plugin/Block/ChangeRecordsBlock.php</p>
+          <pre><code class="hljs">
+  public function build() {
+    // ...
+    $items = [];
+    foreach ($change_records as $change_record) {
+      $items[] = [
+        '#type' => 'link',
+        '#title' => $change_record->title,
+        '#url' => Url::fromUri($change_record->url),
+      ];
+    }
+    return [
+      '#theme' => 'item_list',
+      '#items' => $items,
+      '#list_type' => 'ol',
+    ];
+  }
+          </code></pre>
+        </section>
+
+        <section>
+          <h3>Modeling REST data as entities</h3>
+          <ul>
+            <li>json_decode() results in a plain object (meh)</li>
+            <li>Entities are the ideal match in Drupal</li>
+            <li>Integrates well with everything</li>
+            <li>Local caching</li>
+            <li>Importing / exporting</li>
+            <li>Requires the Serialization module</li>
+          </ul>
+        </section>
+
+        <section>
+          <h3>Modeling REST data as entities</h3>
+          <ul>
+            <li>Create custom entity representing REST data</li>
+            <li>Inject the 'serializer' service</li>
+            <li>Deserialize the REST data into an entity</li>
+          </ul>
+          <pre><code class="hljs">
+ $data = $this->httpClient->get('https://www.drupal.org/api-d7/node/2692565.json');
+ $serializer = \Drupal::service('serializer');
+ $entity = $serializer->deserialize($data, 'Drupal\change_records\Entity\ChangeRecord', 'json');
+          </code></pre>
+        </section>
+
+        <section>
+          <h2>Providing a REST API in Drupal</h2>
+          <ul>
+            <li>Why use Drupal?</li>
+            <li>Designing a REST API</li>
+            <li>REST modules</li>
+            <li>Programmatically creating endpoints</li>
+            <li>Headless Drupal</li>
+          </ul>
+        </section>
+
+        <section>
+          <h2>Why use Drupal?</h2>
+          <ul>
+            <li>No need to write custom code</li>
+            <li>Powerful data modeling UI</li>
+            <li>Versioning</li>
+            <li>Caching</li>
+            <li>Pagination</li>
+            <li>Flood control</li>
+            <li>Sorting</li>
+            <li>Filtering</li>
+            <li>Awesome content authoring tools</li>
+          </ul>
+        </section>
+
+        <section>
+          <h2>Designing a REST API</h2>
+          <ul>
+            <li><code class="inline-code">GET /api/v1/books</code> - Lists books</li>
+            <li><code class="inline-code">GET /api/v1/books/123</code> - Retrieve a book</li>
+            <li><code class="inline-code">POST /api/v1/books</code> - Create a book</li>
+            <li><code class="inline-code">PATCH /api/v1/books/123</code> - Update a book</li>
+            <li><code class="inline-code">DELETE /api/v1/books/123</code> - Delete a book</li>
+          </ul>
+        </section>
+
+        <section>
+          <h2>Designing a REST API</h2>
+          <ul>
+            <li><code class="inline-code">GET /api/v1/books/123/chapters</code> - Lists chapters</li>
+            <li><code class="inline-code">GET /api/v1/books/123/chapters/456</code> - Retrieve a chapter</li>
+            <li><code class="inline-code">POST /api/v1/books/123/chapters</code> - Create a chapter</li>
+            <li><code class="inline-code">PATCH /api/v1/books/123/chapters/456</code> - Update a chapter</li>
+            <li><code class="inline-code">DELETE /api/v1/books/123/chapters/456</code> - Delete a chapter</li>
+          </ul>
         </section>
 
         <section>
@@ -162,19 +402,20 @@
         </section>
 
         <section>
-          <h2>Using REST UI</h2>
+          <h3>Using REST UI</h3>
           <p>/admin/config/services/rest</p>
           <p><img src="restui.png" /></p>
         </section>
 
         <section>
-          <h2>Permissions</h2>
+          <h3>Permissions</h3>
           <ul>
             <li>Available for every enabled entity</li>
             <li>Separate permission per HTTP method</li>
           </ul>
           <p><img src="permissions.png" /></p>
         </section>
+
 
         <section>
           <h2>Headless Drupal</h2>
@@ -189,7 +430,7 @@
         <section>
           <h2>Why go headless?</h2>
           <ul>
-            <li>Drupal can't keep up with the front end</li>
+            <li>Frontend changes faster than backend</li>
             <li>Front end devs prefer JS</li>
             <li>Fast iteration and delivery</li>
             <li>Deliver content to microsites</li>
@@ -201,592 +442,7 @@
         </section>
 
         <section>
-          <h2>Configure webserver</h2>
-          <p>Use the "web/" folder as site root</p>
-        </section>
-
-        <section>
-          <h2>Sanity check</h2>
-          <ul>
-            <li>Open Drupal in the browser</li>
-          </ul>
-          <pre><code class="hljs">
-          $ ./vendor/bin/drush st
-          $ ./vendor/bin/console
-          </code></pre>
-        </section>
-
-        <section>
-          <h2>D8 developer mode</h2>
-          <ul><li>Display error messages</li>
-          <li>Disable CSS/JS aggregation</li>
-          <li>Disable render cache</li>
-          <li>Allow installing test modules</li></ul>
-        </section>
-
-        <section>
-          <h2>Engage developer mode</h2>
-          <h3>Copy:</h3>
-          <code class="hljs">sites/example.settings.local.php</code>
-          <h3>To:</h3>
-          <code class="hljs">sites/default/settings.local.php</code>
-        </section>
-
-        <section>
-          <h3>sites/default/settings.php</h3>
-          <pre><code class="hljs">
-# if (file_exists(__DIR__ . '/settings.local.php')) {
-#   include __DIR__ . '/settings.local.php';
-# }
-          </code></pre>
-          <h3>Uncomment these lines</h3>
-        </section>
-
-        <section>
-          <h2>More development options</h2>
-          <h3>sites/default/services.yml</h3>
-          <ul><li>Twig debugging</li>
-          <li>Twig auto-recompile</li>
-          <li>Disable Twig cache</li>
-          <li>Advanced caching options</li>
-          <li>...</li></ul>
-        </section>
-
-        <section>
-          <h2>Finding information</h2>
-          <p>Where to go when you are stuck?</p>
-        </section>
-
-        <section>
-          <h2>Documentation</h2>
-          <ul>
-            <li><a href="https://www.drupal.org/node/2182165">Getting started with Drupal 8</li>
-            <li><a href="https://www.drupal.org/developing/modules/8">Creating Drupal 8 modules</li>
-            <li><a href="https://www.drupal.org/developing/api/8">Drupal 8 APIs</li>
-            <li><a href="https://www.drupal.org/theme-guide/8">Theming Drupal 8</li>
-          </ul>
-        </section>
-
-        <section>
-          <h2>Change records</h2>
-          <h3><a href="https://www.drupal.org/list-changes">https://www.drupal.org/list-changes</a></h3>
-          <ul>
-            <li>Documents all changes in Drupal 8</li>
-            <li>Search for keywords</li>
-            <li>"Before" and "after" code examples</li>
-            <li>Link to issue that introduced change</li>
-          </ul>
-        </section>
-
-        <section>
-          <h2>Getting help</h2>
-          <ul>
-            <li><a href="https://drupal.stackexchange.com/">Stack Exchange</a></li>
-            <li><a href="https://www.drupal.org/irc">IRC</a></li>
-            <li><a href="https://twitter.com/hashtag/Drupal8">Twitter</a></li>
-            <li>Issue queues</li>
-            <li>Core tests</li>
-            <li>Google</li>
-          </ul>
-        </section>
-
-        <section data-background="#F8FCC1">
-          <h2>Converting modules to D8</h2>
-          <ol start="0">
-            <li>Enable the module</li>
-            <li>Check what breaks</li>
-            <li>Find change record</li>
-            <li>Fix</li>
-            <li>GOTO 1</li>
-          </ol>
-        </section>
-
-        <section data-background="#F8FCC1">
-          <h2>First things first</h2>
-          <h3>mymodule.info -> mymodule.info.yml</h3>
-          <p>Drupal 7:</p>
-          <pre><code data-trim contenteditable>
-name = Example
-description = My module.
-core = 7.x
-files[] = myfile.php
-dependencies[] = views
-          </code></pre>
-          <p>Drupal 8:</p>
-          <pre><code data-trim contenteditable>
-name: Example
-type: module
-description: 'My module.'
-core: 8.x
-dependencies:
-  - views
-          </code></pre>
-        </section>
-
-        <section data-background="#F8FCC1">
-          <h3>Create a module</h3>
-          <pre><code data-trim contenteditable>
-$ mkdir modules/one
-$ vim modules/one/one.info.yml
-          </code></pre>
-
-          <pre><code data-trim contenteditable>
-name: One
-description: Training module
-type: module
-core: 8.x
-          </code></pre>
-
-          <pre><code data-trim contenteditable>
-$ drush en one
-          </code></pre>
-        </section>
-
-
-        <section data-background="#F8FCC1">
-          <h3>Convert hook_menu() to routes</h3>
-          <ul>
-            <li>Convert hook_menu() items to `module.routing.yml`</li>
-            <li>Convert page callbacks to ControllerBase</li>
-            <li>Convert form builders to FormBase</li>
-            <li>Convert local tasks and actions</li>
-            <li>Convert menu links and contextual links</li>
-            <li>Convert hook_menu_alter() to RouteSubscriber</li>
-          </ul>
-        </section>
-
-        <section data-background="#F8FCC1">
-          <h3>module.routing.yml</h3>
-          <pre><code data-trim>
-function book_menu() {
-  $items['admin/content/book'] = array(
-    'title' => 'Books',
-    'description' => "Manage your site's book outlines.",
-    'page callback' => 'book_admin_overview',
-    'access arguments' => array('administer book outlines'),
-    'type' => MENU_LOCAL_TASK,
-    'file' => 'book.admin.inc',
-  );
-  return $items;
-}
-          </code></pre>
-          <pre><code data-trim contenteditable>
-book.admin:
-  path: '/admin/content/book'
-  defaults:
-    _controller: '\Drupal\book\Controller\BookController::adminOverview'
-    _title: 'Books'
-  requirements:
-    _permission: 'administer book outlines'
-          </code></pre>
-        </section>
-
-        <section data-background="#F8FCC1">
-          <h3>Convert local tasks (aka tabs)</h3>
-          <p>In Drupal 7:</p>
-          <pre><code data-trim contenteditable>
-function taxonomy_menu() {
-  $items['taxonomy/term/%taxonomy_term/view'] = array(
-    'title' => 'View',
-    'type' => MENU_DEFAULT_LOCAL_TASK,
-  );
-  $items['taxonomy/term/%taxonomy_term/edit'] = array(
-    'title' => 'Edit',
-    'page callback' => 'drupal_get_form',
-    'page arguments' => array('taxonomy_form_term', 2, NULL),
-    'access callback' => 'taxonomy_term_edit_access',
-    'access arguments' => array(2),
-    'type' => MENU_LOCAL_TASK,
-  );
-  return $items;
-}
-          </code></pre>
-        </section>
-
-        <section data-background="#F8FCC1">
-          <h3>Convert local tasks (aka tabs)</h3>
-          <p>taxonomy.links.task.yml</p>
-          <pre><code data-trim contenteditable>
-entity.taxonomy_term.canonical:
-  title: 'View'
-  route_name: entity.taxonomy_term.canonical
-  base_route: entity.taxonomy_term.canonical
-
-entity.taxonomy_term.edit_form:
-  title: 'Edit'
-  route_name: entity.taxonomy_term.edit_form
-  base_route: entity.taxonomy_term.canonical
-          </code></pre>
-          <p>taxonomy.routing.yml</p>
-          <pre><code data-trim contenteditable>
-entity.taxonomy_term.canonical:
-  path: '/taxonomy/term/{taxonomy_term}'
-  defaults:
-    ...
-
-entity.taxonomy_term.edit_form:
-  path: '/taxonomy/term/{taxonomy_term}/edit'
-  defaults:
-    ...
-          </code></pre>
-        </section>
-
-        <section data-background="#F8FCC1">
-          <h3>Convert local actions</h3>
-          <pre><code data-trim contenteditable>
-function taxonomy_menu() {
-  $items['admin/structure/taxonomy/add'] = array(
-    'title' => 'Add vocabulary',
-    'page callback' => 'drupal_get_form',
-    'page arguments' => array('taxonomy_form_vocabulary'),
-    'access arguments' => array('administer taxonomy'),
-    'type' => MENU_LOCAL_ACTION,
-  );
-  return $items;
-}
-          </code></pre>
-          <p>taxonomy.links.action.yml</p>
-          <pre><code data-trim contenteditable>
-entity.taxonomy_vocabulary.add_form:
-  route_name: entity.taxonomy_vocabulary.add_form
-  title: 'Add vocabulary'
-  appears_on:
-    - entity.taxonomy_vocabulary.collection
-          </code></pre>
-        </section>
-
-        <section data-background="#F8FCC1">
-          <h3>Convert menu links</h3>
-          <pre><code data-trim contenteditable>
-function taxonomy_menu() {
-  $items['admin/structure/taxonomy'] = array(
-    'title' => 'Taxonomy',
-    'description' => 'Manage tagging, categorization, and classification of your content.',
-    'page callback' => 'drupal_get_form',
-    'page arguments' => array('taxonomy_overview_vocabularies'),
-    'access arguments' => array('administer taxonomy'),
-    'type' => MENU_NORMAL_ITEM,
-  );
-  return $items;
-}
-          </code></pre>
-          <p>taxonomy.links.menu.yml</p>
-          <pre><code data-trim contenteditable>
-entity.taxonomy_vocabulary.collection:
-  title: Taxonomy
-  parent: system.admin_structure
-  description: 'Manage tagging, categorization, and classification of your content.'
-  route_name: entity.taxonomy_vocabulary.collection
-          </code></pre>
-        </section>
-
-        <section data-background="#F8FCC1">
-          <h3>Convert contextual links</h3>
-          <pre><code data-trim contenteditable>
-function block_menu() {
- $items['admin/structure/block/manage/%/%/configure'] = array(
-    'title' => 'Configure block',
-    'type' => MENU_DEFAULT_LOCAL_TASK,
-    'context' => MENU_CONTEXT_INLINE,
-  );
-  return $items;
-}
-          </code></pre>
-          <p>block.links.contextual.yml</p>
-          <pre><code data-trim contenteditable>
-block_configure:
-  title: 'Configure block'
-  route_name: 'entity.block.edit_form'
-  group: 'block'
-          </code></pre>
-        </section>
-
-        <section data-background="#F8FCC1">
-          <h3>Showing the contextual links</h3>
-          <p>\Drupal\Block\BlockViewBuilder</p>
-          <pre><code data-trim contenteditable>
-$block = [
-  '#theme' => 'block',
-  '#contextual_links' => [
-    'block' => [
-      'route_parameters' => ['block' => $entity->id()],
-    ],
-  ],
-];
-          </code></pre>
-        </section>
-
-        <section data-background="#F8FCC1">
-          <h3>Convert hook_menu_alter() to RouteSubscriber</h3>
-          <pre><code data-trim contenteditable>
-namespace Drupal\system\EventSubscriber;
-
-use Drupal\Core\Routing\RouteSubscriberBase;
-use Symfony\Component\Routing\RouteCollection;
-
-class AdminRouteSubscriber extends RouteSubscriberBase {
-
-  protected function alterRoutes(RouteCollection $collection) {
-    foreach ($collection->all() as $route) {
-      if (strpos($route->getPath(), '/admin') === 0 && !$route->hasOption('_admin_route')) {
-        $route->setOption('_admin_route', TRUE);
-      }
-    }
-  }
-
-}
-          </code></pre>
-        </section>
-
-
-        <section data-background="#F8FCC1">
-          <h2>More info on routing</h2>
-          <h3>Routing system in Drupal 8</h3>
-          <p><a href="https://www.drupal.org/developing/api/8/routing">https://www.drupal.org/developing/api/8/routing</a></p>
-          <h3>Tutorial for converting hook_menu()</h3>
-          <p><a href="https://www.drupal.org/node/2118147">https://www.drupal.org/node/2118147</a></p>
-        </section>
-
-        <section data-background="#F8FCC1">
-          <h3>Convert page callbacks to ControllerBase</h3>
-          <p>one.routing.yml</p>
-          <pre><code data-trim contenteditable>
-one.helloworld:
-  path: '/hello'
-  defaults:
-    _controller: '\Drupal\one\Controller\OneController::helloWorld'
-    _title: 'Hey there'
-  requirements:
-    _permission: 'access content'
-          </code></pre>
-          <p>src/Controller/OneController.php</p>
-          <pre><code data-trim contenteditable>
-namespace Drupal\one\Controller;
-
-use Drupal\Core\Controller\ControllerBase;
-
-class OneController extends ControllerBase {
-
-  public function helloWorld() {
-    return ['#markup' => 'Hello world!'];
-  }
-
-}
-          </code></pre>
-        </section>
-
-        <section data-background="#F8FCC1">
-          <h3>Convert form builders to FormBase</h3>
-          <p>one.routing.yml</p>
-          <pre><code data-trim contenteditable>
-one.helloworldform:
-  path: '/helloform'
-  defaults:
-    _form: '\Drupal\one\Form\HelloForm'
-  requirements:
-    _permission: 'access content'
-          </code></pre>
-        </section>
-
-        <section data-background="#F8FCC1">
-          <p>src/Form/HelloForm.php</p>
-          <pre><code data-trim contenteditable>
-namespace Drupal\one\Form;
-
-use Drupal\Core\Form\FormBase;
-use Drupal\Core\Form\FormStateInterface;
-
-class HelloForm extends FormBase {
-
-  public function getFormId() {
-    return 'hello_form';
-  }
-
-  public function buildForm(array $form, FormStateInterface $form_state) {
-    return [
-      'subject' => [
-        '#type' => 'radios',
-        '#title' => $this->t('Hello'),
-        '#options' => [
-          'world' => $this->t('World'),
-          'kitty' => $this->t('Kitty'),
-          'dog' => $this->t('Yes this is dog'),
-        ],
-      ],
-      'submit' => [
-        '#type' => 'submit',
-        '#value' => $this->t('Submit'),
-      ],
-    ];
-  }
-
-  public function submitForm(array &$form, FormStateInterface $form_state) {
-    $subject = $form_state->getValue('subject');
-    drupal_set_message($this->t('Hello @subject!', ['@subject' => $subject]));
-  }
-
-}
-          </code></pre>
-        </section>
-
-        <section data-background="#F8FCC1">
-          <h3>Convert variables to config</h3>
-          <pre><code data-trim contenteditable>
-variable_get('mymodule_mysetting', TRUE);
-variable_set('mymodule_mysetting', $my_value);
-          </code></pre>
-          <pre><code data-trim contenteditable>
-\Drupal::config('mymodule.settings')->get('mysetting');
-\Drupal::service('config.factory')
-  ->getEditable('mymodule.settings')
-  ->set('mysetting', $my_value)
-  ->save();
-          </code></pre>
-        </section>
-
-        <section data-background="#F8FCC1">
-          <h3>Default config</h3>
-          <p>config/install/mymodule.settings.yml</p>
-          <pre><code data-trim contenteditable>
-mysetting: true
-          </code></pre>
-        </section>
-
-        <section data-background="#F8FCC1">
-          <h2>More info on config</h2>
-          <h3>Configuration management architecture</h3>
-          <p><a href="https://groups.drupal.org/node/191283">https://groups.drupal.org/node/191283</a></p>
-          <h3>Configuration API</h3>
-          <p><a href="https://www.drupal.org/developing/api/8/configuration">https://www.drupal.org/developing/api/8/configuration</a></p>
-        </section>
-
-        <section data-background="#F8FCC1">
-          <h3>Convert procedural code to services</h3>
-          <p>one.services.yml</p>
-          <pre><code data-trim contenteditable>
-services:
-  one.myservice:
-    class: Drupal\one\MyService
-          </code></pre>
-          <p>Examples: core.services.yml</p>
-        </section>
-
-        <section data-background="#F8FCC1">
-          <h3>Convert blocks</h3>
-          <pre><code data-trim contenteditable>
-function search_block_info() {
-  $blocks['form']['info'] = t('Search form');
-  $blocks['form']['cache'] = DRUPAL_NO_CACHE;
-  $blocks['form']['properties']['administrative'] = TRUE;
-  return $blocks;
-}
-
-function search_block_view($delta = '') {
-  if (user_access('search content')) {
-    $block['content'] = drupal_get_form('search_block_form');
-    return $block;
-  }
-}
-          </code></pre>
-        </section>
-
-        <section data-background="#F8FCC1">
-          <h3>Convert blocks</h3>
-          <pre><code data-trim contenteditable>
-/**
- * @Block(
- *   id = "search_form_block",
- *   admin_label = @Translation("Search form"),
- *   category = @Translation("Forms")
- * )
- */
-class SearchBlock extends BlockBase {
-  protected function blockAccess(AccountInterface $account) {
-    return AccessResult::allowedIfHasPermission($account, 'search content');
-  }
-
-  public function build() {
-    return \Drupal::formBuilder()->getForm('Drupal\search\Form\SearchBlockForm');
-  }
-
-}
-          </code></pre>
-        </section>
-
-        <section data-background="#F8FCC1">
-          <h3>Convert permissions</h3>
-          <pre><code data-trim contenteditable>
-function node_permission() {
-  return array(
-    'access content' => array(
-      'title' => t('View published content'),
-    ),
-  );
-}
-          </code></pre>
-          <p>node.permissions.yml</p>
-          <pre><code data-trim contenteditable>
-access content:
-  title: 'View published content'
-          </code></pre>
-        </section>
-
-        <section data-background="#F8FCC1">
-          <h3>Convert permissions</h3>
-          <p>one.permissions.yml</p>
-          <pre><code data-trim contenteditable>
-view hello form:
-  title: 'View the hello form'
-          </code></pre>
-          <p>one.routing.yml</p>
-          <pre><code data-trim contenteditable>
-one.helloworldform:
-  ...
-  requirements:
-    _permission: 'view hello form'
-          </code></pre>
-        </section>
-
-        <section data-background="#F8FCC1">
-          <h3>Convert tests</h3>
-          <ul>
-            <li>WebTestBase</li>
-            <li>KernelTestBase</li>
-            <li>UnitTestCase</li>
-            <li>BrowserTestBase</li>
-            <li>JavascriptTestBase (soon&trade;)</li>
-          </ul>
-        </section>
-
-        <section>
-          <h2>Converting themes to D8</h2>
-          <ul>
-            <li>Twig</li>
-            <li>Theme functions are dead</li>
-            <li>Template + preprocess for everything</li>
-          </ul>
-          <p><a href="https://www.drupal.org/node/2025313">Twig conversion process</a></p>
-        </section>
-
-        <section>
-          <h2>Converting D7 projects to D8</h2>
-          <ul>
-            <li>Migrate</li>
-            <li>drush make -&gt; composer</li>
-          </ul>
-        </section>
-
-        <section>
           <h2>Questions?</h2>
-        </section>
-
-        <section>
-          <h2>Drupal Module Upgrader</h2>
-          <ul>
-            <li>drush dmu-analyze</li>
-            <li>drush dmu-upgrade</li>
-          </ul>
-          <p>Demo with the 'Language icons' module</p>
         </section>
 
       </div>
