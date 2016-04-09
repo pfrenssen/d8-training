@@ -416,6 +416,71 @@
           <p><img src="permissions.png" /></p>
         </section>
 
+        <section>
+          <h2>HAL module</h2>
+          <ul>
+            <li>Adds support for <a href="https://en.wikipedia.org/wiki/Hypertext_Application_Language">Hypertext Application Language</a></li>
+            <li>Adds formats "application/hal+json" &amp; "application/hal+xml"</li>
+            <li>Provides location of itself and relations (_links)</li>
+            <li>Describes embedded resources (_embedded)</li>
+          </ul>
+        </section>
+
+        <section>
+          <h3>HAL Links</h3>
+          <p>Always provide a link to yourself with <code class="inline-code">_self</code></p>
+          <pre><code class="hljs">
+    {
+        "_links": {
+            "self": {
+                "href": "http://my.domain/users?page=3"
+            }
+        }
+    }
+          </code></pre>
+        </section>
+
+        <section>
+          <h3>HAL Links</h3>
+          <p>Paging</p>
+          <pre><code class="hljs">
+    {
+        "_links": {
+            "first": {
+                "href": "http://my.domain/users"
+            },
+            "prev": {
+                "href": "http://my.domain/users?page=2"
+            },
+            "next": {
+                "href": "http://my.domain/users?page=4"
+            },
+            "last": {
+                "href": "http://my.domain/users?page=133"
+            }
+        }
+    }
+          </code></pre>
+        </section>
+
+        <section>
+          <h3>HAL Embedded Resources</h3>
+          <pre><code class="hljs">
+    {
+        "_embedded": {
+            "profile_pictures": [
+                {
+                    "_links": {
+                        "self": {
+                            "href": "http://my.domain/files/123"
+                        }
+                    },
+                }
+            ],
+        }
+    }
+          </code></pre>
+        </section>
 
         <section>
           <h2>Headless Drupal</h2>
