@@ -96,16 +96,6 @@
         </section>
 
         <section>
-          <h2>CRUD over HTTP</h2>
-          <ul>
-            <li>Create: POST</li>
-            <li>Read: GET</li>
-            <li>Update: PATCH (or PUT)</li>
-            <li>Delete: DELETE</li>
-          </ul>
-        </section>
-
-        <section>
           <h2>REST API first look: drupal.org</h2>
           <ul>
             <li>https://www.drupal.org/drupalorg/api</li>
@@ -131,7 +121,17 @@
         </section>
 
         <section>
-          <h2>REST client</h2>
+          <h2>CRUD over HTTP</h2>
+          <ul>
+            <li>Create: POST</li>
+            <li>Read: GET</li>
+            <li>Update: PATCH (or PUT)</li>
+            <li>Delete: DELETE</li>
+          </ul>
+        </section>
+
+        <section>
+          <h2>HTTP REST client</h2>
           <ul>
             <li>Desktop application</li>
             <li>Browser plugin</li>
@@ -162,11 +162,12 @@
           <h3>POST Example</h3>
           <pre><code class="hljs">
     $ curl \
-      --header "Content-Type: application/json" \
+      --header "Content-Type: application/hal+json" \
       --request POST \
       --data-binary '{"username":"pfrenssen","password":"hunter2"}' \
       http://my.domain/api/login
           </code></pre>
+          <p>Tip: use hal+json for POST & PATCH. See <a href="https://www.drupal.org/node/1964034">issue #1964034</a></p>
         </section>
 
         <section>
@@ -178,7 +179,7 @@
       --request PATCH \
       --user pfrenssen:hunter2 \
       --data-binary '{"title":[{"value":"Updated node title"}]}' \
-      http://my.domain/node/123?_format=hal_json
+      http://my.drupal.site/node/123?_format=hal_json
           </code></pre>
           <p>Tip: get a token from /rest/session/token</p>
         </section>
@@ -190,7 +191,7 @@
       --header 'X-CSRF-Token: YmFH42rZPtRLzl5ZrA5GyKKlskqqWsJQEcme0yWR888' \
       --request DELETE \
       --user pfrenssen:hunter2 \
-      http://my.domain/node/123?_format=hal_json
+      http://my.drupal.site/node/123?_format=hal_json
           </code></pre>
           <p>Tip: get a token from /rest/session/token</p>
         </section>
@@ -215,10 +216,6 @@
             <li>Firefox: <a href="https://addons.mozilla.org/en-US/firefox/addon/jsonview/?src=search">JSONView</a></li>
           </ul>
         </section>
-          <h3>Postman for Chromium</h3>
-          <p><a href="https://www.getpostman.com/">https://www.getpostman.com/</a></p>
-          <p><img src="postman.png" /></p>
-        </section>
 
         <section>
           <h3>HttpRequester for Firefox</h3>
@@ -235,7 +232,8 @@
         </section>
 
         <section>
-          <h2>Stuff you need</h2>
+          <h2>Consuming a REST service with Drupal</h2>
+          <h3>What you need</h3>
           <ul>
             <li>Drupal 8</li>
             <li>Drush</li>
@@ -263,13 +261,12 @@
           <p><a href="https://drupalconsole.com/">https://drupalconsole.com/</a></p>
         </section>
 
-
         <section>
           <h2>Exercise: Consuming a REST service</h2>
           <ul>
             <li>Use the Drupal.org REST API</li>
             <li>Retrieve 5 change records with Guzzle</li>
-            <li>Display in a block</li>
+            <li>Display results in a block</li>
           </ul>
         </section>
 
@@ -394,7 +391,7 @@
         <section>
           <h3>Modeling REST data as entities</h3>
           <ul>
-            <li>json_decode() results in a plain object (meh)</li>
+            <li>json_decode() returns a plain (meh) object</li>
             <li>Entities are the ideal match in Drupal</li>
             <li>Integrates well with everything</li>
             <li>Local caching</li>
@@ -466,6 +463,31 @@
         </section>
 
         <section>
+          <h2>Return correct HTTP responses</h2>
+          <ul>
+            <li>todo</li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+          </ul>
+        </section>
+
+        <section>
+          <h2>JSON or XML?</h2>
+          <h3>JSON</h3>
+          <ul>
+            <li>Compact</li>
+            <li>Easy to read</li>
+            <li>Totally hipster</li>
+          </ul>
+          <h3>XML</h3>
+          <ul>
+            <li>Totally enterprise</li>
+          </ul>
+        </section>
+
+        <section>
           <h2>REST related modules</h2>
           <ul>
             <li>RESTful Web Services</li>
@@ -475,7 +497,6 @@
             <li>Views</li>
           </ul>
         </section>
-
 
         <section>
           <h2>RESTful Web Services module</h2>
@@ -592,6 +613,41 @@
             <li>Allows to authenticate over HTTP Basic Auth</li>
             <li><code class="inline-code">Authorization: Basic dXNlcjpwYXNz</code></li>
             <li>Credentials are base 64 encoded: only use over HTTPS!</li>
+          </ul>
+        </section>
+
+        <section>
+          <h2>Views</h2>
+          <p>Create REST endpoint through UI</p>
+          <p><img src="create-view.png" /></p>
+        </section>
+
+        <section>
+          <h3>Output format</h3>
+          <p>Format settings determines output format</p>
+          <p><img src="views-format.png" /></p>
+        </section>
+
+        <section>
+          <h3>Select data to expose</h3>
+          <p>Display 'fields'</p>
+          <p><img src="views-fields.png" /></p>
+        </section>
+
+        <section>
+          <h3>Output raw data</h3>
+          <p>Edit field settings</p>
+          <p><img src="views-row-style.png" /></p>
+        </section>
+
+        <section>
+          <h2>Programmatically creating an endpoint</h2>
+          <ul>
+            <li>todo</li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
           </ul>
         </section>
 
