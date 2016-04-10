@@ -96,6 +96,145 @@
         </section>
 
         <section>
+          <h2>CRUD over HTTP</h2>
+          <ul>
+            <li>Create: POST</li>
+            <li>Read: GET</li>
+            <li>Update: PATCH (or PUT)</li>
+            <li>Delete: DELETE</li>
+          </ul>
+        </section>
+
+        <section>
+          <h2>REST API first look: drupal.org</h2>
+          <ul>
+            <li>https://www.drupal.org/drupalorg/api</li>
+            <li>Exposes projects, issues, users, nodes, comments, ...</li>
+            <li>Read-only</li>
+            <li>Anonymous access (fair use)</li>
+            <li>Returns data in JSON and XML formats</li>
+            <li>Supports pagination and sorting</li>
+            <li>Built in Drupal 7 with the RESTful Web Services module</li>
+          </ul>
+        </section>
+
+        <section>
+          <h3>An example request</h3>
+          <p><a href="https://www.drupal.org/api-d7/user.json?field_country=Belgium&sort=uid&limit=10">https://www.drupal.org/api-d7/user.json?field_country=Belgium&sort=uid&limit=10</a></p>
+          <ul>
+            <li>A JSON object is returned</li>
+            <li>Contains pagination data and a list of users</li>
+            <li>User objects contain many fields</li>
+            <li>Can be filtered and sorted by field</li>
+            <li>Do all fields make sense?</li>
+          </ul>
+        </section>
+
+        <section>
+          <h2>REST client</h2>
+          <ul>
+            <li>Desktop application</li>
+            <li>Browser plugin</li>
+            <li>Command line client</li>
+            <li>Curl</li>
+          </ul>
+        </section>
+
+        <section>
+          <h2>Doing requests with Curl</h2>
+          <ul>
+            <li>Powerful CLI data transfer tool</li>
+            <li>Available on all platforms</li>
+            <li>Does a lot more than just HTTP</li>
+            <li>Good for doing quick tests</li>
+          </ul>
+        </section>
+
+        <section>
+          <h3>GET Example</h3>
+          <pre><code class="hljs">
+    $ curl 'https://www.drupal.org/api-d7/node.json?limit=1'
+          </code></pre>
+          <p>Tip: add the --include flag to display HTTP headers</p>
+        </section>
+
+        <section>
+          <h3>POST Example</h3>
+          <pre><code class="hljs">
+    $ curl \
+      --header "Content-Type: application/json" \
+      --request POST \
+      --data-binary '{"username":"pfrenssen","password":"hunter2"}' \
+      http://my.domain/api/login
+          </code></pre>
+        </section>
+
+        <section>
+          <h3>PATCH Example</h3>
+          <pre><code class="hljs">
+    $ curl \
+      --header 'Content-type: application/hal+json' \
+      --header 'X-CSRF-Token: YmFH42rZPtRLzl5ZrA5GyKKlskqqWsJQEcme0yWR888' \
+      --request PATCH \
+      --user pfrenssen:hunter2 \
+      --data-binary '{"title":[{"value":"Updated node title"}]}' \
+      http://my.domain/node/123?_format=hal_json
+          </code></pre>
+          <p>Tip: get a token from /rest/session/token</p>
+        </section>
+
+        <section>
+          <h3>DELETE Example</h3>
+          <pre><code class="hljs">
+    $ curl \
+      --header 'X-CSRF-Token: YmFH42rZPtRLzl5ZrA5GyKKlskqqWsJQEcme0yWR888' \
+      --request DELETE \
+      --user pfrenssen:hunter2 \
+      http://my.domain/node/123?_format=hal_json
+          </code></pre>
+          <p>Tip: get a token from /rest/session/token</p>
+        </section>
+
+        <section>
+          <h2>Browser plugins</h2>
+          <h3>Postman for Chromium</h3>
+          <p><a href="https://www.getpostman.com/">https://www.getpostman.com/</a></p>
+          <p><img src="postman.png" /></p>
+        </section>
+
+        <section>
+          <h3>HttpRequester for Firefox</h3>
+          <p><a href="https://addons.mozilla.org/firefox/addon/httprequester">https://addons.mozilla.org/firefox/addon/httprequester</a></p>
+          <p><img src="httprequester.png" /></p>
+        </section>
+
+        <section>
+          <h3>Browser plugin for viewing JSON</h3>
+          <ul>
+            <li>Chromium: <a href="https://chrome.google.com/webstore/detail/json-formatter/bcjindcccaagfpapjjmafapmmgkkhgoa">JSON Formatter</a></li>
+            <li>Firefox: <a href="https://addons.mozilla.org/en-US/firefox/addon/jsonview/?src=search">JSONView</a></li>
+          </ul>
+        </section>
+          <h3>Postman for Chromium</h3>
+          <p><a href="https://www.getpostman.com/">https://www.getpostman.com/</a></p>
+          <p><img src="postman.png" /></p>
+        </section>
+
+        <section>
+          <h3>HttpRequester for Firefox</h3>
+          <p><a href="https://addons.mozilla.org/firefox/addon/httprequester">https://addons.mozilla.org/firefox/addon/httprequester</a></p>
+          <p><img src="httprequester.png" /></p>
+        </section>
+
+        <section>
+          <h3>Browser plugin for viewing JSON</h3>
+          <ul>
+            <li>Chromium: <a href="https://chrome.google.com/webstore/detail/json-formatter/bcjindcccaagfpapjjmafapmmgkkhgoa">JSON Formatter</a></li>
+            <li>Firefox: <a href="https://addons.mozilla.org/en-US/firefox/addon/jsonview/?src=search">JSONView</a></li>
+          </ul>
+        </section>
+
+        <section>
           <h2>Stuff you need</h2>
           <ul>
             <li>Drupal 8</li>
@@ -124,54 +263,6 @@
           <p><a href="https://drupalconsole.com/">https://drupalconsole.com/</a></p>
         </section>
 
-        <section>
-          <h2>REST client</h2>
-        </section>
-
-        <section>
-          <h3>Postman for Chromium</h3>
-          <p><a href="https://www.getpostman.com/">https://www.getpostman.com/</a></p>
-          <p><img src="postman.png" /></p>
-        </section>
-
-        <section>
-          <h3>HttpRequester for Firefox</h3>
-          <p><a href="https://addons.mozilla.org/firefox/addon/httprequester">https://addons.mozilla.org/firefox/addon/httprequester</a></p>
-          <p><img src="httprequester.png" /></p>
-        </section>
-
-        <section>
-          <h3>Browser plugin for viewing JSON</h3>
-          <ul>
-            <li>Chromium: <a href="https://chrome.google.com/webstore/detail/json-formatter/bcjindcccaagfpapjjmafapmmgkkhgoa">JSON Formatter</a></li>
-            <li>Firefox: <a href="https://addons.mozilla.org/en-US/firefox/addon/jsonview/?src=search">JSONView</a></li>
-          </ul>
-        </section>
-
-        <section>
-          <h2>REST API first look: drupal.org</h2>
-          <ul>
-            <li>https://www.drupal.org/drupalorg/api</li>
-            <li>Exposes projects, issues, users, nodes, comments, ...</li>
-            <li>Read-only</li>
-            <li>Anonymous access (fair use)</li>
-            <li>Returns data in JSON and XML formats</li>
-            <li>Supports pagination and sorting</li>
-            <li>Built in Drupal 7 with the RESTful Web Services module</li>
-          </ul>
-        </section>
-
-        <section>
-          <h3>An example request</h3>
-          <p><a href="https://www.drupal.org/api-d7/user.json?field_country=Belgium&sort=uid&limit=10">https://www.drupal.org/api-d7/user.json?field_country=Belgium&sort=uid&limit=10</a></p>
-          <ul>
-            <li>A JSON object is returned</li>
-            <li>Contains pagination data and a list of users</li>
-            <li>User objects contain many fields</li>
-            <li>Can be filtered and sorted by field</li>
-            <li>Do all fields make sense?</li>
-          </ul>
-        </section>
 
         <section>
           <h2>Exercise: Consuming a REST service</h2>
@@ -375,6 +466,18 @@
         </section>
 
         <section>
+          <h2>REST related modules</h2>
+          <ul>
+            <li>RESTful Web Services</li>
+            <li>REST UI</li>
+            <li>HAL</li>
+            <li>HTTP Basic Authentication</li>
+            <li>Views</li>
+          </ul>
+        </section>
+
+
+        <section>
           <h2>RESTful Web Services module</h2>
           <ul>
             <li>Part of Drupal 8 core</li>
@@ -480,6 +583,16 @@
         }
     }
           </code></pre>
+        </section>
+
+        <section>
+          <h2>HTTP Basic Authentication</h2>
+          <ul>
+            <li>Small core module</li>
+            <li>Allows to authenticate over HTTP Basic Auth</li>
+            <li><code class="inline-code">Authorization: Basic dXNlcjpwYXNz</code></li>
+            <li>Credentials are base 64 encoded: only use over HTTPS!</li>
+          </ul>
         </section>
 
         <section>
