@@ -55,7 +55,120 @@
         </section>
 
         <section>
-          <h2>Testing in Drupal 8</h2>
+          <h2>Goals of testing</h2>
+          <ul>
+            <li>Prove requirements are met</li>
+            <li>Prove input is handled correctly</li>
+            <li>Find bugs</li>
+            <li>Prevent regressions</li>
+          </ul>
+        </section>
+
+        <section>
+          <h2>Different types of tests</h2>
+          <ul>
+            <li>Alpha / beta testing</li>
+            <li>Usability testing</li>
+            <li>Accessibility testing</li>
+            <li>Acceptance testing</li>
+            <li>Exploratory testing</li>
+            <li>Security testing</li>
+            <li>Unit testing</li>
+            <li>Regression testing</li>
+            <li>Black box testing</li>
+            <li>A/B testing</li>
+            <li>Compatibility testing</li>
+            <li>Functional testing</li>
+            <li>Performance / Load / Concurrent / Stress testing</li>
+            <li>Smoke testing</li>
+            <li>Fuzzing</li>
+          </ul>
+        </section>
+
+        <section>
+          <h2>Some definitions</h2>
+          <ul>
+            <li>Test runner</li>
+            <li>Test case</li>
+            <li>System under test</li>
+            <li>Assertion</li>
+            <li>Fixture</li>
+            <li>Artifact</li>
+          </ul>
+        </section>
+
+        <section>
+          <h2>History of testing in Drupal</h2>
+          <h3>Simpletest</h3>
+          <ul>
+            <li>Adapted from simpletest/simpletest</li>
+            <li>Created for Drupal 4.6 in 2004</li>
+            <li>Stable release for Drupal 5.0 in 2007</li>
+            <li>Adopted for Drupal 7 core in 2008</li>
+          </ul>
+        </section>
+
+        <section>
+          <h2>Shortcomings</h2>
+          <ul>
+            <li>No true unit testing</li>
+            <li>Non-standard framework</li>
+            <li>Can only test PHP code</li>
+            <li>Slow</li>
+          </ul>
+        </section>
+
+        <section>
+          <h2>Drupal 8: Fix all the things</h2>
+          <ul>
+            <li>OOP: unit testing!</li>
+            <li>Adopt industry standards</li>
+            <li>Faster testing</li>
+            <li>Test browser behavior</li>
+            <li>Javascript testing</li>
+          </ul>
+        </section>
+
+        <section>
+          <h2>Simpletest in D8</h2>
+          <ul>
+            <li>Hosts (most) test code</li>
+            <li>User interface</li>
+            <li>Traits</li>
+          </ul>
+        </section>
+
+        <section>
+          <h2>Running tests from the UI</h2>
+          <ul>
+            <li>Enable Simpletest module</li>
+            <li>Go to admin/config/development/testing</li>
+            <li>Tip: don't run all tests at once</li>
+          </ul>
+          <p><img src="simpletest-ui.png" /></p>
+        </section>
+
+        <section>
+          <h2>How does Simpletest run tests</h2>
+          <ul>
+            <li>Creates temporary tables</li>
+            <li>Creates temporary file storage</li>
+            <li>Full Drupal install</li>
+          </ul>
+        </section>
+
+        <section>
+          <h2>Clean up test artifacts</h2>
+          <ul>
+            <li>Through Simpletest UI</li>
+            <li>Removes test database tables</li>
+            <li>Cleans out sites/default/files/simpletest</li>
+          </ul>
+          <p><img src="clean-test-environment.png" /></p>
+        </section>
+
+        <section>
+          <h2>Writing tests in Drupal 8</h2>
           <ul>
             <li>WebTestBase</li>
             <li>KernelTestBase</li>
@@ -68,27 +181,109 @@
         </section>
 
         <section>
-          <h2>Simpletest</h2>
+          <h2>Test location and namespaces</h2>
+          <h3>WebTestBase</h3>
           <ul>
-            <li>Adapted from simpletest/simpletest</li>
-            <li>Created for Drupal 4.6 in 2004</li>
-            <li>Stable release for Drupal 5.0 in 2007</li>
-            <li>Adopted for Drupal 7 core in 2008</li>
+            <li>modules/my_module/src/Tests/MyTest.php</li>
+            <li>Drupal\my_module\Tests\MyTest</li>
           </ul>
         </section>
 
         <section>
-          <h2>Shortcomings</h2>
+          <h3>KernelTestBase</h3>
           <ul>
-            <li></li>
+            <li>modules/my_module/tests/src/kernel/MyTest.php</li>
+            <li>Drupal\Tests\my_module\Kernel\MyTest</li>
           </ul>
         </section>
 
         <section>
-          <h2>Drupal 8</h2>
+          <h3>UnitTestCase</h3>
           <ul>
-            <li></li>
+            <li>modules/my_module/tests/src/unit/MyTest.php</li>
+            <li>Drupal\Tests\my_module\Unit\MyTest</li>
           </ul>
+        </section>
+
+        <section>
+          <h3>BrowserTestBase / JavaScriptTestBase</h3>
+          <ul>
+            <li>modules/my_module/tests/src/functional/MyTest.php</li>
+            <li>Drupal\Tests\my_module\Functional\MyTest</li>
+          </ul>
+        </section>
+
+        <section>
+          <h3>Create a test module</h3>
+          <pre><code class="hljs">
+   $ cd modules
+   $ mkdir one_two
+   $ cd one_two
+   $ mkdir -p src/Tests
+   $ mkdir -p tests/src/Kernel
+   $ mkdir -p tests/src/Unit
+   $ mkdir -p tests/src/Functional
+          </code></pre>
+        </section>
+
+        <section>
+          <p>one_two.info.yml</p>
+          <pre><code class="hljs">
+   name: One Two, One Two
+   description: Test tests
+   package: Testing
+
+   type: module
+   core: 8.x
+          </code></pre>
+        </section>
+
+        <section>
+          <h3>WebTestBase</h3>
+          <p>src/Tests/WebTest.php</p>
+          <pre><code class="hljs">
+  &lt;?php
+  namespace Drupal\one_two\Tests;
+
+  use Drupal\simpletest\WebTestBase;
+  
+  /**
+   * Example functional test. 
+   *
+   * @group one_two
+   */
+  class WebTest extends WebTestBase {
+    function testDrupalGet() {
+      $this->drupalGet('user/register');
+      $this->assertResponse(200, 'The registration page is accessible.');
+    }
+  }
+          </code></pre>
+        </section>
+
+        <section>
+          <pre><code class="hljs">
+  function testDrupalGet() {
+    $this->drupalGet('user/register');
+    $this->assertResponse(200, 'The registration page is accessible.');
+    $this->assertField('mail', 'The email field is present.');
+    $this->assertField('name', 'The name field is present.');
+    $this->assertField('timezone', 'The timezone field is present.');
+    $this->assertField('op', 'The submit button is present.');
+    $this->assertNoField('zlorp', 'The zlorp field is not present.');
+  }
+          </code></pre>
+          <p>Take a look at the available asserts.</p>
+        </section>
+
+        <section>
+          <h3>Debugging Web Tests</h3>
+          <pre><code class="hljs">
+  function testDrupalGet() {
+    @todo
+  }
+          </code></pre>
+          <p>Take a look at the available asserts.</p>
         </section>
 
         <section>
@@ -102,12 +297,12 @@
           </p>
         </section>
 
-        <section data-background="#007777">
+        <section>
           <h2>What is BDD?</h2>
           <h3>Bridge between client and development team</h3>
         </section>
 
-        <section data-background="#007777">
+        <section>
           <h2>Better communication</h2>
           <ul>
             <li>A shared language</li>
@@ -119,7 +314,7 @@
           </aside>
         </section>
 
-        <section data-background="#007777">
+        <section>
           <h2>Better planning</h2>
           <h3>Effective planning of development cycle</h3>
           <ul>
@@ -130,7 +325,7 @@
           </ul>
         </section>
 
-        <section data-background="#007777">
+        <section>
           <h2>Better documentation</h2>
           <h3>Complete, always correct</h3>
           <ul>
@@ -141,7 +336,7 @@
           </ul>
         </section>
 
-        <section data-background="#007777">
+        <section>
           <h2>Improve software quality</h2>
           <h3>Manual + automatic tests</h3>
           <ul>
@@ -151,11 +346,11 @@
           </ul>
         </section>
 
-        <section data-background="#4d7e65" data-background-transition="slide">
+        <section>
           <h1>Gherkin</h1>
         </section>
 
-        <section data-background="#4d7e65" data-background-transition="slide">
+        <section>
           <h2>Gherkin</h2>
           <h3>A language understandable by everyone</h3>
           <ul>
@@ -166,10 +361,10 @@
           </ul>
         </section>
 
-        <section data-background="#4d7e65" data-background-transition="slide">
+        <section>
           <h2>Gherkin example</h2>
           <pre>
-            <code class="gherkin">
+            <code class="hljs">
               Feature: Product highlights
                 In order to promote specific products
                 As a marketing manager
@@ -183,10 +378,10 @@
           </pre>
         </section>
 
-        <section data-background="#4d7e65" data-background-transition="slide">
+        <section>
           <h2>Gherkin structure</h2>
           <pre>
-            <code class="gherkin">
+            <code class="hljs">
               Feature: &lt; title &gt;
                 In order to &lt; business objective &gt;
                 As a &lt; user role or persona &gt;
@@ -202,10 +397,10 @@
           </pre>
         </section>
 
-        <section data-background="#4d7e65" data-background-transition="slide">
+        <section>
           <h2>Scenario outlines</h2>
           <pre>
-            <code class="gherkin">
+            <code class="hljs">
               Scenario: Show number of likes
                 Given I am logged in as &lt;user&gt;
                 When I visit the profile of &lt;friend&gt;
@@ -223,10 +418,10 @@
           </pre>
         </section>
 
-        <section data-background="#4d7e65" data-background-transition="slide">
+        <section>
           <h2>Tables</h2>
           <pre>
-            <code class="gherkin">
+            <code class="hljs">
               Scenario:
                 Given the following users exist:
                 | username | email                 |
@@ -237,9 +432,9 @@
           </pre>
         </section>
 
-        <section data-background="#7A6750" data-background-transition="slide">
+        <section>
           <h2>Get started</h2>
-          <pre class="bash">
+          <pre class="hljs">
             <div>
          $ git clone https://github.com/pfrenssen/behat-workshop.git 
          $ cd behat-workshop
@@ -247,36 +442,36 @@
           </pre>
         </section>
 
-        <section data-background="#7A6750" data-background-transition="slide">
+        <section>
           <h2>Install Composer</h2>
           <p><a href="https://getcomposer.org/download/">https://getcomposer.org/download/</a></p>
-          <pre class="bash">
+          <pre class="hljs">
             <div>
               $ curl -sS https://getcomposer.org/installer | php
             </div>
           </pre>
-          <pre class="bash">
+          <pre class="hljs">
             <div>
               $ php composer.phar --version
             </div>
           </pre>
         </section>
 
-        <section data-background="#7A6750" data-background-transition="slide">
+        <section>
           <h2>Install Behat Drupal Extension</h2>
-          <pre class="bash">
+          <pre class="hljs">
             <div>
               $ php composer.phar require drupal/drupal-extension
             </div>
           </pre>
-          <pre class="bash">
+          <pre class="hljs">
             <div>
               $ ./vendor/bin/behat --version
             </div>
           </pre>
         </section>
 
-        <section data-background="#7A6750" data-background-transition="slide">
+        <section>
           <h3>behat.yml</h3>
           <pre>
             <div class="behatyml">
@@ -303,7 +498,7 @@
           </pre>
         </section>
 
-        <section data-background="#7A6750" data-background-transition="slide">
+        <section>
           <h2>RTFM</h2>
           <p><a href="http://drupal.org/project/drupalextension">http://drupal.org/project/drupalextension</a></p>
           <p><a href="http://bit.ly/1NeFa75">http://bit.ly/1NeFa75</a></p>
@@ -315,7 +510,7 @@
           </pre>
         </section>
 
-        <section data-background="#7A6750" data-background-transition="slide">
+        <section>
           <h3>behat.yml</h3>
           <pre>
             <div class="behatyml">
@@ -335,22 +530,22 @@
           </aside>
         </section>
 
-        <section data-background="#7A6750" data-background-transition="slide">
+        <section>
           <h2>Bootstrap test suite</h2>
           <pre>
-            <div class="bash">
+            <div class="hljs">
               $ ./vendor/bin/behat --init
             </div>
           </pre>
           <pre>
-            <div class="bash">
+            <div class="hljs">
               features/
               features/bootstrap/FeatureContext.php
             </div>
           </pre>
         </section>
 
-        <section data-background="#b4946e" data-background-transition="slide">
+        <section>
           <h2>A blackbox test</h2>
           <pre>
             <div class="feature">
@@ -372,7 +567,7 @@
           </pre>
         </section>
 
-        <section data-background="#b4946e" data-background-transition="slide">
+        <section>
           <h2>Run the test</h2>
           <pre>
             <div class="feature">
@@ -394,11 +589,11 @@
           </pre>
         </section>
 
-        <section data-background="#b4946e" data-background-transition="slide">
+        <section>
           <h2>Built-in step definitions</h2>
           <pre>
 
-            <div class="bash">
+            <div class="hljs">
             $ ./vendor/bin/behat -di
 
             <span class="fragment">Given I am not logged in
@@ -418,10 +613,10 @@
           <p class="fragment">More than 100 built-in steps!</p>
         </section>
 
-        <section data-background="#783d2b" data-background-transition="slide">
+        <section>
           <h2>Bad built-in stuff</h2>
           <pre>
-            <div class="bash">
+            <div class="hljs">
           Then I should get a :code HTTP response
           Then I should see text matching "&lt;regex&gt;"
           Then I should see :number "&lt;element&gt;" elements
@@ -434,10 +629,10 @@
           <h3>No business would ever use this language!</h3>
         </section>
 
-        <section data-background="#1e7849" data-background-transition="slide">
+        <section>
           <h2>Use domain specific language</h2>
           <pre>
-            <div class="bash">
+            <div class="hljs">
           Then I should see the text "Page not found"
           Then I should see the welcome message
           Then I should see 5 blog posts
@@ -446,7 +641,7 @@
           </pre>
         </section>
 
-        <section data-background="#7A6750" data-background-transition="slide">
+        <section>
           <h2>Testing Drupal</h2>
           <h3>behat.yml</h3>
           <pre>
@@ -472,7 +667,7 @@
           </aside>
         </section>
 
-        <section data-background="#7A6750" data-background-transition="slide">
+        <section>
           <h2>Configuring Behat</h2>
           <pre>
             <div class="behatyml">
@@ -494,7 +689,7 @@
           </pre>
         </section>
 
-        <section data-background="#b4946e" data-background-transition="slide">
+        <section>
           <h3>features/newsroom.feature</h3>
           <pre>
             <div class="feature">
@@ -516,7 +711,7 @@
           </pre>
         </section>
 
-        <section data-background="#b4946e" data-background-transition="slide">
+        <section>
           <h2>Run the test</h2>
           <pre>
             <div class="feature">
@@ -543,15 +738,15 @@
           </aside>
         </section>
 
-        <section data-background="#1e7849" data-background-transition="slide">
+        <section>
           <h2>Defining your own steps</h2>
           <pre>
-            <div class="bash">
+            <div class="hljs">
           $ git checkout 4-custom
             </div>
           </pre>
           <pre>
-            <div class="bash">
+            <div class="hljs">
           @api
           Scenario: Anonymous user can see the news overview
             Given "News article" content:
@@ -568,10 +763,10 @@
           </pre>
         </section>
 
-        <section data-background="#1e7849" data-background-transition="slide">
+        <section>
           <h2>Defining your own steps</h2>
           <pre>
-            <div class="bash">
+            <div class="hljs">
   $ ./vendor/bin/behat
 
   1 scenario (1 undefined)
@@ -591,10 +786,10 @@
           </pre>
         </section>
 
-        <section data-background="#1e7849" data-background-transition="slide">
+        <section>
           <h2>Add missing steps automatically</h2>
           <pre>
-            <div class="bash">
+            <div class="hljs">
           $ ./vendor/bin/behat --append-snippets
 
           1 scenario (1 undefined)
@@ -606,7 +801,7 @@
           </pre>
         </section>
 
-        <section data-background="#1e7849" data-background-transition="slide">
+        <section>
           <h2>Implementation</h2>
           <pre>
             <div class="php">
@@ -621,7 +816,7 @@
           <p>See MinkContext and DrupalContext</p>
         </section>
 
-        <section data-background="#1e7849" data-background-transition="slide">
+        <section>
           <h2>Selenium</h2>
           <ul><li>Supported by Mink</li>
           <li>Install selenium-server-standalone</li>
