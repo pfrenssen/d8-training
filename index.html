@@ -41,7 +41,7 @@
       <!-- Any section element inside of this container is displayed as a slide -->
       <div class="slides">
         <section data-background="#ffffff">
-          <h1>RESTful web services</h1>
+          <h1>Automated testing</h1>
           <p>
             <small><a href="https://drupal.org/u/pfrenssen">Pieter Frenssen</a> / <a href="http://twitter.com/pfrenssen">@pfrenssen</a></small>
           </p>
@@ -51,637 +51,581 @@
         <section>
           <h2>Slides</h2>
           <p><a href="https://github.com/pfrenssen/d8-training">https://github.com/pfrenssen/d8-training</a></p>
-          <p>branch: rest-api</p>
+          <p>branch: automated-testing</p>
         </section>
 
         <section>
-          <h2>REST?</h2>
-          <h3>REpresentational</h3>
-          <h3>State</h3>
-          <h3>Transfer</h3>
-        </section>
-
-        <section>
-          <h2>What is REST?</h2>
+          <h2>Testing in Drupal 8</h2>
           <ul>
-            <li>Software architecture</li>
-            <li>Resource based (using URIs)</li>
-            <li>Communication over HTTP</li>
-            <li>Introduced by Roy Fielding in 2000</li>
+            <li>WebTestBase</li>
+            <li>KernelTestBase</li>
+            <li>KernelTestBase</li>
+            <li>UnitTestCase</li>
+            <li>BrowserTestBase</li>
+            <li>JavaScriptTestBase</li>
+            <li>Behat</li>
           </ul>
         </section>
 
         <section>
-          <h2>What is REST?</h2>
-          <h3>The 6 constraints</h3>
+          <h2>Simpletest</h2>
           <ul>
-            <li>Client-server</li>
-            <li>Stateless</li>
-            <li>Cache</li>
-            <li>Uniform interface</li>
-            <li>Layered system</li>
-            <li>Code-on-demand</li>
-          </ul>
-          <p><a href="http://www.ics.uci.edu/~fielding/pubs/dissertation/rest_arch_style.htm">http://www.ics.uci.edu/~fielding/pubs/dissertation/rest_arch_style.htm</a></p>
-        </section>
-
-        <section>
-          <h2>Why use REST?</h2>
-          <ul>
-            <li>Standard CRUD implementation</li>
-            <li>Easy to use</li>
-            <li>Widely supported</li>
-            <li>Built in to popular JS frameworks</li>
+            <li>Adapted from simpletest/simpletest</li>
+            <li>Created for Drupal 4.6 in 2004</li>
+            <li>Stable release for Drupal 5.0 in 2007</li>
+            <li>Adopted for Drupal 7 core in 2008</li>
           </ul>
         </section>
 
         <section>
-          <h2>REST API first look: drupal.org</h2>
+          <h2>Shortcomings</h2>
           <ul>
-            <li>https://www.drupal.org/drupalorg/api</li>
-            <li>Exposes projects, issues, users, nodes, comments, ...</li>
-            <li>Read-only</li>
-            <li>Anonymous access (fair use)</li>
-            <li>Returns data in JSON and XML formats</li>
-            <li>Supports pagination and sorting</li>
-            <li>Built in Drupal 7 with the RESTful Web Services module</li>
-          </ul>
-        </section>
-
-        <section>
-          <h3>An example request</h3>
-          <p><a href="https://www.drupal.org/api-d7/user.json?field_country=Belgium&sort=uid&limit=10">https://www.drupal.org/api-d7/user.json?field_country=Belgium&sort=uid&limit=10</a></p>
-          <ul>
-            <li>A JSON object is returned</li>
-            <li>Contains pagination data and a list of users</li>
-            <li>User objects contain many fields</li>
-            <li>Can be filtered and sorted by field</li>
-            <li>Do all fields make sense?</li>
-          </ul>
-        </section>
-
-        <section>
-          <h2>CRUD over HTTP</h2>
-          <ul>
-            <li>Create: POST</li>
-            <li>Read: GET</li>
-            <li>Update: PATCH (or PUT)</li>
-            <li>Delete: DELETE</li>
-          </ul>
-        </section>
-
-        <section>
-          <h2>HTTP REST client</h2>
-          <ul>
-            <li>Desktop application</li>
-            <li>Browser plugin</li>
-            <li>Command line client</li>
-            <li>Curl</li>
-          </ul>
-        </section>
-
-        <section>
-          <h2>Doing requests with Curl</h2>
-          <ul>
-            <li>Powerful CLI data transfer tool</li>
-            <li>Available on all platforms</li>
-            <li>Does a lot more than just HTTP</li>
-            <li>Good for doing quick tests</li>
-          </ul>
-        </section>
-
-        <section>
-          <h3>GET Example</h3>
-          <pre><code class="hljs">
-    $ curl 'https://www.drupal.org/api-d7/node.json?limit=1'
-          </code></pre>
-          <p>Tip: add the --include flag to display HTTP headers</p>
-        </section>
-
-        <section>
-          <h3>POST Example</h3>
-          <pre><code class="hljs">
-    $ curl \
-      --header "Content-Type: application/hal+json" \
-      --request POST \
-      --data-binary '{"username":"pfrenssen","password":"hunter2"}' \
-      http://my.domain/api/login
-          </code></pre>
-          <p>Tip: use hal+json for POST & PATCH. See <a href="https://www.drupal.org/node/1964034">issue #1964034</a></p>
-        </section>
-
-        <section>
-          <h3>PATCH Example</h3>
-          <pre><code class="hljs">
-    $ curl \
-      --header 'Content-type: application/hal+json' \
-      --header 'X-CSRF-Token: YmFH42rZPtRLzl5ZrA5GyKKlskqqWsJQEcme0yWR888' \
-      --request PATCH \
-      --user pfrenssen:hunter2 \
-      --data-binary '{"title":[{"value":"Updated node title"}]}' \
-      http://my.drupal.site/node/123?_format=hal_json
-          </code></pre>
-          <p>Tip: get a token from /rest/session/token</p>
-        </section>
-
-        <section>
-          <h3>DELETE Example</h3>
-          <pre><code class="hljs">
-    $ curl \
-      --header 'X-CSRF-Token: YmFH42rZPtRLzl5ZrA5GyKKlskqqWsJQEcme0yWR888' \
-      --request DELETE \
-      --user pfrenssen:hunter2 \
-      http://my.drupal.site/node/123?_format=hal_json
-          </code></pre>
-          <p>Tip: get a token from /rest/session/token</p>
-        </section>
-
-        <section>
-          <h2>Browser plugins</h2>
-          <h3>Postman for Chromium</h3>
-          <p><a href="https://www.getpostman.com/">https://www.getpostman.com/</a></p>
-          <p><img src="postman.png" /></p>
-        </section>
-
-        <section>
-          <h3>HttpRequester for Firefox</h3>
-          <p><a href="https://addons.mozilla.org/firefox/addon/httprequester">https://addons.mozilla.org/firefox/addon/httprequester</a></p>
-          <p><img src="httprequester.png" /></p>
-        </section>
-
-        <section>
-          <h3>Browser plugin for viewing JSON</h3>
-          <ul>
-            <li>Chromium: <a href="https://chrome.google.com/webstore/detail/json-formatter/bcjindcccaagfpapjjmafapmmgkkhgoa">JSON Formatter</a></li>
-            <li>Firefox: <a href="https://addons.mozilla.org/en-US/firefox/addon/jsonview/?src=search">JSONView</a></li>
-          </ul>
-        </section>
-
-        <section>
-          <h3>HttpRequester for Firefox</h3>
-          <p><a href="https://addons.mozilla.org/firefox/addon/httprequester">https://addons.mozilla.org/firefox/addon/httprequester</a></p>
-          <p><img src="httprequester.png" /></p>
-        </section>
-
-        <section>
-          <h3>Browser plugin for viewing JSON</h3>
-          <ul>
-            <li>Chromium: <a href="https://chrome.google.com/webstore/detail/json-formatter/bcjindcccaagfpapjjmafapmmgkkhgoa">JSON Formatter</a></li>
-            <li>Firefox: <a href="https://addons.mozilla.org/en-US/firefox/addon/jsonview/?src=search">JSONView</a></li>
-          </ul>
-        </section>
-
-        <section>
-          <h2>Consuming a REST service with Drupal</h2>
-          <h3>What you need</h3>
-          <ul>
-            <li>Drupal 8</li>
-            <li>Drush</li>
-            <li>Console</li>
-            <li>REST client</li>
+            <li></li>
           </ul>
         </section>
 
         <section>
           <h2>Drupal 8</h2>
           <ul>
-            <li>Use standard profile</li>
-            <li>Enable the REST module</li>
-            <li>Install <a href="https://www.drupal.org/project/restui">REST UI</a> contrib module</li>
-          </ul>
-        </section>
-
-        <section>
-          <h2>Drush</h2>
-          <p><a href="https://github.com/drush-ops/drush">https://github.com/drush-ops/drush</a></p>
-        </section>
-
-        <section>
-          <h2>Console</h2>
-          <p><a href="https://drupalconsole.com/">https://drupalconsole.com/</a></p>
-        </section>
-
-        <section>
-          <h2>Exercise: Consuming a REST service</h2>
-          <ul>
-            <li>Use the Drupal.org REST API</li>
-            <li>Retrieve 5 change records with Guzzle</li>
-            <li>Display results in a block</li>
-          </ul>
-        </section>
-
-        <section>
-          <h3>Create a module with Drupal Console</h3>
-          <pre><code class="hljs">
-      $ drupal generate:module
-
-      Enter the new module name:
-      > Change records
-
-      Enter module description [My Awesome Module]:
-      > Displays change records from drupal.org.
-
-      Do you confirm generation? (yes/no) [yes]:
-      > yes
-
-      Generated or updated files
-       1 - modules/custom/change_records/change_records.info.yml
-       2 - modules/custom/change_records/composer.json
-          </code></pre>
-          <p>(all default options are omitted)</p>
-        </section>
-
-        <section>
-          <h3>Create a block part 1</h3>
-          <pre><code class="hljs">
-      $ drupal generate:plugin:block
-
-      Enter the module name [devel]:
-      > change_records
-
-      Plugin class name [DefaultBlock]:
-      > ChangeRecordsBlock
-
-      Do you want to load services from the container (yes/no) [no]:
-      > yes
-
-      Enter your service [ ]:
-      > http_client
-          </code></pre>
-        </section>
-
-        <section>
-          <h3>Create a block part 2</h3>
-          <pre><code class="hljs">
-      Do you want to generate a form structure? (yes/no) [yes]:
-      > yes
-
-      Type [ ]:
-      > number
-
-      Input label:
-      > Number of change records to show
-
-      Input machine name [number_of_change_records_to_show]:
-      > limit
-
-      Default value [ ]:
-      > 5
-          </code></pre>
-        </section>
-
-        <section>
-          <h3>Create a block part 3</h3>
-          <pre><code class="hljs">
-      Do you confirm generation? (yes/no) [yes]:
-      > yes
-
-      Generated or updated files
-       1 - modules/custom/change_records/src/Plugin/Block/ChangeRecordsBlock.php
-
-      Rebuilding cache(s), wait a moment please.
-      [OK] Done clearing cache(s).
-          </code></pre>
-        </section>
-
-        <section>
-          <h3>Requesting data from the REST API</h3>
-          <p>src/Plugin/Block/ChangeRecordsBlock.php</p>
-          <pre><code class="hljs">
-  public function build() {
-    $options = [
-      'query' => [
-        'type' => 'changenotice',
-        'limit' => $this->configuration['limit'],
-        'status' => 1,
-        'sort' => 'created',
-        'direction' => 'DESC',
-      ],
-    ];
-    $result = $this->http_client->get('https://www.drupal.org/api-d7/node.json', $options);
-    $change_records = json_decode($result->getBody())->list;
-    // ...
-  }
-          </code></pre>
-        </section>
-
-        <section>
-          <h3>Requesting data from the REST API</h3>
-          <p>src/Plugin/Block/ChangeRecordsBlock.php</p>
-          <pre><code class="hljs">
-  public function build() {
-    // ...
-    $items = [];
-    foreach ($change_records as $change_record) {
-      $items[] = [
-        '#type' => 'link',
-        '#title' => $change_record->title,
-        '#url' => Url::fromUri($change_record->url),
-      ];
-    }
-    return [
-      '#theme' => 'item_list',
-      '#items' => $items,
-      '#list_type' => 'ol',
-    ];
-  }
-          </code></pre>
-        </section>
-
-        <section>
-          <h3>Modeling REST data as entities</h3>
-          <ul>
-            <li>json_decode() returns a plain (meh) object</li>
-            <li>Entities are the ideal match in Drupal</li>
-            <li>Integrates well with everything</li>
-            <li>Local caching</li>
-            <li>Importing / exporting</li>
-            <li>Requires the Serialization module</li>
-          </ul>
-        </section>
-
-        <section>
-          <h3>Modeling REST data as entities</h3>
-          <ul>
-            <li>Create custom entity representing REST data</li>
-            <li>Inject the 'serializer' service</li>
-            <li>Deserialize the REST data into an entity</li>
-          </ul>
-          <pre><code class="hljs">
- $data = $this->httpClient->get('https://www.drupal.org/api-d7/node/2692565.json');
- $serializer = \Drupal::service('serializer');
- $entity = $serializer->deserialize($data, 'Drupal\change_records\Entity\ChangeRecord', 'json');
-          </code></pre>
-        </section>
-
-        <section>
-          <h2>Providing a REST API in Drupal</h2>
-          <ul>
-            <li>Why use Drupal?</li>
-            <li>Designing a REST API</li>
-            <li>REST modules</li>
-            <li>Programmatically creating endpoints</li>
-            <li>Headless Drupal</li>
-          </ul>
-        </section>
-
-        <section>
-          <h2>Why use Drupal?</h2>
-          <ul>
-            <li>No need to write custom code</li>
-            <li>Powerful data modeling UI</li>
-            <li>Versioning</li>
-            <li>Caching</li>
-            <li>Pagination</li>
-            <li>Flood control</li>
-            <li>Sorting</li>
-            <li>Filtering</li>
-            <li>Awesome content authoring tools</li>
-          </ul>
-        </section>
-
-        <section>
-          <h2>Designing a REST API</h2>
-          <ul>
-            <li><code class="inline-code">GET /api/v1/books</code> - Lists books</li>
-            <li><code class="inline-code">GET /api/v1/books/123</code> - Retrieve a book</li>
-            <li><code class="inline-code">POST /api/v1/books</code> - Create a book</li>
-            <li><code class="inline-code">PATCH /api/v1/books/123</code> - Update a book</li>
-            <li><code class="inline-code">DELETE /api/v1/books/123</code> - Delete a book</li>
-          </ul>
-        </section>
-
-        <section>
-          <h2>Designing a REST API</h2>
-          <ul>
-            <li><code class="inline-code">GET /api/v1/books/123/chapters</code> - Lists chapters</li>
-            <li><code class="inline-code">GET /api/v1/books/123/chapters/456</code> - Retrieve a chapter</li>
-            <li><code class="inline-code">POST /api/v1/books/123/chapters</code> - Create a chapter</li>
-            <li><code class="inline-code">PATCH /api/v1/books/123/chapters/456</code> - Update a chapter</li>
-            <li><code class="inline-code">DELETE /api/v1/books/123/chapters/456</code> - Delete a chapter</li>
-          </ul>
-        </section>
-
-        <section>
-          <h2>Return correct HTTP responses</h2>
-          <ul>
-            <li><code class="inline-code">200 OK</code> - Successful GET or PATCH</li>
-            <li><code class="inline-code">201 Created</code> - Successful POST</li>
-            <li><code class="inline-code">204 No Content</code> - Successful DELETE</li>
-            <li><code class="inline-code">400 Bad Request</code> - Invalid data received</li>
-            <li><code class="inline-code">401 Unauthorized</code> - Not authenticated</li>
-            <li><code class="inline-code">403 Forbidden</code> - Successfully authenticated, no access</li>
-            <li><code class="inline-code">404 Not Found</code> - Resource does not exist</li>
-            <li><code class="inline-code">405 Method Not Allowed</code> - Successfully authenticated, wrong HTTP method</li>
-            <li><code class="inline-code">410 Gone</code> - API version is deprecated</li>
-            <li><code class="inline-code">422 Unprocessable Entity</code> - Validation error</li>
-            <li><code class="inline-code">429 Too Many Requests</code> - Exceeded rate limiting</li>
-          </ul>
-        </section>
-
-        <section>
-          <h2>JSON or XML?</h2>
-          <h3>JSON</h3>
-          <ul>
-            <li>Compact</li>
-            <li>Easy to read</li>
-            <li>Totally hipster</li>
-          </ul>
-        </section>
-
-        <section>
-          <h3>XML</h3>
-          <ul>
-            <li>Totally enterprise</li>
-          </ul>
-        </section>
-
-        <section>
-          <h2>REST related modules</h2>
-          <ul>
-            <li>RESTful Web Services</li>
-            <li>REST UI</li>
-            <li>HAL</li>
-            <li>HTTP Basic Authentication</li>
-            <li>Views</li>
-          </ul>
-        </section>
-
-        <section>
-          <h2>RESTful Web Services module</h2>
-          <ul>
-            <li>Part of Drupal 8 core</li>
-            <li>Depends on Serialization</li>
-            <li>No user interface</li>
-            <li>Only nodes exposed by default</li>
-            <li>Pluggable formats (JSON, XML, ...)</li>
-            <li>Flexible authentication methods</li>
-            <li>Resource plugin type</li>
-            <li>Views plugins</li>
-            <li>Hooks to alter resources and URIs</li>
-          </ul>
-        </section>
-
-        <section>
-          <h2>REST UI module</h2>
-          <ul>
-            <li>User interface for the REST module</li>
-            <li>Supports all content entities</li>
-            <li>Configure supported data formats</li>
-            <li>Configure authentication methods</li>
-            <li>Configure HTTP methods</li>
-            <li>Optional alternative to raw config</li>
-          </ul>
-        </section>
-
-        <section>
-          <h3>Using REST UI</h3>
-          <p>/admin/config/services/rest</p>
-          <p><img src="restui.png" /></p>
-        </section>
-
-        <section>
-          <h3>Permissions</h3>
-          <ul>
-            <li>Available for every enabled entity</li>
-            <li>Separate permission per HTTP method</li>
-          </ul>
-          <p><img src="permissions.png" /></p>
-        </section>
-
-        <section>
-          <h2>HAL module</h2>
-          <ul>
-            <li>Adds support for <a href="https://en.wikipedia.org/wiki/Hypertext_Application_Language">Hypertext Application Language</a></li>
-            <li>Adds formats "application/hal+json" &amp; "application/hal+xml"</li>
-            <li>Provides location of itself and relations (_links)</li>
-            <li>Describes embedded resources (_embedded)</li>
-          </ul>
-        </section>
-
-        <section>
-          <h3>HAL Links</h3>
-          <p>Always provide a link to yourself with <code class="inline-code">_self</code></p>
-          <pre><code class="hljs">
-    {
-        "_links": {
-            "self": {
-                "href": "http://my.domain/users?page=3"
-            }
-        }
-    }
-          </code></pre>
-        </section>
-
-        <section>
-          <h3>HAL Links</h3>
-          <p>Paging</p>
-          <pre><code class="hljs">
-    {
-        "_links": {
-            "first": {
-                "href": "http://my.domain/users"
-            },
-            "prev": {
-                "href": "http://my.domain/users?page=2"
-            },
-            "next": {
-                "href": "http://my.domain/users?page=4"
-            },
-            "last": {
-                "href": "http://my.domain/users?page=133"
-            }
-        }
-    }
-          </code></pre>
-        </section>
-
-        <section>
-          <h3>HAL Embedded Resources</h3>
-          <pre><code class="hljs">
-    {
-        "_embedded": {
-            "profile_pictures": [
-                {
-                    "_links": {
-                        "self": {
-                            "href": "http://my.domain/files/123"
-                        }
-                    },
-                }
-            ],
-        }
-    }
-          </code></pre>
-        </section>
-
-        <section>
-          <h2>HTTP Basic Authentication</h2>
-          <ul>
-            <li>Small core module</li>
-            <li>Allows to authenticate over HTTP Basic Auth</li>
-            <li><code class="inline-code">Authorization: Basic dXNlcjpwYXNz</code></li>
-            <li>Credentials are base 64 encoded: only use over HTTPS!</li>
-          </ul>
-        </section>
-
-        <section>
-          <h2>Views</h2>
-          <p>Create REST endpoint through UI</p>
-          <p><img src="create-view.png" /></p>
-        </section>
-
-        <section>
-          <h3>Output format</h3>
-          <p>Format settings determines output format</p>
-          <p><img src="views-format.png" /></p>
-        </section>
-
-        <section>
-          <h3>Select data to expose</h3>
-          <p>Display 'fields'</p>
-          <p><img src="views-fields.png" /></p>
-        </section>
-
-        <section>
-          <h3>Output raw data</h3>
-          <p>Edit field settings</p>
-          <p><img src="views-row-style.png" /></p>
-        </section>
-
-        <section>
-          <h2>Programmatically creating an endpoint</h2>
-          <ul>
-            <li>todo</li>
-            <li></li>
-            <li></li>
-            <li></li>
             <li></li>
           </ul>
         </section>
 
         <section>
-          <h2>Headless Drupal</h2>
-          <ul>
-            <li>Using Drupal as a web service</li>
-            <li>Decoupling of editing and displaying content</li>
-            <li>Frontend implemented separately</li>
-            <li>Pull data over RESTful API</li>
-          </ul>
+          <h1>Behat</h1>
         </section>
 
         <section>
-          <h2>Why go headless?</h2>
+          <h2>What is Behat?</h2>
+          <p>
+            Behat is a BDD framework for PHP
+          </p>
+        </section>
+
+        <section data-background="#007777">
+          <h2>What is BDD?</h2>
+          <h3>Bridge between client and development team</h3>
+        </section>
+
+        <section data-background="#007777">
+          <h2>Better communication</h2>
           <ul>
-            <li>Frontend changes faster than backend</li>
-            <li>Front end devs prefer JS</li>
-            <li>Fast iteration and delivery</li>
-            <li>Deliver content to microsites</li>
-            <li>Deliver content to any platform</li>
-            <li>Broadcasting to multiple targets</li>
-            <li>Protect data integrity with REST API</li>
-            <li>Provide a rich and powerful CMS</li>
+            <li>A shared language</li>
+            <li>Understandable by business and developers</li>
+            <li>Focused on business value</li>
           </ul>
+          <aside class="notes">
+            Business value: answer WHY?
+          </aside>
+        </section>
+
+        <section data-background="#007777">
+          <h2>Better planning</h2>
+          <h3>Effective planning of development cycle</h3>
+          <ul>
+            <li>Based on Agile workflow</li>
+            <li>Similar to user stories</li>
+            <li>Provides specification (DoR)</li>
+            <li>Provides acceptance criteria (DoD)</li>
+          </ul>
+        </section>
+
+        <section data-background="#007777">
+          <h2>Better documentation</h2>
+          <h3>Complete, always correct</h3>
+          <ul>
+            <li>Living documentation</li>
+            <li>Every feature is documented</li>
+            <li>Specification == documentation</li>
+            <li>Basis for writing user manuals</li>
+          </ul>
+        </section>
+
+        <section data-background="#007777">
+          <h2>Improve software quality</h2>
+          <h3>Manual + automatic tests</h3>
+          <ul>
+            <li>Developer ensures specification is met</li>
+            <li>QA engineer can validate</li>
+            <li>Product owner can approve</li>
+          </ul>
+        </section>
+
+        <section data-background="#4d7e65" data-background-transition="slide">
+          <h1>Gherkin</h1>
+        </section>
+
+        <section data-background="#4d7e65" data-background-transition="slide">
+          <h2>Gherkin</h2>
+          <h3>A language understandable by everyone</h3>
+          <ul>
+            <li>Business readable</li>
+            <li>Developer readable</li>
+            <li>Machine readable</li>
+            <li>Domain specific</li>
+          </ul>
+        </section>
+
+        <section data-background="#4d7e65" data-background-transition="slide">
+          <h2>Gherkin example</h2>
+          <pre>
+            <code class="gherkin">
+              Feature: Product highlights
+                In order to promote specific products
+                As a marketing manager
+                I need to highlight products on the homepage
+
+              Scenario: View product highlights
+                Given I have 3 product highlights
+                When I visit the frontpage
+                Then I should see 3 highlighted products
+            </code>
+          </pre>
+        </section>
+
+        <section data-background="#4d7e65" data-background-transition="slide">
+          <h2>Gherkin structure</h2>
+          <pre>
+            <code class="gherkin">
+              Feature: &lt; title &gt;
+                In order to &lt; business objective &gt;
+                As a &lt; user role or persona &gt;
+                I need to &lt; some action &gt;
+
+              Scenario:
+                Given &lt; a precondition &gt;
+                When &lt; some action &gt;
+                And &lt; some other action &gt;
+                Then &lt; a testable outcome &gt;
+                But &lt; something else we can test &gt;
+            </code>
+          </pre>
+        </section>
+
+        <section data-background="#4d7e65" data-background-transition="slide">
+          <h2>Scenario outlines</h2>
+          <pre>
+            <code class="gherkin">
+              Scenario: Show number of likes
+                Given I am logged in as &lt;user&gt;
+                When I visit the profile of &lt;friend&gt;
+                And I click on "Like"
+                Then I should see &lt;number&gt; likes
+
+                Examples:
+                | user   | friend | number |
+                | Cindy  | Cindy  | 0      |
+                | Thomas | Cindy  | 1      |
+                | Thomas | Cindy  | 1      |
+                | Roger  | Cindy  | 2      |
+                | Roger  | Thomas | 1      |
+            </code>
+          </pre>
+        </section>
+
+        <section data-background="#4d7e65" data-background-transition="slide">
+          <h2>Tables</h2>
+          <pre>
+            <code class="gherkin">
+              Scenario:
+                Given the following users exist:
+                | username | email                 |
+                | Cindy    | hypodrake@hotmail.com |
+                | Thomas   | thofpop@ec.europa.eu  |
+                | Roger    | sirfrodo@gmail.com    |
+            </code>
+          </pre>
+        </section>
+
+        <section data-background="#7A6750" data-background-transition="slide">
+          <h2>Get started</h2>
+          <pre class="bash">
+            <div>
+         $ git clone https://github.com/pfrenssen/behat-workshop.git 
+         $ cd behat-workshop
+            </div>
+          </pre>
+        </section>
+
+        <section data-background="#7A6750" data-background-transition="slide">
+          <h2>Install Composer</h2>
+          <p><a href="https://getcomposer.org/download/">https://getcomposer.org/download/</a></p>
+          <pre class="bash">
+            <div>
+              $ curl -sS https://getcomposer.org/installer | php
+            </div>
+          </pre>
+          <pre class="bash">
+            <div>
+              $ php composer.phar --version
+            </div>
+          </pre>
+        </section>
+
+        <section data-background="#7A6750" data-background-transition="slide">
+          <h2>Install Behat Drupal Extension</h2>
+          <pre class="bash">
+            <div>
+              $ php composer.phar require drupal/drupal-extension
+            </div>
+          </pre>
+          <pre class="bash">
+            <div>
+              $ ./vendor/bin/behat --version
+            </div>
+          </pre>
+        </section>
+
+        <section data-background="#7A6750" data-background-transition="slide">
+          <h3>behat.yml</h3>
+          <pre>
+            <div class="behatyml">
+              default:
+                suites:
+                  default:
+                    contexts:
+                      - FeatureContext
+                      - Drupal\DrupalExtension\Context\DrupalContext
+                      - Drupal\DrupalExtension\Context\DrushContext
+                      - Drupal\DrupalExtension\Context\MessageContext
+                      - Drupal\DrupalExtension\Context\MinkContext
+                extensions:
+                  Behat\MinkExtension:
+                    goutte: ~
+                    selenium2: ~
+                    base_url: http://mysite.local/
+                  Drupal\DrupalExtension:
+                    blackbox: ~
+                    api_driver: 'drupal'
+                    drupal:
+                      drupal_root: '/var/www/mysite'
+            </div>
+          </pre>
+        </section>
+
+        <section data-background="#7A6750" data-background-transition="slide">
+          <h2>RTFM</h2>
+          <p><a href="http://drupal.org/project/drupalextension">http://drupal.org/project/drupalextension</a></p>
+          <p><a href="http://bit.ly/1NeFa75">http://bit.ly/1NeFa75</a></p>
+          <pre>
+            <div class="behatyml">
+              $ git checkout 1-wikipedia
+              $ cp behat.yml.dist behat.yml
+            </div>
+          </pre>
+        </section>
+
+        <section data-background="#7A6750" data-background-transition="slide">
+          <h3>behat.yml</h3>
+          <pre>
+            <div class="behatyml">
+              default:
+                suites:
+                  default:
+                    contexts:
+                      - Drupal\DrupalExtension\Context\MinkContext
+                extensions:
+                  Behat\MinkExtension:
+                    base-url: 'https://en.wikipedia.org/'
+                    goutte: ~
+            </div>
+          </pre>
+          <aside class="notes">
+            This is the default test profile.
+          </aside>
+        </section>
+
+        <section data-background="#7A6750" data-background-transition="slide">
+          <h2>Bootstrap test suite</h2>
+          <pre>
+            <div class="bash">
+              $ ./vendor/bin/behat --init
+            </div>
+          </pre>
+          <pre>
+            <div class="bash">
+              features/
+              features/bootstrap/FeatureContext.php
+            </div>
+          </pre>
+        </section>
+
+        <section data-background="#b4946e" data-background-transition="slide">
+          <h2>A blackbox test</h2>
+          <pre>
+            <div class="feature">
+      Scenario: Find the Behat article
+        Given I am on the homepage
+        When I enter "Behat" for "search"
+        And I press "Go"
+        Then I should see the heading "Behat"
+        But I see the text "Behat is an ancient town"
+        When I click "Behat (computer science)"
+        Then I should see the heading "Behat (computer science)"
+        And I should see the text "Behat is a BDD framework"
+            </div>
+          </pre>
+          <pre>
+            <div class="feature">
+      $ git checkout 2-wikipedia
+            </div>
+          </pre>
+        </section>
+
+        <section data-background="#b4946e" data-background-transition="slide">
+          <h2>Run the test</h2>
+          <pre>
+            <div class="feature">
+      $ ./vendor/bin/behat
+      Scenario: Find the Behat article
+        Given I am on the homepage
+        When I enter "Behat" for "search"
+        And I press "Go"
+        Then I should see the heading "Behat"
+        But I see the text "Behat is an ancient town"
+        When I click "Behat (computer science)"
+        Then I should see the heading "Behat (computer science)"
+        And I should see the text "Behat is a BDD framework"
+      
+      1 scenario (1 passed)
+      8 steps (8 passed)
+      0m8.21s (18.10Mb)
+            </div>
+          </pre>
+        </section>
+
+        <section data-background="#b4946e" data-background-transition="slide">
+          <h2>Built-in step definitions</h2>
+          <pre>
+
+            <div class="bash">
+            $ ./vendor/bin/behat -di
+
+            <span class="fragment">Given I am not logged in
+            Given I am logged in as :name</span>
+
+            <span class="fragment">Given a/an :type (content )with the title :title</span>
+
+            <span class="fragment">When I visit :path
+            When I click :link
+            When I enter :value for :field
+            When I press the :button button</span>
+
+            <span class="fragment">Then I should see the text :text
+            Then I should not see the link :link</span>
+            </div>
+          </pre>
+          <p class="fragment">More than 100 built-in steps!</p>
+        </section>
+
+        <section data-background="#783d2b" data-background-transition="slide">
+          <h2>Bad built-in stuff</h2>
+          <pre>
+            <div class="bash">
+          Then I should get a :code HTTP response
+          Then I should see text matching "&lt;regex&gt;"
+          Then I should see :number "&lt;element&gt;" elements
+          Given the cache has been cleared
+          Given I run cron
+          Given I run drush :command
+          Given I wait for AJAX to finish
+            </div>
+          </pre>
+          <h3>No business would ever use this language!</h3>
+        </section>
+
+        <section data-background="#1e7849" data-background-transition="slide">
+          <h2>Use domain specific language</h2>
+          <pre>
+            <div class="bash">
+          Then I should see the text "Page not found"
+          Then I should see the welcome message
+          Then I should see 5 blog posts
+          And I wait for the autocomplete suggestions to appear
+            </div>
+          </pre>
+        </section>
+
+        <section data-background="#7A6750" data-background-transition="slide">
+          <h2>Testing Drupal</h2>
+          <h3>behat.yml</h3>
+          <pre>
+            <div class="behatyml">
+            default:
+              suites:
+                default:
+                  contexts:
+                    - FeatureContext
+                    - Drupal\DrupalExtension\Context\DrupalContext
+                    - Drupal\DrupalExtension\Context\MinkContext
+              extensions:
+                Behat\MinkExtension:
+                  base-url: 'http://mysite.local/'
+                Drupal\DrupalExtension:
+                  api_driver: 'drupal'
+                  drupal:
+                    drupal_root: '/var/www/mysite'
+            </div>
+          </pre>
+          <aside class="notes">
+            This is the default test profile.
+          </aside>
+        </section>
+
+        <section data-background="#7A6750" data-background-transition="slide">
+          <h2>Configuring Behat</h2>
+          <pre>
+            <div class="behatyml">
+              $ git checkout 3-drupal
+              $ cp behat.yml.dist behat.yml
+              $ vim behat.yml
+            </div>
+          </pre>
+          <pre>
+            <div class="behatyml">
+            default:
+              extensions:
+                Behat\MinkExtension:
+                  base-url: 'http://mysite.local/' &lt;&lt;&lt;&lt;&lt;
+                Drupal\DrupalExtension:
+                  drupal:
+                    drupal_root: '/var/www/mysite' &lt;&lt;&lt;&lt;&lt;
+            </div>
+          </pre>
+        </section>
+
+        <section data-background="#b4946e" data-background-transition="slide">
+          <h3>features/newsroom.feature</h3>
+          <pre>
+            <div class="feature">
+           @api
+           Scenario: Anonymous user can see the news overview
+             Given "News article" content:
+             | title     | body                |
+             | Article 1 | The first article.  |
+             | Article 2 | The second article. |
+           
+             Given I am not logged in
+             When I visit "news"
+             Then I should see the heading "News"
+             And I should see the link "Article 1"
+             And I should see the text "The first article."
+             And I should see the link "Article 2"
+             And I should see the text "The second article."
+            </div>
+          </pre>
+        </section>
+
+        <section data-background="#b4946e" data-background-transition="slide">
+          <h2>Run the test</h2>
+          <pre>
+            <div class="feature">
+          $ ./vendor/bin/behat
+
+          <span class="fragment">
+         @api
+         Scenario: Anonymous user can see the news overview
+           Given "News article" content:
+             | title     | body                |
+             | Article 1 | The first article.  |
+             | Article 2 | The second article. |
+           Given I am not logged in
+           ...
+         
+         1 scenario (1 passed)
+         8 steps (8 passed)
+         0m0.75s (34.45Mb)
+           </span>
+            </div>
+          </pre>
+          <aside class="notes">
+            For the tests to pass you might need to implement the functionality :)
+          </aside>
+        </section>
+
+        <section data-background="#1e7849" data-background-transition="slide">
+          <h2>Defining your own steps</h2>
+          <pre>
+            <div class="bash">
+          $ git checkout 4-custom
+            </div>
+          </pre>
+          <pre>
+            <div class="bash">
+          @api
+          Scenario: Anonymous user can see the news overview
+            Given "News article" content:
+            | title     | body                |
+            | Article 1 | The first article.  |
+            | Article 2 | The second article. |
+            | Article 3 | The third article.  |
+          
+            Given I am not logged in
+            When I visit "news"
+            Then I should see the heading "News"
+            And I should see 3 news articles     &lt;&lt;&lt;&lt;&lt; CUSTOM STEP
+            </div>
+          </pre>
+        </section>
+
+        <section data-background="#1e7849" data-background-transition="slide">
+          <h2>Defining your own steps</h2>
+          <pre>
+            <div class="bash">
+  $ ./vendor/bin/behat
+
+  1 scenario (1 undefined)
+  5 steps (4 passed, 1 undefined)
+  0m5.47s (42.90Mb)
+
+  --- FeatureContext has missing steps. Define them with these snippets:
+
+      /**
+       * @Then I should see :arg1 news articles
+       */
+      public function iShouldSeeNewsArticles($arg1)
+      {
+          throw new PendingException();
+      }
+            </div>
+          </pre>
+        </section>
+
+        <section data-background="#1e7849" data-background-transition="slide">
+          <h2>Add missing steps automatically</h2>
+          <pre>
+            <div class="bash">
+          $ ./vendor/bin/behat --append-snippets
+
+          1 scenario (1 undefined)
+          5 steps (4 passed, 1 undefined)
+          0m5.47s (42.90Mb)
+
+          `I should see 3 news articles` definition added
+            </div>
+          </pre>
+        </section>
+
+        <section data-background="#1e7849" data-background-transition="slide">
+          <h2>Implementation</h2>
+          <pre>
+            <div class="php">
+    /**
+     * @Then I should see :number news articles
+     */
+    public function assertNewsArticleCount($number) {
+      $this->assertSession()->elementsCount('css', 'div.news-article', $number);
+    }
+            </div>
+          </pre>
+          <p>See MinkContext and DrupalContext</p>
+        </section>
+
+        <section data-background="#1e7849" data-background-transition="slide">
+          <h2>Selenium</h2>
+          <ul><li>Supported by Mink</li>
+          <li>Install selenium-server-standalone</li>
+          <li>Use tag `@javascript`</li></ul>
         </section>
 
         <section>
