@@ -262,6 +262,12 @@
         </section>
 
         <section>
+          <h2>Test output</h2>
+          <p><img src="test-screenshot.png" /></p>
+        </section>
+
+        <section>
+          <h3>Test some more</h3>
           <pre><code class="hljs">
   function testDrupalGet() {
     $this->drupalGet('user/register');
@@ -277,13 +283,113 @@
         </section>
 
         <section>
-          <h3>Debugging Web Tests</h3>
+          <h3>Test setUp()</h3>
           <pre><code class="hljs">
-  function testDrupalGet() {
-    @todo
+class WebTest extends WebTestBase {
+  
+  protected $user;
+  
+  public static $modules = ['block', 'node', 'datetime'];
+
+  protected function setUp() {
+    parent::setUp();
+
+    $this->drupalCreateContentType(['type' => 'page', 'name' => 'Basic page']);
+    $this->user = $this->drupalCreateUser(['edit own page content', 'create page content']);
+    $this->drupalPlaceBlock('local_tasks_block');
+  }
+
+}
+          </code></pre>
+        </section>
+
+        <section>
+          <h3>Submitting forms</h3>
+          <pre><code class="hljs">
+  function testNodeCreate() {
+    $this->drupalLogin($this->user);
+
+    $title = $this->randomString();
+    $body = $this->randomString(32);
+    $edit = [
+      'title[0][value]' => $title,
+      'body[0][value]' => $body,
+    ];
+    $this->drupalPostForm('node/add/page', $edit, t('Save'));
   }
           </code></pre>
-          <p>Take a look at the available asserts.</p>
+        </section>
+
+        <section>
+          <h3>Checking saved data</h3>
+          <pre><code class="hljs">
+  function testNodeCreate() {
+    ...
+
+    $node = $this->drupalGetNodeByTitle($title);
+    $this->assertTrue($node, 'Node found in database.');
+    $this->assertIdentical($node->getTitle(), $title, 'Title is correct.');
+    $this->assertIdentical($node->body->value, $title, 'Body is correct.');
+  }
+          </code></pre>
+        </section>
+
+        <section>
+          <h3>Debugging Web Tests</h3>
+          <pre><code class="hljs">
+  function testNodeCreate() {
+    ...
+
+    $node = $this->drupalGetNodeByTitle($title);
+    $this->assertTrue($node, 'Node found in database.');
+    $this->assertIdentical($node->getTitle(), $title, 'Title is correct.');
+    $this->assertIdentical($node->body->value, $title, 'Body is correct.');
+    debug($node->body->value);
+    debug($title);
+  }
+          </code></pre>
+        </section>
+
+        <section>
+          <h2>Debugging output</h2>
+          <p><img src="debugging.png" /></p>
+        </section>
+
+        <section>
+          <h3>Debugging Tips</h3>
+          <ul>
+            <li>Only investigate first failure</li>
+            <li>Output lots of debugging data</li>
+            <li>Increase XDebug connections</li>
+            <li>Inspect live database during test</li>
+          </ul>
+        </section>
+
+        <section>
+          <h3>Navigating</h3>
+          <pre><code class="hljs">
+  function testNodeCreate() {
+    ...
+
+    $this->clickLink(t('Edit'));
+    $this->assertUrl($node->toUrl('edit-form', ['absolute' => TRUE]));
+
+    $link_text = 'Edit<span class="visually-hidden">(active tab)</span>';
+    $this->assertRaw($link_text, 'Edit tab found and marked active.');
+  }
+          </code></pre>
+        </section>
+
+        <section>
+          <h3>Checking form values</h3>
+          <pre><code class="hljs">
+  function testNodeCreate() {
+    ...
+
+    $this->assertFieldByName('title[0][value]', $title, 'Title field displayed.');
+    $this->assertFieldByName('body[0][value]', $body, 'Body field displayed.');
+  }
+          </code></pre>
         </section>
 
         <section>
