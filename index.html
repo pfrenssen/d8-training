@@ -246,9 +246,9 @@
   namespace Drupal\one_two\Tests;
 
   use Drupal\simpletest\WebTestBase;
-  
+
   /**
-   * Example functional test. 
+   * Example functional test.
    *
    * @group one_two
    */
@@ -286,9 +286,9 @@
           <h3>Test setUp()</h3>
           <pre><code class="hljs">
 class WebTest extends WebTestBase {
-  
+
   protected $user;
-  
+
   public static $modules = ['block', 'node', 'datetime'];
 
   protected function setUp() {
@@ -389,6 +389,118 @@ class WebTest extends WebTestBase {
     $this->assertFieldByName('title[0][value]', $title, 'Title field displayed.');
     $this->assertFieldByName('body[0][value]', $body, 'Body field displayed.');
   }
+          </code></pre>
+        </section>
+
+        <section>
+          <h3>KernelTestBase</h3>
+          <p>tests/src/Kernel/KernelTest.php</p>
+          <pre><code class="hljs">
+    &lt;?php
+    namespace Drupal\Tests\one_two\Kernel;
+
+    use Drupal\Component\Utility\Unicode;
+    use Drupal\KernelTests\KernelTestBase;
+    use Drupal\block_content\Entity\BlockContent;
+    use Drupal\block_content\Entity\BlockContentType;
+
+    /**
+     * An example kernel test.
+     *
+     * @group one_two
+     */
+    class KernelTest extends KernelTestBase {
+    }
+          </code></pre>
+        </section>
+
+        <section>
+          <h3>Create a block type</h3>
+          <pre><code class="hljs">
+    class KernelTest extends KernelTestBase {
+
+      /**
+       * Tests creation of custom blocks.
+       */
+      public function testBlockCreation() {
+        // Create a block entity type.
+        $bundle = Unicode::strtolower($this->randomMachineName());
+        BlockContentType::create([
+          'id' => $bundle,
+          'label' => $this->randomString(),
+        ])->save();
+      }
+
+    }
+          </code></pre>
+        </section>
+
+        <section>
+          <h3>Run the test</h3>
+          <pre><code class="hljs">
+    $ export SIMPLETEST_BASE_URL=http://mysite.local/
+    $ export SIMPLETEST_DB=mysql://user:pass@localhost/dbname
+
+    $ ./vendor/bin/phpunit -c ./core/phpunit.xml.dist modules/one_two
+          </code></pre>
+        </section>
+
+        <section>
+          <h3>Install schema</h3>
+          <pre><code class="hljs">
+    class KernelTest extends KernelTestBase {
+
+      /**
+       * {@inheritdoc}
+       */
+      public static $modules = ['system', 'block', 'block_content'];
+
+      /**
+       * {@inheritdoc}
+       */
+      public function setUp() {
+        parent::setUp();
+        $this->installEntitySchema('block_content');
+      }
+
+    }
+          </code></pre>
+        </section>
+
+        <section>
+          <h3>Create a block</h3>
+          <pre><code class="hljs">
+    class KernelTest extends KernelTestBase {
+
+      public function testBlockCreation() {
+        // ...
+
+        // Create a block.
+        $info = $this->randomMachineName();
+        $block = BlockContent::create([
+          'info' => $info,
+          'type' => $bundle,
+        ]);
+        $block->save();
+      }
+
+    }
+          </code></pre>
+        </section>
+
+        <section>
+          <h3>Check the block</h3>
+          <pre><code class="hljs">
+    class KernelTest extends KernelTestBase {
+
+      public function testBlockCreation() {
+        // ...
+
+        $this->assertEquals($info, $block->label(), 'The label was set correctly.');
+        $this->assertEquals($bundle, $block->bundle(), 'The bundle was set correctly.');
+      }
+
+    }
           </code></pre>
         </section>
 
@@ -542,7 +654,7 @@ class WebTest extends WebTestBase {
           <h2>Get started</h2>
           <pre class="hljs">
             <div>
-         $ git clone https://github.com/pfrenssen/behat-workshop.git 
+         $ git clone https://github.com/pfrenssen/behat-workshop.git
          $ cd behat-workshop
             </div>
           </pre>
@@ -687,7 +799,7 @@ class WebTest extends WebTestBase {
         When I click "Behat (computer science)"
         Then I should see the heading "Behat (computer science)"
         And I should see the text "Behat is a BDD framework"
-      
+
       1 scenario (1 passed)
       8 steps (8 passed)
       0m8.21s (18.10Mb)
@@ -805,7 +917,7 @@ class WebTest extends WebTestBase {
              | title     | body                |
              | Article 1 | The first article.  |
              | Article 2 | The second article. |
-           
+
              Given I am not logged in
              When I visit "news"
              Then I should see the heading "News"
@@ -832,7 +944,7 @@ class WebTest extends WebTestBase {
              | Article 2 | The second article. |
            Given I am not logged in
            ...
-         
+
          1 scenario (1 passed)
          8 steps (8 passed)
          0m0.75s (34.45Mb)
@@ -860,7 +972,7 @@ class WebTest extends WebTestBase {
             | Article 1 | The first article.  |
             | Article 2 | The second article. |
             | Article 3 | The third article.  |
-          
+
             Given I am not logged in
             When I visit "news"
             Then I should see the heading "News"
