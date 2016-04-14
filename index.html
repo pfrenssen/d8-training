@@ -55,6 +55,71 @@
         </section>
 
         <section>
+          <h2>First let's install Drupal</h2>
+          <p>... using a Composer based workflow</p>
+        </section>
+
+        <section>
+          <h2>Install Composer globally</h2>
+          <p><a href="https://getcomposer.org/download/">https://getcomposer.org/download/</a></p>
+          <pre class="hljs"><div>
+              $ mv composer.phar /usr/bin/
+              $ composer --version
+          </div></pre>
+        </section>
+
+        <section>
+          <h2>Download Drupal project fork</h2>
+          <pre class="hljs"><div>
+         $ git clone https://github.com/pfrenssen/drupal-project.git
+         $ cd drupal-project
+         $ composer install
+          </div></pre>
+          <p>Take a look at the folder structure</p>
+          <p>Drupal site is in web/</p>
+        </section>
+
+        <section>
+          <h2>Configure project</h2>
+          <pre class="hljs"><div>
+              $ vim build.properties.local
+          </div></pre>
+        </section>
+
+        <section>
+          <h2>Configure project</h2>
+          <p>build.properties.local</p>
+          <pre class="hljs"><div>
+# The location of the Composer binary.
+composer.bin = /usr/bin/composer
+
+# Database settings.
+drupal.db.name = drupalproject
+drupal.db.user = root
+drupal.db.password = tp5VBzRj
+
+# Admin user.
+drupal.admin.username = admin
+drupal.admin.password = admin
+
+# The base URL to use in Behat tests.
+behat.base_url = http://drupal-project.local
+          </div></pre>
+        </section>
+
+        <section>
+          <h2>Install drupal</h2>
+          <pre class="hljs"><div>
+    $ ./vendor/bin/phing install-dev
+          </div></pre>
+          <p>Check if it works in the browser</p>
+        </section>
+
+        <section>
+          <h2>A little bit of theory</h2>
+        </section>
+
+        <section>
           <h2>Goals of testing</h2>
           <ul>
             <li>Prove requirements are met</li>
@@ -441,7 +506,8 @@ class WebTest extends WebTestBase {
     $ export SIMPLETEST_BASE_URL=http://mysite.local/
     $ export SIMPLETEST_DB=mysql://user:pass@localhost/dbname
 
-    $ ./vendor/bin/phpunit -c ./core/phpunit.xml.dist modules/one_two
+    $ cd web/
+    $ ../vendor/bin/phpunit -c ./core/phpunit.xml.dist modules/one_two
           </code></pre>
         </section>
 
@@ -573,7 +639,7 @@ class UnitTest extends UnitTestCase {
     $ export SIMPLETEST_BASE_URL=http://mysite.local/
     $ export SIMPLETEST_DB=mysql://user:pass@localhost/dbname
 
-    $ ./vendor/bin/phpunit \
+    $ ../vendor/bin/phpunit \
       -c ./core/phpunit.xml.dist \
       --coverage-xml=result.xml \
       modules/one_two
@@ -584,10 +650,6 @@ class UnitTest extends UnitTestCase {
           <h3>Run coverage tests in PHPStorm</h3>
           <p><a href="https://www.drupal.org/node/2288559">https://www.drupal.org/node/2288559</a></p>
           <p><img src="phpstorm-coverage.png" /></p>
-        </section>
-
-        <section>
-          <h1>Behat</h1>
         </section>
 
         <section>
@@ -694,6 +756,154 @@ class UnitTest extends UnitTestCase {
         </section>
 
         <section>
+          <h3>BrowserTestBase</h3>
+          <p>tests/src/Functional/BrowserTest.php</p>
+          <pre><code class="hljs">
+    &lt;?php
+
+    namespace Drupal\one_two\Tests;
+    
+    use Drupal\KernelTests\AssertLegacyTrait;
+    use Drupal\simpletest\AssertContentTrait;
+    use Drupal\simpletest\BrowserTestBase;
+    
+    class BrowserTest extends BrowserTestBase {
+    }
+          </code></pre>
+        </section>
+
+        <section>
+          <h3>setUp()</h3>
+          <p>tests/src/Functional/BrowserTest.php</p>
+          <pre><code class="hljs">
+class BrowserTest extends BrowserTestBase {
+
+  use AssertContentTrait;
+  use AssertLegacyTrait;
+
+  public static $modules = ['node'];
+  protected $entityTypeManager;
+
+  public function setUp() {
+    parent::setUp();
+
+    $this->entityTypeManager = $this->container->get('entity_type.manager');
+
+    $user = $this->drupalCreateUser(['administer content types']);
+    $this->drupalLogin($user);
+  }
+  
+}
+          </code></pre>
+        </section>
+
+        <section>
+          <h3>Create content type through UI</h3>
+          <p>tests/src/Functional/BrowserTest.php</p>
+          <pre><code class="hljs">
+class BrowserTest extends BrowserTestBase {
+  // ...
+
+  public function testCreateContentType() {
+    $edit = [
+      'name' => 'My Content Type',
+      'type' => 'mytype',
+      'options[sticky]' => TRUE,
+    ];
+    $this->drupalGet('admin/structure/types/add');
+    $this->submitForm($edit, t('Save content type'));
+    $this->assertSession()->statusCodeEquals(200);
+  }
+  
+}
+          </code></pre>
+        </section>
+
+        <section>
+          <h3>Assert the content type</h3>
+          <p>tests/src/Functional/BrowserTest.php</p>
+          <pre><code class="hljs">
+  public function testCreateContentType() {
+    // ...
+
+    $this->content = $this->drupalGet('admin/structure/types/manage/mytype');
+    $this->assertFieldChecked('edit-options-sticky');
+
+    // Check if we can load the content type from the database.
+    $storage = $this->entityTypeManager->getStorage('node_type');
+    $entities = $storage->loadByProperties(['type' => 'mytype']);
+    $this->assertEquals(1, count($entities['mytype']));
+  }
+          </code></pre>
+        </section>
+
+        <section>
+          <h3>Debugging BrowserTestBase</h3>
+          <p>tests/src/Functional/BrowserTest.php</p>
+          <pre><code class="hljs">
+  public function testCreateContentType() {
+    $this->submitForm($edit, t('Save content type'));
+    $html = $this->getSession()->getPage()->getContent();
+    file_put_contents('/home/pieter/v/joinup/web/test.html', $html);
+
+    $this->content = $this->drupalGet('admin/structure/types/manage/mytype');
+    file_put_contents('/home/pieter/v/joinup/web/test2.html', $this->content);
+  }
+  
+}
+          </code></pre>
+        </section>
+
+        <section>
+          <h3>Debugging BrowserTestBase</h3>
+          <p>tests/src/Functional/BrowserTest.php</p>
+          <pre><code class="hljs">
+  public function testCreateContentType() {
+    $this->submitForm($edit, t('Save content type'));
+    $html = $this->getSession()->getPage()->getContent();
+    file_put_contents('/home/pieter/v/joinup/web/test.html', $html);
+
+    $this->content = $this->drupalGet('admin/structure/types/manage/mytype');
+    file_put_contents('/home/pieter/v/joinup/web/test2.html', $this->content);
+  }
+          </code></pre>
+        </section>
+
+        <section>
+          <h3>JavaScriptTestBase</h3>
+          <ul>
+            <li>Drupal 8.1.x</li>
+            <li>PhantomJS</li>
+            <li>See core/tests/README.md</li>
+          </ul>
+        </section>
+
+        <section>
+          <h3>Example JavaScript test</h3>
+          <pre><code class="hljs">
+class ToolbarIntegrationTest extends JavascriptTestBase {
+
+  public function testToolbarToggling() {
+    $this->drupalLogin($admin_user);
+    $this->drupalGet('&lt;front&gt;');
+
+    // Test that it is possible to toggle the toolbar tray.
+    $this->assertElementVisible('#toolbar-link-system-admin_content', 'Toolbar tray is open by default.');
+    $this->click('#toolbar-item-administration');
+    $this->assertElementNotVisible('#toolbar-link-system-admin_content', 'Toolbar tray is closed after clicking the "Manage" button.');
+    $this->click('#toolbar-item-administration');
+    $this->assertElementVisible('#toolbar-link-system-admin_content', 'Toolbar tray is visible again after clicking the "Manage" button a second time.');
+  }
+
+}
+          </code></pre>
+        </section>
+
+        <section>
+          <h1>Behat</h1>
+        </section>
+
+        <section>
           <h2>What is Behat?</h2>
           <p>
             Behat is a BDD framework for PHP
@@ -766,8 +976,7 @@ class UnitTest extends UnitTestCase {
 
         <section>
           <h2>Gherkin example</h2>
-          <pre>
-            <code class="hljs">
+          <pre><code class="hljs">
               Feature: Product highlights
                 In order to promote specific products
                 As a marketing manager
@@ -777,14 +986,12 @@ class UnitTest extends UnitTestCase {
                 Given I have 3 product highlights
                 When I visit the frontpage
                 Then I should see 3 highlighted products
-            </code>
-          </pre>
+          </code></pre>
         </section>
 
         <section>
           <h2>Gherkin structure</h2>
-          <pre>
-            <code class="hljs">
+          <pre><code class="hljs">
               Feature: &lt; title &gt;
                 In order to &lt; business objective &gt;
                 As a &lt; user role or persona &gt;
@@ -796,14 +1003,12 @@ class UnitTest extends UnitTestCase {
                 And &lt; some other action &gt;
                 Then &lt; a testable outcome &gt;
                 But &lt; something else we can test &gt;
-            </code>
-          </pre>
+          </code></pre>
         </section>
 
         <section>
           <h2>Scenario outlines</h2>
-          <pre>
-            <code class="hljs">
+          <pre><code class="hljs">
               Scenario: Show number of likes
                 Given I am logged in as &lt;user&gt;
                 When I visit the profile of &lt;friend&gt;
@@ -817,187 +1022,107 @@ class UnitTest extends UnitTestCase {
                 | Thomas | Cindy  | 1      |
                 | Roger  | Cindy  | 2      |
                 | Roger  | Thomas | 1      |
-            </code>
-          </pre>
+          </code></pre>
         </section>
 
         <section>
           <h2>Tables</h2>
-          <pre>
-            <code class="hljs">
+          <pre><code class="hljs">
               Scenario:
                 Given the following users exist:
                 | username | email                 |
                 | Cindy    | hypodrake@hotmail.com |
                 | Thomas   | thofpop@ec.europa.eu  |
                 | Roger    | sirfrodo@gmail.com    |
-            </code>
-          </pre>
+          </code></pre>
         </section>
 
         <section>
-          <h2>Get started</h2>
-          <pre class="hljs">
-            <div>
-         $ git clone https://github.com/pfrenssen/behat-workshop.git
-         $ cd behat-workshop
-            </div>
-          </pre>
+          <h3>Behat configuration</h3>
+          <p>tests/behat.yml</p>
+          <pre><div class="hljs">
+default:
+  suites:
+    default:
+      contexts:
+        - FeatureContext
+        - Drupal\DrupalExtension\Context\DrupalContext
+        - Drupal\DrupalExtension\Context\DrushContext
+        - Drupal\DrupalExtension\Context\MessageContext
+        - Drupal\DrupalExtension\Context\MinkContext
+      filters:
+        tags: "~@wip"
+  extensions:
+    Behat\MinkExtension:
+      base-url: 'http://drupal-project.local'
+      files_path: '/home/pieter/drupal-project/tests/fixtures/files'
+      goutte: ~
+      javascript_session: 'selenium2'
+      selenium2: ~
+    Drupal\DrupalExtension:
+      api_driver: 'drupal'
+      blackbox: ~
+      drupal:
+        drupal_root: '/home/pieter/drupal-project/web'
+      selectors:
+        message_selector: '.messages'
+        error_message_selector: '.messages.messages--error'
+        success_message_selector: '.messages.messages--status'
+      subcontexts:
+        paths:
+          - '/home/pieter/drupal-project/web/modules'
+  formatters:
+    progress: ~
+          </div></pre>
         </section>
 
         <section>
-          <h2>Install Composer</h2>
-          <p><a href="https://getcomposer.org/download/">https://getcomposer.org/download/</a></p>
-          <pre class="hljs">
-            <div>
-              $ curl -sS https://getcomposer.org/installer | php
-            </div>
-          </pre>
-          <pre class="hljs">
-            <div>
-              $ php composer.phar --version
-            </div>
-          </pre>
+          <h2>Example test I</h2>
+          <pre><div class="hljs">
+Scenario: Anonymous user can see the user login page
+  Given I am not logged in
+  When I visit "user"
+  Then I should see the text "Log in"
+  And I should see the text "Reset your password"
+  And I should see the text "Username"
+  And I should see the text "Password"
+  But I should not see the text "Log out"
+  And I should not see the text "My account"
+          </div></pre>
         </section>
 
         <section>
-          <h2>Install Behat Drupal Extension</h2>
-          <pre class="hljs">
-            <div>
-              $ php composer.phar require drupal/drupal-extension
-            </div>
-          </pre>
-          <pre class="hljs">
-            <div>
-              $ ./vendor/bin/behat --version
-            </div>
-          </pre>
+          <h2>Example test II</h2>
+          <pre><div class="hljs">
+Scenario Outline: Anonymous user cannot access site administration
+  Given I am not logged in
+  When I go to "<path>"
+  Then I should get an access denied error
+
+  Examples:
+  | path            |
+  | admin           |
+  | admin/config    |
+  | admin/content   |
+  | admin/people    |
+  | admin/structure |
+  | node/add        |
+  | node/add/page   |
+          </div></pre>
         </section>
 
         <section>
-          <h3>behat.yml</h3>
-          <pre>
-            <div class="behatyml">
-              default:
-                suites:
-                  default:
-                    contexts:
-                      - FeatureContext
-                      - Drupal\DrupalExtension\Context\DrupalContext
-                      - Drupal\DrupalExtension\Context\DrushContext
-                      - Drupal\DrupalExtension\Context\MessageContext
-                      - Drupal\DrupalExtension\Context\MinkContext
-                extensions:
-                  Behat\MinkExtension:
-                    goutte: ~
-                    selenium2: ~
-                    base_url: http://mysite.local/
-                  Drupal\DrupalExtension:
-                    blackbox: ~
-                    api_driver: 'drupal'
-                    drupal:
-                      drupal_root: '/var/www/mysite'
-            </div>
-          </pre>
-        </section>
-
-        <section>
-          <h2>RTFM</h2>
-          <p><a href="http://drupal.org/project/drupalextension">http://drupal.org/project/drupalextension</a></p>
-          <p><a href="http://bit.ly/1NeFa75">http://bit.ly/1NeFa75</a></p>
-          <pre>
-            <div class="behatyml">
-              $ git checkout 1-wikipedia
-              $ cp behat.yml.dist behat.yml
-            </div>
-          </pre>
-        </section>
-
-        <section>
-          <h3>behat.yml</h3>
-          <pre>
-            <div class="behatyml">
-              default:
-                suites:
-                  default:
-                    contexts:
-                      - Drupal\DrupalExtension\Context\MinkContext
-                extensions:
-                  Behat\MinkExtension:
-                    base-url: 'https://en.wikipedia.org/'
-                    goutte: ~
-            </div>
-          </pre>
-          <aside class="notes">
-            This is the default test profile.
-          </aside>
-        </section>
-
-        <section>
-          <h2>Bootstrap test suite</h2>
-          <pre>
-            <div class="hljs">
-              $ ./vendor/bin/behat --init
-            </div>
-          </pre>
-          <pre>
-            <div class="hljs">
-              features/
-              features/bootstrap/FeatureContext.php
-            </div>
-          </pre>
-        </section>
-
-        <section>
-          <h2>A blackbox test</h2>
-          <pre>
-            <div class="feature">
-      Scenario: Find the Behat article
-        Given I am on the homepage
-        When I enter "Behat" for "search"
-        And I press "Go"
-        Then I should see the heading "Behat"
-        But I see the text "Behat is an ancient town"
-        When I click "Behat (computer science)"
-        Then I should see the heading "Behat (computer science)"
-        And I should see the text "Behat is a BDD framework"
-            </div>
-          </pre>
-          <pre>
-            <div class="feature">
-      $ git checkout 2-wikipedia
-            </div>
-          </pre>
-        </section>
-
-        <section>
-          <h2>Run the test</h2>
-          <pre>
-            <div class="feature">
-      $ ./vendor/bin/behat
-      Scenario: Find the Behat article
-        Given I am on the homepage
-        When I enter "Behat" for "search"
-        And I press "Go"
-        Then I should see the heading "Behat"
-        But I see the text "Behat is an ancient town"
-        When I click "Behat (computer science)"
-        Then I should see the heading "Behat (computer science)"
-        And I should see the text "Behat is a BDD framework"
-
-      1 scenario (1 passed)
-      8 steps (8 passed)
-      0m8.21s (18.10Mb)
-            </div>
-          </pre>
+          <h2>Run example tests</h2>
+          <pre><div class="hljs">
+              $ cd tests/
+              $ ./behat
+          </div></pre>
         </section>
 
         <section>
           <h2>Built-in step definitions</h2>
-          <pre>
-
-            <div class="hljs">
-            $ ./vendor/bin/behat -di
+          <pre><div class="hljs">
+            $ ./behat -di
 
             <span class="fragment">Given I am not logged in
             Given I am logged in as :name</span>
@@ -1011,15 +1136,13 @@ class UnitTest extends UnitTestCase {
 
             <span class="fragment">Then I should see the text :text
             Then I should not see the link :link</span>
-            </div>
-          </pre>
+          </div></pre>
           <p class="fragment">More than 100 built-in steps!</p>
         </section>
 
         <section>
           <h2>Bad built-in stuff</h2>
-          <pre>
-            <div class="hljs">
+          <pre><div class="hljs">
           Then I should get a :code HTTP response
           Then I should see text matching "&lt;regex&gt;"
           Then I should see :number "&lt;element&gt;" elements
@@ -1027,75 +1150,23 @@ class UnitTest extends UnitTestCase {
           Given I run cron
           Given I run drush :command
           Given I wait for AJAX to finish
-            </div>
-          </pre>
+          </div></pre>
           <h3>No business would ever use this language!</h3>
         </section>
 
         <section>
           <h2>Use domain specific language</h2>
-          <pre>
-            <div class="hljs">
+          <pre><div class="hljs">
           Then I should see the text "Page not found"
           Then I should see the welcome message
           Then I should see 5 blog posts
           And I wait for the autocomplete suggestions to appear
-            </div>
-          </pre>
-        </section>
-
-        <section>
-          <h2>Testing Drupal</h2>
-          <h3>behat.yml</h3>
-          <pre>
-            <div class="behatyml">
-            default:
-              suites:
-                default:
-                  contexts:
-                    - FeatureContext
-                    - Drupal\DrupalExtension\Context\DrupalContext
-                    - Drupal\DrupalExtension\Context\MinkContext
-              extensions:
-                Behat\MinkExtension:
-                  base-url: 'http://mysite.local/'
-                Drupal\DrupalExtension:
-                  api_driver: 'drupal'
-                  drupal:
-                    drupal_root: '/var/www/mysite'
-            </div>
-          </pre>
-          <aside class="notes">
-            This is the default test profile.
-          </aside>
-        </section>
-
-        <section>
-          <h2>Configuring Behat</h2>
-          <pre>
-            <div class="behatyml">
-              $ git checkout 3-drupal
-              $ cp behat.yml.dist behat.yml
-              $ vim behat.yml
-            </div>
-          </pre>
-          <pre>
-            <div class="behatyml">
-            default:
-              extensions:
-                Behat\MinkExtension:
-                  base-url: 'http://mysite.local/' &lt;&lt;&lt;&lt;&lt;
-                Drupal\DrupalExtension:
-                  drupal:
-                    drupal_root: '/var/www/mysite' &lt;&lt;&lt;&lt;&lt;
-            </div>
-          </pre>
+          </div></pre>
         </section>
 
         <section>
           <h3>features/newsroom.feature</h3>
-          <pre>
-            <div class="feature">
+          <pre><div class="feature">
            @api
            Scenario: Anonymous user can see the news overview
              Given "News article" content:
@@ -1110,15 +1181,13 @@ class UnitTest extends UnitTestCase {
              And I should see the text "The first article."
              And I should see the link "Article 2"
              And I should see the text "The second article."
-            </div>
-          </pre>
+          </div></pre>
         </section>
 
         <section>
           <h2>Run the test</h2>
-          <pre>
-            <div class="feature">
-          $ ./vendor/bin/behat
+          <pre><div class="feature">
+          $ ./behat
 
           <span class="fragment">
          @api
@@ -1134,8 +1203,7 @@ class UnitTest extends UnitTestCase {
          8 steps (8 passed)
          0m0.75s (34.45Mb)
            </span>
-            </div>
-          </pre>
+          </div></pre>
           <aside class="notes">
             For the tests to pass you might need to implement the functionality :)
           </aside>
@@ -1143,13 +1211,7 @@ class UnitTest extends UnitTestCase {
 
         <section>
           <h2>Defining your own steps</h2>
-          <pre>
-            <div class="hljs">
-          $ git checkout 4-custom
-            </div>
-          </pre>
-          <pre>
-            <div class="hljs">
+          <pre><div class="hljs">
           @api
           Scenario: Anonymous user can see the news overview
             Given "News article" content:
@@ -1162,15 +1224,13 @@ class UnitTest extends UnitTestCase {
             When I visit "news"
             Then I should see the heading "News"
             And I should see 3 news articles     &lt;&lt;&lt;&lt;&lt; CUSTOM STEP
-            </div>
-          </pre>
+          </div></pre>
         </section>
 
         <section>
           <h2>Defining your own steps</h2>
-          <pre>
-            <div class="hljs">
-  $ ./vendor/bin/behat
+          <pre><div class="hljs">
+  $ ./behat
 
   1 scenario (1 undefined)
   5 steps (4 passed, 1 undefined)
@@ -1185,37 +1245,32 @@ class UnitTest extends UnitTestCase {
       {
           throw new PendingException();
       }
-            </div>
-          </pre>
+          </div></pre>
         </section>
 
         <section>
           <h2>Add missing steps automatically</h2>
-          <pre>
-            <div class="hljs">
-          $ ./vendor/bin/behat --append-snippets
+          <pre><div class="hljs">
+          $ ./behat --append-snippets
 
           1 scenario (1 undefined)
           5 steps (4 passed, 1 undefined)
           0m5.47s (42.90Mb)
 
           `I should see 3 news articles` definition added
-            </div>
-          </pre>
+          </div></pre>
         </section>
 
         <section>
           <h2>Implementation</h2>
-          <pre>
-            <div class="php">
+          <pre><div class="php">
     /**
      * @Then I should see :number news articles
      */
     public function assertNewsArticleCount($number) {
       $this->assertSession()->elementsCount('css', 'div.news-article', $number);
     }
-            </div>
-          </pre>
+          </div></pre>
           <p>See MinkContext and DrupalContext</p>
         </section>
 
