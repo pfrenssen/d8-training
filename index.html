@@ -505,7 +505,192 @@ class WebTest extends WebTestBase {
         </section>
 
         <section>
+          <h3>UnitTestCase</h3>
+          <p>tests/src/Unit/UnitTest.php</p>
+          <pre><code class="hljs">
+    &lt;?php
+
+namespace Drupal\Tests\one_two\Unit;
+
+use Drupal\Component\Utility\UrlHelper;
+use Drupal\Tests\UnitTestCase;
+
+/**
+ * @coversDefaultClass \Drupal\Component\Utility\UrlHelper
+ */
+class UnitTest extends UnitTestCase {
+}
+          </code></pre>
+        </section>
+
+        <section>
+          <h3>Test isValid()</h3>
+          <pre><code class="hljs">
+class UnitTest extends UnitTestCase {
+
+  /**
+   * Tests valid absolute URLs.
+   *
+   * @dataProvider providerTestValidAbsoluteData
+   * @covers ::isValid
+   */
+  public function testValidAbsoluteUrl($url) {
+    $valid_url = UrlHelper::isValid($url, TRUE);
+    $this->assertTrue($valid_url, $url . ' is a valid URL.');
+  }
+
+}
+          </code></pre>
+        </section>
+
+        <section>
+          <h3>Add data provider</h3>
+          <pre><code class="hljs">
+class UnitTest extends UnitTestCase {
+  public function providerTestValidAbsoluteData() {
+    return [
+      ['http://example.com'],
+      ['https://www.example.com'],
+      ['http://ex-ample.com'],
+      ['https://3xampl3.com'],
+      ['http://example.com:8080'],
+      ['https://subdomain.example.com'],
+      ['http://example.com/index.php/node?param=false'],
+      ['https://user:pass@www.example.com:8080/login.php?do=login&style=%23#pagetop'],
+      ['http://127.0.0.1'],
+      ['http://john%20doe:secret:foo@example.org/'],
+      ['https://[FEDC:BA98:7654:3210:FEDC:BA98:7654:3210]:80/index.html'],
+    ];
+  }
+  
+}
+          </code></pre>
+        </section>
+
+        <section>
+          <h3>Run tests with code coverage</h3>
+          <pre><code class="hljs">
+    $ export SIMPLETEST_BASE_URL=http://mysite.local/
+    $ export SIMPLETEST_DB=mysql://user:pass@localhost/dbname
+
+    $ ./vendor/bin/phpunit \
+      -c ./core/phpunit.xml.dist \
+      --coverage-xml=result.xml \
+      modules/one_two
+          </code></pre>
+        </section>
+
+        <section>
+          <h3>Run coverage tests in PHPStorm</h3>
+          <p><a href="https://www.drupal.org/node/2288559">https://www.drupal.org/node/2288559</a></p>
+          <p><img src="phpstorm-coverage.png" /></p>
+        </section>
+
+        <section>
           <h1>Behat</h1>
+        </section>
+
+        <section>
+          <h3>Mocking</h3>
+          <ul>
+            <li>Allows to test classes in isolation</li>
+            <li>Replace dependencies with fake "mock" objects</li>
+            <li>Mock objects implement an interface</li>
+            <li>Full control over output</li>
+            <li>Can check method calls</li>
+            <li>Relies on dependency injection</li>
+          </ul>
+        </section>
+
+        <section>
+          <h3>Testing user authentication</h3>
+          <p>\Drupal\user\UserAuth::authenticate()</p>
+          <ul>
+            <li>Uses EntityManagerInterface and PasswordInterface</li>
+            <li>We need to provide mocks for both</li>
+          </ul>
+        </section>
+
+        <section>
+          <h3>MockingTest</h3>
+          <p>tests/src/Unit/MockingTest.php</p>
+          <pre><code class="hljs">
+    &lt;?php
+
+namespace Drupal\Tests\one_two\Unit;
+
+use Drupal\user\UserAuth;
+use Drupal\Tests\UnitTestCase;
+
+/**
+ * @coversDefaultClass \Drupal\user\UserAuth
+ */
+class UnitTest extends UnitTestCase {
+  
+  protected $userStorage;
+  protected $passwordService;
+  protected $testUser;
+  protected $userAuth;
+  protected $username = 'test_user';
+  protected $password = 'password';
+
+}
+          </code></pre>
+        </section>
+
+        <section>
+          <h3>Test user authentication</h3>
+          <pre><code class="hljs">
+class UnitTest extends UnitTestCase {
+
+  public function testAuthenticateWithCorrectPassword() {
+    $this->testUser->expects($this->once())
+      ->method('id')
+      ->will($this->returnValue(1));
+
+    $this->userStorage->expects($this->once())
+      ->method('loadByProperties')
+      ->with(array('name' => $this->username))
+      ->will($this->returnValue(array($this->testUser)));
+
+    $this->passwordService->expects($this->once())
+      ->method('check')
+      ->with($this->password, $this->testUser->getPassword())
+      ->will($this->returnValue(TRUE));
+
+    $this->assertSame(1, $this->userAuth->authenticate($this->username, $this->password));
+  }
+  
+}
+          </code></pre>
+        </section>
+
+        <section>
+          <h3>The setUp()</h3>
+          <pre><code class="hljs">
+class UnitTest extends UnitTestCase {
+
+  protected function setUp() {
+    $this->userStorage = $this->getMock('Drupal\Core\Entity\EntityStorageInterface');
+
+    $entity_manager = $this->getMock('Drupal\Core\Entity\EntityManagerInterface');
+    $entity_manager->expects($this->any())
+      ->method('getStorage')
+      ->with('user')
+      ->will($this->returnValue($this->userStorage));
+
+    $this->passwordService = $this->getMock('Drupal\Core\Password\PasswordInterface');
+
+    $this->testUser = $this->getMockBuilder('Drupal\user\Entity\User')
+      ->disableOriginalConstructor()
+      ->setMethods(array('id', 'setPassword', 'save', 'getPassword'))
+      ->getMock();
+
+    $this->userAuth = new UserAuth($entity_manager, $this->passwordService);
+  }
+  
+}
+          </code></pre>
         </section>
 
         <section>
