@@ -218,20 +218,6 @@
         </section>
 
         <section>
-          <h3>HttpRequester for Firefox</h3>
-          <p><a href="https://addons.mozilla.org/firefox/addon/httprequester">https://addons.mozilla.org/firefox/addon/httprequester</a></p>
-          <p><img src="httprequester.png" /></p>
-        </section>
-
-        <section>
-          <h3>Browser plugin for viewing JSON</h3>
-          <ul>
-            <li>Chromium: <a href="https://chrome.google.com/webstore/detail/json-formatter/bcjindcccaagfpapjjmafapmmgkkhgoa">JSON Formatter</a></li>
-            <li>Firefox: <a href="https://addons.mozilla.org/en-US/firefox/addon/jsonview/?src=search">JSONView</a></li>
-          </ul>
-        </section>
-
-        <section>
           <h2>Consuming a REST service with Drupal</h2>
           <h3>What you need</h3>
           <ul>
@@ -650,14 +636,53 @@
         </section>
 
         <section>
-          <h2>Programmatically creating an endpoint</h2>
+          <h3>Programmatically creating an endpoint</h3>
           <ul>
-            <li>todo</li>
-            <li></li>
-            <li></li>
-            <li></li>
-            <li></li>
+						<li>Create a Controller</li>
+						<li>Return a JsonResponse object</li>
           </ul>
+        </section>
+
+        <section>
+          <h3>Programmatically creating an endpoint</h3>
+          <pre><code class="hljs">
+      $ drupal generate:controller
+
+      Enter the module name:
+      > change_records
+
+      Enter the Controller clas name:
+      > RestApiController
+
+      Enter the Controller method title:
+      > REST API
+
+      Enter the action method name:
+      > getStats
+
+      Enter the route path:
+      > api/v1/stats
+          </code></pre>
+          <p>(all default options are omitted)</p>
+        </section>
+
+        <section>
+          <h2>Returning a JSON response</h2>
+          <pre><code class="hljs">
+class RestApiController extends ControllerBase {
+
+  public function getStats($date_range) {
+    $data = [
+      'unique_visitors' => 100,
+      'page_views' => 3440,
+      'date_range' => ['2016-03-15T08:14:45Z', '2016-04-15T08:14:45Z'],
+    ];
+    return new JsonResponse($data);
+  }
+
+}
+          </code></pre>
+
         </section>
 
         <section>
