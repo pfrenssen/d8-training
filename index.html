@@ -75,8 +75,9 @@
          $ cd drupal-project
          $ composer install
           </div></pre>
+          <p>Check out composer.json</p>
           <p>Take a look at the folder structure</p>
-          <p>Drupal site is in web/</p>
+          <p>Point web server to site (in web/)</p>
         </section>
 
         <section>
@@ -90,21 +91,22 @@
           <h2>Configure project</h2>
           <p>build.properties.local</p>
           <pre class="hljs"><div>
-# The location of the Composer binary.
-composer.bin = /usr/bin/composer
+    # The location of the Composer binary.
+    composer.bin = /usr/bin/composer
 
-# Database settings.
-drupal.db.name = drupalproject
-drupal.db.user = root
-drupal.db.password = tp5VBzRj
+    # Database settings.
+    drupal.db.name = drupalproject
+    drupal.db.user = root
+    drupal.db.password = tp5VBzRj
 
-# Admin user.
-drupal.admin.username = admin
-drupal.admin.password = admin
+    # Admin user.
+    drupal.admin.username = admin
+    drupal.admin.password = admin
 
-# The base URL to use in Behat tests.
-behat.base_url = http://drupal-project.local
+    # The base URL to use in Behat tests.
+    behat.base_url = http://drupal-project.local
           </div></pre>
+          <p>Check `build.properties` for all available options.</p>
         </section>
 
         <section>
@@ -628,7 +630,7 @@ class UnitTest extends UnitTestCase {
       ['https://[FEDC:BA98:7654:3210:FEDC:BA98:7654:3210]:80/index.html'],
     ];
   }
-  
+
 }
           </code></pre>
         </section>
@@ -688,7 +690,7 @@ use Drupal\Tests\UnitTestCase;
  * @coversDefaultClass \Drupal\user\UserAuth
  */
 class UnitTest extends UnitTestCase {
-  
+
   protected $userStorage;
   protected $passwordService;
   protected $testUser;
@@ -722,7 +724,7 @@ class UnitTest extends UnitTestCase {
 
     $this->assertSame(1, $this->userAuth->authenticate($this->username, $this->password));
   }
-  
+
 }
           </code></pre>
         </section>
@@ -750,7 +752,7 @@ class UnitTest extends UnitTestCase {
 
     $this->userAuth = new UserAuth($entity_manager, $this->passwordService);
   }
-  
+
 }
           </code></pre>
         </section>
@@ -762,11 +764,11 @@ class UnitTest extends UnitTestCase {
     &lt;?php
 
     namespace Drupal\one_two\Tests;
-    
+
     use Drupal\KernelTests\AssertLegacyTrait;
     use Drupal\simpletest\AssertContentTrait;
     use Drupal\simpletest\BrowserTestBase;
-    
+
     class BrowserTest extends BrowserTestBase {
     }
           </code></pre>
@@ -792,7 +794,7 @@ class BrowserTest extends BrowserTestBase {
     $user = $this->drupalCreateUser(['administer content types']);
     $this->drupalLogin($user);
   }
-  
+
 }
           </code></pre>
         </section>
@@ -814,7 +816,7 @@ class BrowserTest extends BrowserTestBase {
     $this->submitForm($edit, t('Save content type'));
     $this->assertSession()->statusCodeEquals(200);
   }
-  
+
 }
           </code></pre>
         </section>
@@ -849,8 +851,6 @@ class BrowserTest extends BrowserTestBase {
     $this->content = $this->drupalGet('admin/structure/types/manage/mytype');
     file_put_contents('/home/pieter/v/joinup/web/test2.html', $this->content);
   }
-  
-}
           </code></pre>
         </section>
 
@@ -1166,7 +1166,7 @@ Scenario Outline: Anonymous user cannot access site administration
 
         <section>
           <h3>features/newsroom.feature</h3>
-          <pre><div class="feature">
+          <pre><div class="hljs">
            @api
            Scenario: Anonymous user can see the news overview
              Given "News article" content:
@@ -1186,7 +1186,7 @@ Scenario Outline: Anonymous user cannot access site administration
 
         <section>
           <h2>Run the test</h2>
-          <pre><div class="feature">
+          <pre><div class="hljs">
           $ ./behat
 
           <span class="fragment">
@@ -1263,7 +1263,7 @@ Scenario Outline: Anonymous user cannot access site administration
 
         <section>
           <h2>Implementation</h2>
-          <pre><div class="php">
+          <pre><div class="hljs">
     /**
      * @Then I should see :number news articles
      */
