@@ -40,10 +40,16 @@
 
       <!-- Any section element inside of this container is displayed as a slide -->
       <div class="slides">
+        <section data-background="front.jpg">
+        </section>
+        <section data-background="sponsors.jpg">
+        </section>
         <section data-background="#ffffff">
-          <h1>Automated testing</h1>
+          <h1>About me</h1>
+          <h2>Pieter Frenssen</h2>
           <p>
-            <small><a href="https://drupal.org/u/pfrenssen">Pieter Frenssen</a> / <a href="http://twitter.com/pfrenssen">@pfrenssen</a></small>
+            <a href="https://drupal.org/u/pfrenssen">https://drupal.org/u/pfrenssen</a><br />
+            <a href="http://twitter.com/pfrenssen">http://twitter.com/pfrenssen</a>
           </p>
           <img src="./one-agency.png" style="width: 100px; height: 100px; border: none; box-shadow: none;">
         </section>
@@ -51,7 +57,7 @@
         <section>
           <h2>Slides</h2>
           <p><a href="https://github.com/pfrenssen/d8-training">https://github.com/pfrenssen/d8-training</a></p>
-          <p>branch: automated-testing</p>
+          <p>branch: automated-testing-ddd2016</p>
         </section>
 
         <section>
@@ -202,6 +208,7 @@
             <li>Hosts (most) test code</li>
             <li>User interface</li>
             <li>Traits</li>
+            <li>Will be deprecated in the future</li>
           </ul>
         </section>
 
@@ -503,7 +510,7 @@ class WebTest extends WebTestBase {
         </section>
 
         <section>
-          <h3>Run the test</h3>
+          <h3>Run PHPUnit tests from the CLI</h3>
           <pre><code class="hljs">
     $ export SIMPLETEST_BASE_URL=http://mysite.local/
     $ export SIMPLETEST_DB=mysql://user:pass@localhost/dbname
@@ -511,6 +518,7 @@ class WebTest extends WebTestBase {
     $ cd web/
     $ ../vendor/bin/phpunit -c ./core/phpunit.xml.dist modules/one_two
           </code></pre>
+          <p>See <a href="https://www.drupal.org/node/2116263">Running PHPUnit tests</a></p>
         </section>
 
         <section>
@@ -663,6 +671,7 @@ class UnitTest extends UnitTestCase {
             <li>Full control over output</li>
             <li>Can check method calls</li>
             <li>Relies on dependency injection</li>
+            <li>Prophecy</li>
           </ul>
         </section>
 
@@ -897,6 +906,12 @@ class ToolbarIntegrationTest extends JavascriptTestBase {
 
 }
           </code></pre>
+        </section>
+
+        <section>
+          <h3>Drupal Dev Days sprint</h3>
+          <p>Converting all Simpletest web tests to BrowserTestBase</p>
+          <p><a href="https://www.drupal.org/node/2735005">https://www.drupal.org/node/2735005</a></p>
         </section>
 
         <section>
