@@ -698,7 +698,7 @@ use Drupal\Tests\UnitTestCase;
 /**
  * @coversDefaultClass \Drupal\user\UserAuth
  */
-class UnitTest extends UnitTestCase {
+class MockingTest extends UnitTestCase {
 
   protected $userStorage;
   protected $passwordService;
@@ -714,7 +714,7 @@ class UnitTest extends UnitTestCase {
         <section>
           <h3>Test user authentication</h3>
           <pre><code class="hljs">
-class UnitTest extends UnitTestCase {
+class MockingTest extends UnitTestCase {
 
   public function testAuthenticateWithCorrectPassword() {
     $this->testUser->expects($this->once())
@@ -741,7 +741,7 @@ class UnitTest extends UnitTestCase {
         <section>
           <h3>The setUp()</h3>
           <pre><code class="hljs">
-class UnitTest extends UnitTestCase {
+class MockingTest extends UnitTestCase {
 
   protected function setUp() {
     $this->userStorage = $this->getMock('Drupal\Core\Entity\EntityStorageInterface');
