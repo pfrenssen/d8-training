@@ -98,7 +98,7 @@
         <section>
           <h2>REST API first look: drupal.org</h2>
           <ul>
-            <li>https://www.drupal.org/drupalorg/docs/api</li>
+            <li><a href="https://www.drupal.org/drupalorg/docs/api">https://www.drupal.org/drupalorg/docs/api</a></li>
             <li>Exposes projects, issues, users, nodes, comments, ...</li>
             <li>Read-only</li>
             <li>Anonymous access (fair use)</li>
@@ -302,7 +302,7 @@
       Do you want to generate a form structure? (yes/no) [yes]:
       > yes
 
-      Type [ ]:
+      New field type:
       > number
 
       Input label:
@@ -344,7 +344,7 @@
         'direction' => 'DESC',
       ],
     ];
-    $result = $this->http_client->get('https://www.drupal.org/api-d7/node.json', $options);
+    $result = $this->httpClient->get('https://www.drupal.org/api-d7/node.json', $options);
     $change_records = json_decode($result->getBody())->list;
     // ...
   }
@@ -372,6 +372,10 @@
     ];
   }
           </code></pre>
+        </section>
+
+        <section>
+          <img src="changerecordsblock.png" />
         </section>
 
         <section>
