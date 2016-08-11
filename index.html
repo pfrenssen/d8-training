@@ -682,6 +682,8 @@
           <pre><code class="hljs">
 class RestApiController extends ControllerBase {
 
+  use Symfony\Component\HttpFoundation\JsonResponse;
+
   public function getStats($date_range) {
     $data = [
       'unique_visitors' => 100,
