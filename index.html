@@ -76,16 +76,6 @@
         </section>
 
         <section>
-          <h2>REST basics</h2>
-          <ul>
-            <li>Client-server</li>
-            <li>Stateless</li>
-            <li>Cacheable</li>
-            <li>Layered system</li>
-          </ul>
-        </section>
-
-        <section>
           <h2>Why use REST?</h2>
           <ul>
             <li>Standard CRUD implementation</li>
@@ -110,6 +100,7 @@
           <ul>
             <li>Desktop application</li>
             <li>Browser plugin</li>
+            <li>IDE plugin</li>
             <li>Command line client</li>
             <li>Curl</li>
           </ul>
@@ -168,7 +159,7 @@
             <li>Designing a REST API</li>
             <li>REST modules</li>
             <li>Programmatically creating endpoints</li>
-            <li>Headless Drupal</li>
+            <li><strike>Headless Drupal</strike></li>
           </ul>
         </section>
 
@@ -185,6 +176,7 @@
             <li>Filtering</li>
             <li>Awesome content authoring tools</li>
           </ul>
+          <p>Tip: use Drupal 8.2-rc1</p>
         </section>
 
         <section>
@@ -252,6 +244,7 @@
             <li>HTTP Basic Authentication</li>
             <li>Views</li>
             <li>Services</li>
+            <li>JSON API</li>
           </ul>
         </section>
 
@@ -309,7 +302,7 @@
 
         <section>
           <h3>HAL Links</h3>
-          <p>Always provide a link to yourself with <code class="inline-code">_self</code></p>
+          <p>Always provide a link to yourself with <code class="inline-code">self</code></p>
           <pre><code class="hljs">
     {
         "_links": {
@@ -380,23 +373,6 @@
         </section>
 
         <section>
-          <h2>Services</h2>
-          <ul>
-            <li>Port of the D7 modlie</li>
-            <li>Define end points</li>
-            <li>Expose data</li>
-          </ul>
-          <p><img src="services.png" /></p>
-        </section>
-
-        <section>
-          <h3>Output format</h3>
-          <p>Format settings</p>
-          <p>Specify output format(s)</p>
-          <p><img src="views-format.png" /></p>
-        </section>
-
-        <section>
           <h3>Select data to expose</h3>
           <p>Display 'fields'</p>
           <p><img src="views-fields.png" /></p>
@@ -411,7 +387,33 @@
         <section>
           <h3>Fleshing out the data</h3>
           <p>Add more fields</p>
-          <p>Visit /api/v1/members/newest</p>
+          <p><img src="views-add-fields.png" /></p>
+        </section>
+
+        <section>
+          <h3>Result</h3>
+          <p>/api/v1/members/newest</p>
+          <p><img src="views-result.png" /></p>
+        </section>
+
+        <section>
+          <h2>Services</h2>
+          <ul>
+            <li>Port of the D7 modlie</li>
+            <li>Define end points</li>
+            <li>Expose data</li>
+          </ul>
+          <p><img src="services.png" /></p>
+        </section>
+
+        <section>
+          <h2>JSON API</h2>
+          <ul>
+            <li>JSON formatter</li>
+            <li>Follows best practices</li>
+            <li>Provides resources and links</li>
+            <li>Requires Drupal 8.2</li>
+          </ul>
         </section>
 
         <section>
@@ -569,8 +571,7 @@ class ChangeRecordsBlock extends BlockBase implements ContainerFactoryPluginInte
           </ul>
         </section>
 
-        <section>
-          <h2>Questions?</h2>
+        <section data-background-image="./close.svg">
         </section>
 
       </div>
