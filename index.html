@@ -96,32 +96,7 @@
         </section>
 
         <section>
-          <h2>REST API first look: drupal.org</h2>
-          <ul>
-            <li><a href="https://www.drupal.org/drupalorg/docs/api">https://www.drupal.org/drupalorg/docs/api</a></li>
-            <li>Exposes projects, issues, users, nodes, comments, ...</li>
-            <li>Read-only</li>
-            <li>Anonymous access (fair use)</li>
-            <li>Returns data in JSON and XML formats</li>
-            <li>Supports pagination and sorting</li>
-            <li>Built in Drupal 7 with the RESTful Web Services module</li>
-          </ul>
-        </section>
-
-        <section>
-          <h3>An example request</h3>
-          <p><a href="https://www.drupal.org/api-d7/user.json?field_country=Belgium&sort=uid&limit=10">https://www.drupal.org/api-d7/user.json?field_country=Belgium&sort=uid&limit=10</a></p>
-          <ul>
-            <li>A JSON object is returned</li>
-            <li>Contains pagination data and a list of users</li>
-            <li>User objects contain many fields</li>
-            <li>Can be filtered and sorted by field</li>
-            <li>Do all fields make sense?</li>
-          </ul>
-        </section>
-
-        <section>
-          <h2>CRUD over HTTP</h2>
+          <h2>CRUD over HTTP?</h2>
           <ul>
             <li>Create: POST</li>
             <li>Read: GET</li>
@@ -138,62 +113,6 @@
             <li>Command line client</li>
             <li>Curl</li>
           </ul>
-        </section>
-
-        <section>
-          <h2>Doing requests with Curl</h2>
-          <ul>
-            <li>Powerful CLI data transfer tool</li>
-            <li>Available on all platforms</li>
-            <li>Does a lot more than just HTTP</li>
-            <li>Good for doing quick tests</li>
-          </ul>
-        </section>
-
-        <section>
-          <h3>GET Example</h3>
-          <pre><code class="hljs">
-    $ curl 'https://www.drupal.org/api-d7/node.json?limit=1'
-          </code></pre>
-          <p>Tip: add the --include flag to display HTTP headers</p>
-        </section>
-
-        <section>
-          <h3>POST Example</h3>
-          <pre><code class="hljs">
-    $ curl \
-      --header "Content-Type: application/hal+json" \
-      --request POST \
-      --data-binary '{"username":"pfrenssen","password":"hunter2"}' \
-      http://my.domain/api/login
-          </code></pre>
-          <p>Tip: use hal+json for POST & PATCH. See <a href="https://www.drupal.org/node/1964034">issue #1964034</a></p>
-        </section>
-
-        <section>
-          <h3>PATCH Example</h3>
-          <pre><code class="hljs">
-    $ curl \
-      --header 'Content-type: application/hal+json' \
-      --header 'X-CSRF-Token: YmFH42rZPtRLzl5ZrA5GyKKlskqqWsJQEcme0yWR888' \
-      --request PATCH \
-      --user pfrenssen:hunter2 \
-      --data-binary '{"title":[{"value":"Updated node title"}]}' \
-      http://my.drupal.site/node/123?_format=hal_json
-          </code></pre>
-          <p>Tip: get a token from /rest/session/token</p>
-        </section>
-
-        <section>
-          <h3>DELETE Example</h3>
-          <pre><code class="hljs">
-    $ curl \
-      --header 'X-CSRF-Token: YmFH42rZPtRLzl5ZrA5GyKKlskqqWsJQEcme0yWR888' \
-      --request DELETE \
-      --user pfrenssen:hunter2 \
-      http://my.drupal.site/node/123?_format=hal_json
-          </code></pre>
-          <p>Tip: get a token from /rest/session/token</p>
         </section>
 
         <section>
@@ -218,190 +137,28 @@
         </section>
 
         <section>
-          <h2>Consuming a REST service with Drupal</h2>
-          <h3>What you need</h3>
+          <h2>REST API first look: drupal.org</h2>
           <ul>
-            <li>Drupal 8</li>
-            <li>Drush</li>
-            <li>Console</li>
-            <li>REST client</li>
+            <li><a href="https://www.drupal.org/drupalorg/docs/api">https://www.drupal.org/drupalorg/docs/api</a></li>
+            <li>Exposes projects, issues, users, nodes, comments, ...</li>
+            <li>Read-only</li>
+            <li>Anonymous access (fair use)</li>
+            <li>Returns data in JSON and XML formats</li>
+            <li>Supports pagination and sorting</li>
+            <li>Built in Drupal 7 with the RESTful Web Services module</li>
           </ul>
         </section>
 
         <section>
-          <h2>Drupal 8</h2>
+          <h3>An example request</h3>
+          <p><a href="https://www.drupal.org/api-d7/user.json?field_country=Belgium&sort=uid&limit=10">https://www.drupal.org/api-d7/user.json?field_country=Belgium&sort=uid&limit=10</a></p>
           <ul>
-            <li>Use standard profile</li>
-            <li>Enable the REST module</li>
-            <li>Install <a href="https://www.drupal.org/project/restui">REST UI</a> contrib module</li>
+            <li>A JSON object is returned</li>
+            <li>Contains pagination data and a list of users</li>
+            <li>User objects contain many fields</li>
+            <li>Can be filtered and sorted by field</li>
+            <li>Do all fields make sense?</li>
           </ul>
-        </section>
-
-        <section>
-          <h2>Drush</h2>
-          <p><a href="https://github.com/drush-ops/drush">https://github.com/drush-ops/drush</a></p>
-        </section>
-
-        <section>
-          <h2>Console</h2>
-          <p><a href="https://drupalconsole.com/">https://drupalconsole.com/</a></p>
-        </section>
-
-        <section>
-          <h2>Exercise: Consuming a REST service</h2>
-          <ul>
-            <li>Use the Drupal.org REST API</li>
-            <li>Retrieve 5 change records with Guzzle</li>
-            <li>Display results in a block</li>
-          </ul>
-        </section>
-
-        <section>
-          <h3>Create a module with Drupal Console</h3>
-          <pre><code class="hljs">
-      $ drupal generate:module
-
-      Enter the new module name:
-      > Change records
-
-      Enter module description [My Awesome Module]:
-      > Displays change records from drupal.org.
-
-      Do you confirm generation? (yes/no) [yes]:
-      > yes
-
-      Generated or updated files
-       1 - modules/custom/change_records/change_records.info.yml
-       2 - modules/custom/change_records/composer.json
-          </code></pre>
-          <p>(all default options are omitted)</p>
-        </section>
-
-        <section>
-          <h3>Create a block part 1</h3>
-          <pre><code class="hljs">
-      $ drupal generate:plugin:block
-
-      Enter the module name [devel]:
-      > change_records
-
-      Plugin class name [DefaultBlock]:
-      > ChangeRecordsBlock
-
-      Do you want to load services from the container (yes/no) [no]:
-      > yes
-
-      Enter your service [ ]:
-      > http_client
-          </code></pre>
-        </section>
-
-        <section>
-          <h3>Create a block part 2</h3>
-          <pre><code class="hljs">
-      Do you want to generate a form structure? (yes/no) [yes]:
-      > yes
-
-      New field type:
-      > number
-
-      Input label:
-      > Number of change records to show
-
-      Input machine name [number_of_change_records_to_show]:
-      > limit
-
-      Default value [ ]:
-      > 5
-          </code></pre>
-        </section>
-
-        <section>
-          <h3>Create a block part 3</h3>
-          <pre><code class="hljs">
-      Do you confirm generation? (yes/no) [yes]:
-      > yes
-
-      Generated or updated files
-       1 - modules/custom/change_records/src/Plugin/Block/ChangeRecordsBlock.php
-
-      Rebuilding cache(s), wait a moment please.
-      [OK] Done clearing cache(s).
-          </code></pre>
-        </section>
-
-        <section>
-          <h3>Requesting data from the REST API</h3>
-          <p>src/Plugin/Block/ChangeRecordsBlock.php</p>
-          <pre><code class="hljs">
-  public function build() {
-    $options = [
-      'query' => [
-        'type' => 'changenotice',
-        'limit' => $this->configuration['limit'],
-        'status' => 1,
-        'sort' => 'created',
-        'direction' => 'DESC',
-      ],
-    ];
-    $result = $this->httpClient->get('https://www.drupal.org/api-d7/node.json', $options);
-    $change_records = json_decode($result->getBody())->list;
-    // ...
-  }
-          </code></pre>
-        </section>
-
-        <section>
-          <h3>Requesting data from the REST API</h3>
-          <p>src/Plugin/Block/ChangeRecordsBlock.php</p>
-          <pre><code class="hljs">
-  public function build() {
-    // ...
-    $items = [];
-    foreach ($change_records as $change_record) {
-      $items[] = [
-        '#type' => 'link',
-        '#title' => $change_record->title,
-        '#url' => Url::fromUri($change_record->url),
-      ];
-    }
-    return [
-      '#theme' => 'item_list',
-      '#items' => $items,
-      '#list_type' => 'ol',
-    ];
-  }
-          </code></pre>
-        </section>
-
-        <section>
-          <img src="changerecordsblock.png" />
-        </section>
-
-        <section>
-          <h3>Modeling REST data as entities</h3>
-          <ul>
-            <li>json_decode() returns a plain (meh) object</li>
-            <li>Entities are the ideal match in Drupal</li>
-            <li>Integrates well with everything</li>
-            <li>Local caching</li>
-            <li>Importing / exporting</li>
-            <li>Requires the Serialization module</li>
-          </ul>
-        </section>
-
-        <section>
-          <h3>Modeling REST data as entities</h3>
-          <ul>
-            <li>Create custom entity representing REST data</li>
-            <li>Inject the 'serializer' service</li>
-            <li>Deserialize the REST data into an entity</li>
-          </ul>
-          <pre><code class="hljs">
- $data = $this->httpClient->get('https://www.drupal.org/api-d7/node/2692565.json');
- $serializer = \Drupal::service('serializer');
- $entity = $serializer->deserialize($data, 'Drupal\change_records\Entity\ChangeRecord', 'json');
-          </code></pre>
         </section>
 
         <section>
@@ -494,6 +251,7 @@
             <li>HAL</li>
             <li>HTTP Basic Authentication</li>
             <li>Views</li>
+            <li>Services</li>
           </ul>
         </section>
 
@@ -622,6 +380,16 @@
         </section>
 
         <section>
+          <h2>Services</h2>
+          <ul>
+            <li>Port of the D7 modlie</li>
+            <li>Define end points</li>
+            <li>Expose data</li>
+          </ul>
+          <p><img src="services.png" /></p>
+        </section>
+
+        <section>
           <h3>Output format</h3>
           <p>Format settings</p>
           <p>Specify output format(s)</p>
@@ -655,29 +423,6 @@
         </section>
 
         <section>
-          <h3>Programmatically creating an endpoint</h3>
-          <pre><code class="hljs">
-      $ drupal generate:controller
-
-      Enter the module name:
-      > change_records
-
-      Enter the Controller clas name:
-      > RestApiController
-
-      Enter the Controller method title:
-      > REST API
-
-      Enter the action method name:
-      > getStats
-
-      Enter the route path:
-      > api/v1/stats
-          </code></pre>
-          <p>(all default options are omitted)</p>
-        </section>
-
-        <section>
           <h2>Returning a JSON response</h2>
           <pre><code class="hljs">
 class RestApiController extends ControllerBase {
@@ -699,12 +444,129 @@ class RestApiController extends ControllerBase {
         </section>
 
         <section>
-          <h2>Headless Drupal workshop</h2>
-          <p>Ruben Teijero</p>
-          <p>Today 13:30</p>
-          <h2>GraphQL and Relay</h2>
-          <p>Sebastian Siemssen</p>
-          <p>Tomorrow 13:30</p>
+          <h2>Consuming a REST service with Drupal</h2>
+          <ul>
+            <li>No modules yet</li>
+            <li>Easy to do programmatically</li>
+          </ul>
+        </section>
+
+        <section>
+          <h2>Example implementation</h2>
+          <ul>
+            <li>Use the Drupal.org REST API</li>
+            <li>Retrieve 5 change records with Guzzle</li>
+            <li>Display results in a block</li>
+          </ul>
+        </section>
+
+        <section>
+          <h3>Injecting Guzzle</h3>
+          <p>Example implementation in a block</p>
+          <pre><code class="hljs">
+class ChangeRecordsBlock extends BlockBase implements ContainerFactoryPluginInterface {
+
+  protected $httpClient;
+
+  public function __construct(array $configuration, $plugin_id, $plugin_definition, Client $http_client) {
+    parent::__construct($configuration, $plugin_id, $plugin_definition);
+    $this->httpClient = $http_client;
+  }
+
+  public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition) {
+    return new static(
+      $configuration,
+      $plugin_id,
+      $plugin_definition,
+      $container->get('http_client')
+    );
+  }
+}
+          </code></pre>
+        </section>
+
+
+        <section>
+          <h3>Requesting data from the REST API</h3>
+          <p>Example implementation in a block</p>
+          <pre><code class="hljs">
+  public function build() {
+    $options = [
+      'query' => [
+        'type' => 'changenotice',
+        'limit' => 5,
+        'status' => 1,
+        'sort' => 'created',
+        'direction' => 'DESC',
+      ],
+    ];
+    $result = $this->httpClient->get('https://www.drupal.org/api-d7/node.json', $options);
+    $change_records = json_decode($result->getBody())->list;
+    // ...
+  }
+          </code></pre>
+        </section>
+
+        <section>
+          <h3>Requesting data from the REST API</h3>
+          <p>src/Plugin/Block/ChangeRecordsBlock.php</p>
+          <pre><code class="hljs">
+  public function build() {
+    // ...
+    $items = [];
+    foreach ($change_records as $change_record) {
+      $items[] = [
+        '#type' => 'link',
+        '#title' => $change_record->title,
+        '#url' => Url::fromUri($change_record->url),
+      ];
+    }
+    return [
+      '#theme' => 'item_list',
+      '#items' => $items,
+      '#list_type' => 'ol',
+    ];
+  }
+          </code></pre>
+        </section>
+
+        <section>
+          <img src="changerecordsblock.png" />
+        </section>
+
+        <section>
+          <h3>Modeling REST data as entities</h3>
+          <ul>
+            <li>json_decode() returns a plain (meh) object</li>
+            <li>Entities are the ideal match in Drupal</li>
+            <li>Integrates well with everything</li>
+            <li>Local caching</li>
+            <li>Importing / exporting</li>
+            <li>Requires the Serialization module</li>
+          </ul>
+        </section>
+
+        <section>
+          <h3>Modeling REST data as entities</h3>
+          <ul>
+            <li>Create custom entity representing REST data</li>
+            <li>Inject the 'serializer' service</li>
+            <li>Deserialize the REST data into an entity</li>
+          </ul>
+          <pre><code class="hljs">
+ $data = $this->httpClient->get('https://www.drupal.org/api-d7/node/2692565.json');
+ $serializer = \Drupal::service('serializer');
+ $entity = $serializer->deserialize($data, 'Drupal\change_records\Entity\ChangeRecord', 'json');
+          </code></pre>
+        </section>
+
+
+        <section>
+          <h2>Resources</h2>
+          <ul>
+            <li><a href="https://www.drupal.org/documentation/modules/rest">RESTful Web Services module documentation</a></li>
+            <li><a href="https://www.drupal.org/node/2721489">REST: top priorities for Drupal 8.2.x</a></li>
+          </ul>
         </section>
 
         <section>
