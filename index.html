@@ -40,87 +40,36 @@
 
       <!-- Any section element inside of this container is displayed as a slide -->
       <div class="slides">
-        <section data-background="front.jpg">
+        <section>
+          <h1>Automated testing</h1>
+          <p>
+            <small><a href="https://drupal.org/u/pfrenssen">Pieter Frenssen</a> / <a href="http://twitter.com/pfrenssen">@pfrenssen</a></small>
+          </p>
+          <img src="./vrt-logo.png" style="width: auto; height: auto; border: none; box-shadow: none;">
         </section>
-        <section data-background="sponsors.jpg">
-        </section>
-        <section data-background="#ffffff">
+
+        <section>
           <h1>About me</h1>
           <h2>Pieter Frenssen</h2>
           <p>
             <a href="https://drupal.org/u/pfrenssen">https://drupal.org/u/pfrenssen</a><br />
             <a href="http://twitter.com/pfrenssen">http://twitter.com/pfrenssen</a>
           </p>
-          <img src="./one-agency.png" style="width: 100px; height: 100px; border: none; box-shadow: none;">
         </section>
 
         <section>
           <h2>Slides</h2>
           <p><a href="https://github.com/pfrenssen/d8-training">https://github.com/pfrenssen/d8-training</a></p>
-          <p>branch: automated-testing-ddd2016</p>
+          <p>branch: automated-testing-introduction-vrt-2h</p>
         </section>
 
         <section>
-          <h2>First let's install Drupal</h2>
-          <p>... using a Composer based workflow</p>
-        </section>
-
-        <section>
-          <h2>Install Composer globally</h2>
-          <p><a href="https://getcomposer.org/download/">https://getcomposer.org/download/</a></p>
-          <pre class="hljs"><div>
-              $ mv composer.phar /usr/bin/
-              $ composer --version
-          </div></pre>
-        </section>
-
-        <section>
-          <h2>Download Drupal project fork</h2>
+          <h2>Drupal project 'starterkit'</h2>
           <pre class="hljs"><div>
          $ git clone https://github.com/pfrenssen/drupal-project.git
          $ cd drupal-project
          $ composer install
           </div></pre>
-          <p>Check out composer.json</p>
-          <p>Take a look at the folder structure</p>
-          <p>Point web server to site (in web/)</p>
-        </section>
-
-        <section>
-          <h2>Configure project</h2>
-          <pre class="hljs"><div>
-              $ vim build.properties.local
-          </div></pre>
-        </section>
-
-        <section>
-          <h2>Configure project</h2>
-          <p>build.properties.local</p>
-          <pre class="hljs"><div>
-    # The location of the Composer binary.
-    composer.bin = /usr/bin/composer
-
-    # Database settings.
-    drupal.db.name = drupalproject
-    drupal.db.user = root
-    drupal.db.password = tp5VBzRj
-
-    # Admin user.
-    drupal.admin.username = admin
-    drupal.admin.password = admin
-
-    # The base URL to use in Behat tests.
-    behat.base_url = http://drupal-project.local
-          </div></pre>
-          <p>Check `build.properties` for all available options.</p>
-        </section>
-
-        <section>
-          <h2>Install drupal</h2>
-          <pre class="hljs"><div>
-    $ ./vendor/bin/phing install-dev
-          </div></pre>
-          <p>Check if it works in the browser</p>
         </section>
 
         <section>
@@ -152,7 +101,7 @@
             <li>A/B testing</li>
             <li>Compatibility testing</li>
             <li>Functional testing</li>
-            <li>Performance / Load / Concurrent / Stress testing</li>
+            <li>Performance / load / stress testing</li>
             <li>Smoke testing</li>
             <li>Fuzzing</li>
           </ul>
