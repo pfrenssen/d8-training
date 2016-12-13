@@ -43,7 +43,7 @@
         <section>
           <h1>Automated testing</h1>
           <p>
-            <small><a href="https://drupal.org/u/pfrenssen">Pieter Frenssen</a> / <a href="http://twitter.com/pfrenssen">@pfrenssen</a></small>
+            <a href="https://drupal.org/u/pfrenssen">Pieter Frenssen</a> / <a href="http://twitter.com/pfrenssen">@pfrenssen</a>
           </p>
           <img src="./vrt-logo.png" style="width: auto; height: auto; border: none; box-shadow: none;">
         </section>
@@ -120,6 +120,64 @@
         </section>
 
         <section>
+          <h2>Agile workflow</h2>
+          <p><img src="workflow-basic.png" /></p>
+        </section>
+
+        <section>
+          <h2>Agile workflow</h2>
+          <p><img src="workflow-tests.png" /></p>
+        </section>
+
+        <section>
+          <h2>Agile workflow</h2>
+          <p><img src="workflow-branches.png" /></p>
+        </section>
+
+        <section>
+          <h2>Agile workflow</h2>
+          <ul>
+            <li>Create subtasks</li>
+            <li>Work in separate branches</li>
+            <li>QA / UAT for every subtask</li>
+            <li>Only merge when tests are green</li>
+          </ul>
+          <p>Product is always shippable</p>
+        </section>
+
+        <section>
+          <h3>Definition of Done</h3>
+          <ul>
+            <li>Implementation complete</li>
+            <li>Documentation complete</li>
+            <li>Tests added</li>
+            <li>All tests passing</li>
+            <li>Manual test instructions in ticket</li>
+            <li>Track technical debt: todo's + followups</li>
+          </ul>
+        </section>
+
+        <section>
+          <h3>Doing effective QA</h3>
+          <ul>
+            <li>Start by checking the DoD</li>
+            <li>Follow manual testing instructions</li>
+            <li>Code review</li>
+            <li>Assess if test coverage is sufficient</li>
+          </ul>
+        </section>
+
+        <section>
+          <h3>Continuous integration</h3>
+          <ul>
+            <li>Critical for success</li>
+            <li>Run all tests on every push</li>
+            <li>Deploy acceptance environments</li>
+            <li>Travis CI / ContinuousPHP / Jenkins</li>
+          </ul>
+        </section>
+
+        <section>
           <h2>History of testing in Drupal</h2>
           <h3>Simpletest</h3>
           <ul>
@@ -191,6 +249,14 @@
         </section>
 
         <section>
+          <h2>PHPUnit in D8</h2>
+          <ul>
+            <li>Modern, powerful testing framework</li>
+            <li>Command line interface only</li>
+          </ul>
+        </section>
+
+        <section>
           <h2>Writing tests in Drupal 8</h2>
           <ul>
             <li>WebTestBase</li>
@@ -218,6 +284,9 @@
             <li>modules/my_module/tests/src/kernel/MyTest.php</li>
             <li>Drupal\Tests\my_module\Kernel\MyTest</li>
           </ul>
+          <p>
+            Don't extend \Drupal\simpletest\KernelTestBase!
+          </p>
         </section>
 
         <section>
