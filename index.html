@@ -64,15 +64,6 @@
         </section>
 
         <section>
-          <h2>Drupal project 'starterkit'</h2>
-          <pre class="hljs"><div>
-         $ git clone https://github.com/pfrenssen/drupal-project.git
-         $ cd drupal-project
-         $ composer install
-          </div></pre>
-        </section>
-
-        <section>
           <h2>A little bit of theory</h2>
         </section>
 
@@ -142,7 +133,7 @@
             <li>QA / UAT for every subtask</li>
             <li>Only merge when tests are green</li>
           </ul>
-          <p>Product is always shippable</p>
+          <p>Result: product is always shippable</p>
         </section>
 
         <section>
@@ -212,57 +203,27 @@
         <section>
           <h2>Simpletest in D8</h2>
           <ul>
-            <li>Hosts (most) test code</li>
+            <li>Deprecated: will be removed in D9</li>
+            <li>Custom test runner</li>
             <li>User interface</li>
-            <li>Traits</li>
-            <li>Will be deprecated in the future</li>
+            <li>Script to run tests on CLI</li>
           </ul>
-        </section>
-
-        <section>
-          <h2>Running tests from the UI</h2>
-          <ul>
-            <li>Enable Simpletest module</li>
-            <li>Go to admin/config/development/testing</li>
-            <li>Tip: don't run all tests at once</li>
-          </ul>
-          <p><img src="simpletest-ui.png" /></p>
-        </section>
-
-        <section>
-          <h2>How does Simpletest run tests</h2>
-          <ul>
-            <li>Creates temporary tables</li>
-            <li>Creates temporary file storage</li>
-            <li>Full Drupal install</li>
-          </ul>
-        </section>
-
-        <section>
-          <h2>Clean up test artifacts</h2>
-          <ul>
-            <li>Through Simpletest UI</li>
-            <li>Removes test database tables</li>
-            <li>Cleans out sites/default/files/simpletest</li>
-          </ul>
-          <p><img src="clean-test-environment.png" /></p>
         </section>
 
         <section>
           <h2>PHPUnit in D8</h2>
           <ul>
-            <li>Modern, powerful testing framework</li>
+            <li>Modern + powerful testing framework</li>
             <li>Command line interface only</li>
           </ul>
         </section>
 
+
         <section>
           <h2>Writing tests in Drupal 8</h2>
           <ul>
-            <li>WebTestBase</li>
-            <li>KernelTestBase</li>
-            <li>KernelTestBase</li>
             <li>UnitTestCase</li>
+            <li>KernelTestBase</li>
             <li>BrowserTestBase</li>
             <li>JavaScriptTestBase</li>
             <li>Behat</li>
@@ -270,39 +231,189 @@
         </section>
 
         <section>
-          <h2>Test location and namespaces</h2>
-          <h3>WebTestBase</h3>
+          <h2>Deprecated base classes</h2>
           <ul>
-            <li>modules/my_module/src/Tests/MyTest.php</li>
-            <li>Drupal\my_module\Tests\MyTest</li>
+            <li>WebTestBase</li>
+            <li>KernelTestBase</li>
+          </ul>
+          <p>Legacy code from Simpletest</p>
+          <p>Use BrowserTestBase and the "new" KernelTestBase instead</p>
+        </section>
+
+        <section>
+          <h2>Which test type to use?</h2>
+        </section>
+
+        <section>
+          <h2>UnitTestCase</h2>
+          <ul>
+            <li>Test OOP classes in isolation</li>
+            <li>Mock all dependencies</li>
+            <li>Really fast</li>
+            <li>Thorough testing of arguments + output</li>
+            <li>Harder to write</li>
           </ul>
         </section>
 
         <section>
-          <h3>KernelTestBase</h3>
+          <h2>UnitTestCase</h2>
+          <h3>Useful for:</h3>
           <ul>
-            <li>modules/my_module/tests/src/kernel/MyTest.php</li>
-            <li>Drupal\Tests\my_module\Kernel\MyTest</li>
-          </ul>
-          <p>
-            Don't extend \Drupal\simpletest\KernelTestBase!
-          </p>
-        </section>
-
-        <section>
-          <h3>UnitTestCase</h3>
-          <ul>
-            <li>modules/my_module/tests/src/unit/MyTest.php</li>
-            <li>Drupal\Tests\my_module\Unit\MyTest</li>
+            <li>Services</li>
+            <li>Plugins</li>
+            <li>Utility classes</li>
+            <li>Pure OOP code</li>
           </ul>
         </section>
 
         <section>
-          <h3>BrowserTestBase / JavaScriptTestBase</h3>
+          <h2>KernelTestBase</h2>
           <ul>
-            <li>modules/my_module/tests/src/functional/MyTest.php</li>
-            <li>Drupal\Tests\my_module\Functional\MyTest</li>
+            <li>Integration tests</li>
+            <li>Empty database in RAM</li>
+            <li>Choose database schemas to install</li>
+            <li>Full Drupal API is available</li>
+            <li>Runs reasonably fast</li>
+            <li>Quite easy to write</li>
           </ul>
+        </section>
+
+        <section>
+          <h2>KernelTestBase</h2>
+          <h3>Useful for:</h3>
+          <ul>
+            <li>Entities</li>
+            <li>Storage</li>
+            <li>Config</li>
+            <li>Procedural code (e.g. hooks)</li>
+            <li>Interaction between modules</li>
+          </ul>
+        </section>
+
+        <section>
+          <h2>BrowserTestBase</h2>
+          <ul>
+            <li>Drupal is fully installed</li>
+            <li>Choose installation profile</li>
+            <li>Perform HTTP requests</li>
+            <li>Verify rendered HTML</li>
+            <li>Very slow to run</li>
+            <li>Easy to write</li>
+          </ul>
+        </section>
+
+        <section>
+          <h2>BrowserTestBase</h2>
+          <h3>Use it for:</h3>
+          <ul>
+            <li>User interaction</li>
+            <li>Forms</li>
+            <li>Complex integrations</li>
+          </ul>
+        </section>
+
+        <section>
+          <h2>JavascriptTestBase</h2>
+          <ul>
+            <li>Uses a real browser</li>
+            <li>Mink + PhantomJS</li>
+            <li>Clicking, dragging, key presses</li>
+            <li>Verify DOM element visibility</li>
+            <li>Execute JS code in the running browser</li>
+            <li>Wait for JS events to happen</li>
+          </ul>
+        </section>
+
+        <section>
+          <h2>JavascriptTestBase</h2>
+          <h3>Use it for:</h3>
+          <ul>
+            <li>Testing JS code in the live site</li>
+          </ul>
+        </section>
+
+        <section>
+          <h2>Behat</h2>
+          <ul>
+            <li>BDD</li>
+            <li>Test complete user stories</li>
+            <li>Plain english</li>
+            <li>Domain specific language</li>
+            <li>Very easy to write, great ROI</li>
+            <li>Not for testing code!</li>
+          </ul>
+        </section>
+
+        <section>
+          <h2>Behat</h2>
+          <h3>Use it for:</h3>
+          <ul>
+            <li>Client projects!</li>
+            <li>Describing expected user behaviour</li>
+            <li>Improving communication with client</li>
+            <li>Proving delivery of business value</li>
+          </ul>
+        </section>
+
+        <section>
+          <h2>Where to put the tests</h2>
+          <dl>
+            <dt>UnitTestBase</dt>
+            <dd>modules/my_module/tests/src/Unit/MyUnitTest.php</dd>
+            <dt>KernelTestBase</dt>
+            <dd>modules/my_module/tests/src/Kernel/MyKernelTest.php</dd>
+            <dt>BrowserTestBase</dt>
+            <dd>modules/my_module/tests/src/Functional/MyBrowserTest.php</dd>
+            <dt>JavaScriptTestBase</dt>
+            <dd>modules/my_module/tests/src/Functional/MyJSTest.php</dd>
+          </dl>
+        </section>
+
+        <section>
+          <h2>Test namespaces</h2>
+          <dl>
+            <dt>UnitTestBase</dt>
+            <dd>\Drupal\Tests\my_module\Unit</dd>
+            <dt>KernelTestBase</dt>
+            <dd>\Drupal\Tests\my_module\Kernel</dd>
+            <dt>BrowserTestBase</dt>
+            <dd>\Drupal\Tests\my_module\Functional</dd>
+            <dt>JavaScriptTestBase</dt>
+            <dd>\Drupal\Tests\my_module\Functional</dd>
+          </dl>
+        </section>
+
+        <section>
+          <h1>Enough waffling</h1>
+          <h1>Show us the code</h1>
+        </section>
+
+        <section>
+          <h2>Drupal project 'starterkit'</h2>
+          <a href="https://github.com/pfrenssen/drupal-project">https://github.com/pfrenssen/drupal-project.git</a>
+          <p>Fork of drupal-composer/drupal-project</p>
+          <p>Includes Behat, PHP CodeSniffer, CI support, ...</p>
+        </section>
+
+        <section>
+          <h2>Fork it on Github</h2>
+          <p><img src="fork-drupal-project.png" /></p>
+        </section>
+
+        <section>
+          <h2>Enable continuous integration</h2>
+          <p><img src="enable-testing-travis-ci.png" /></p>
+          <p><a href="https://travis-ci.org/">https://travis-ci.org/</a></p>
+          <p>Log in with your Github account</p>
+        </section>
+
+        <section>
+          <h2>Clone the project locally</h2>
+          <pre class="hljs"><div>
+         $ git clone https://github.com/myusername/drupal-project.git
+         $ cd drupal-project
+         $ composer install
+          </div></pre>
         </section>
 
         <section>
@@ -924,12 +1035,6 @@ class ToolbarIntegrationTest extends JavascriptTestBase {
 
 }
           </code></pre>
-        </section>
-
-        <section>
-          <h3>Drupal Dev Days sprint</h3>
-          <p>Converting all Simpletest web tests to BrowserTestBase</p>
-          <p><a href="https://www.drupal.org/node/2735005">https://www.drupal.org/node/2735005</a></p>
         </section>
 
         <section>
