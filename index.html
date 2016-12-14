@@ -390,18 +390,20 @@
 
         <section>
           <h2>Drupal project 'starterkit'</h2>
-          <a href="https://github.com/pfrenssen/drupal-project">https://github.com/pfrenssen/drupal-project.git</a>
+          <p><a href="https://github.com/pfrenssen/drupal-project">https://github.com/pfrenssen/drupal-project</a></p>
           <p>Fork of drupal-composer/drupal-project</p>
-          <p>Includes Behat, PHP CodeSniffer, CI support, ...</p>
+          <p>Behat, PHP CodeSniffer, CI, Drush, Drupal Console, ...</p>
         </section>
 
         <section>
           <h2>Fork it on Github</h2>
           <p><img src="fork-drupal-project.png" /></p>
+          <p><a href="https://github.com/pfrenssen/drupal-project">https://github.com/pfrenssen/drupal-project</a></p>
+          <p>Note: for client projects, clone rather than fork</p>
         </section>
 
         <section>
-          <h2>Enable continuous integration</h2>
+          <h2>Activate project on Travis CI</h2>
           <p><img src="enable-testing-travis-ci.png" /></p>
           <p><a href="https://travis-ci.org/">https://travis-ci.org/</a></p>
           <p>Log in with your Github account</p>
@@ -414,15 +416,71 @@
          $ cd drupal-project
          $ composer install
           </div></pre>
+          <p>Use your Github username for 'myusername'</p>
+        </section>
+
+        <section>
+          <h2>Configure the project</h2>
+          <p>build.properties</p>
+          <pre class="hljs"><div>
+    # The site name.
+    website.site.name = VRT Demo Project
+          </div></pre>
+          <p>Create the 'build.properties' file</p>
+          <p>Contains settings unique for the project</p>
+          <p>Commit this file</p>
+        </section>
+
+        <section>
+          <h2>Configure your dev environment</h2>
+          <p>build.properties.local</p>
+          <pre class="hljs"><div>
+    # Database settings.
+    drupal.db.name = vrt-demo
+    drupal.db.user = root
+    drupal.db.password = hunter2
+    
+    # The base URL. Used for functional tests.
+    drupal.base_url = http://vrt-demo.local
+          </div></pre>
+          <p>Create the 'build.properties.local' file</p>
+          <p>Contains personal settings for local dev - don't commit!</p>
+          <p>Check 'build.properties.dist' for more options</p>
+        </section>
+
+        <section>
+          <h2>Build development environment</h2>
+          <pre class="hljs"><div>
+         $ ./vendor/bin/phing build-dev
+          </div></pre>
+          <p>Creates various configuration files</p>
+        </section>
+
+        <section>
+          <h2>Install development environment</h2>
+          <pre class="hljs"><div>
+         $ ./vendor/bin/phing install-dev
+          </div></pre>
+          <p>Installs Drupal, creates test users</p>
+          <p>Drupal is up and running now!</p>
+        </section>
+
+        <section>
+          <h2>Try out CI</h2>
+          <ul>
+            <li>Make a small change (e.g. update README)</li>
+            <li>$ git push</li>
+            <li>Tests start running on Travis</li>
+            <li>Test result visible on Github</li>
+          </ul>
         </section>
 
         <section>
           <h3>Create a test module</h3>
           <pre><code class="hljs">
-   $ cd modules
-   $ mkdir one_two
-   $ cd one_two
-   $ mkdir -p src/Tests
+   $ cd web/modules
+   $ mkdir -p custom/one_two
+   $ cd custom/one_two
    $ mkdir -p tests/src/Kernel
    $ mkdir -p tests/src/Unit
    $ mkdir -p tests/src/Functional
@@ -442,31 +500,44 @@
         </section>
 
         <section>
-          <h3>WebTestBase</h3>
-          <p>src/Tests/WebTest.php</p>
+          <h3>BrowserTestBase</h3>
+          <p>tests/src/Functional/BrowserTest.php</p>
           <pre><code class="hljs">
   &lt;?php
-  namespace Drupal\one_two\Tests;
-
-  use Drupal\simpletest\WebTestBase;
-
+  namespace Drupal\Tests\one_two\Functional;
+  
+  use Drupal\Tests\BrowserTestBase;
+  
   /**
    * Example functional test.
    *
    * @group one_two
    */
-  class WebTest extends WebTestBase {
+  class BrowserTest extends BrowserTestBase {
     function testDrupalGet() {
       $this->drupalGet('user/register');
-      $this->assertResponse(200, 'The registration page is accessible.');
+      $this->assertSession()->pageTextContains('Create new account');
     }
   }
           </code></pre>
         </section>
 
         <section>
-          <h2>Test output</h2>
-          <p><img src="test-screenshot.png" /></p>
+					<h3>Run the test</h3>
+          <pre><code class="hljs">
+   $ cd web/
+   $ ../vendor/bin/phpunit
+          </code></pre>
+        </section>
+
+        <section>
+					<h3>Inspect test output</h3>
+          <pre><code class="hljs">
+   $ cd sites/simpletest/browser_output/
+   $ ls
+          </code></pre>
+          <p>Contains screenshots taken during test runs</p>
+          <p>'outputfile.txt' has the full list</p>
         </section>
 
         <section>
@@ -474,12 +545,11 @@
           <pre><code class="hljs">
   function testDrupalGet() {
     $this->drupalGet('user/register');
-    $this->assertResponse(200, 'The registration page is accessible.');
-    $this->assertField('mail', 'The email field is present.');
-    $this->assertField('name', 'The name field is present.');
-    $this->assertField('timezone', 'The timezone field is present.');
-    $this->assertField('op', 'The submit button is present.');
-    $this->assertNoField('zlorp', 'The zlorp field is not present.');
+    $this->assertSession()->pageTextContains('Create new account');
+    $this->assertSession()->fieldExists('Email address');
+    $this->assertSession()->fieldExists('Username');
+    $this->assertSession()->buttonExists('Create new account');
+    $this->assertSession()->pageTextNotContains('vtm nieuws');
   }
           </code></pre>
           <p>Take a look at the available asserts.</p>
@@ -488,7 +558,7 @@
         <section>
           <h3>Test setUp()</h3>
           <pre><code class="hljs">
-class WebTest extends WebTestBase {
+class BrowserTest extends BrowserTestBase {
 
   protected $user;
 
@@ -515,8 +585,8 @@ class WebTest extends WebTestBase {
     $title = $this->randomString();
     $body = $this->randomString(32);
     $edit = [
-      'title[0][value]' => $title,
-      'body[0][value]' => $body,
+      'Title' => $title,
+      'Body' => $body,
     ];
     $this->drupalPostForm('node/add/page', $edit, t('Save'));
   }
@@ -530,9 +600,9 @@ class WebTest extends WebTestBase {
     ...
 
     $node = $this->drupalGetNodeByTitle($title);
-    $this->assertTrue($node, 'Node found in database.');
-    $this->assertIdentical($node->getTitle(), $title, 'Title is correct.');
-    $this->assertIdentical($node->body->value, $title, 'Body is correct.');
+    $this->assertTrue($node);
+    $this->assertEquals($title, $node->getTitle());
+    $this->assertEquals($body, $node->body->value);
   }
           </code></pre>
         </section>
@@ -543,19 +613,11 @@ class WebTest extends WebTestBase {
   function testNodeCreate() {
     ...
 
-    $node = $this->drupalGetNodeByTitle($title);
-    $this->assertTrue($node, 'Node found in database.');
-    $this->assertIdentical($node->getTitle(), $title, 'Title is correct.');
-    $this->assertIdentical($node->body->value, $title, 'Body is correct.');
-    debug($node->body->value);
-    debug($title);
+    var_dump($node->body->value);
+    var_dump($title);
   }
           </code></pre>
-        </section>
-
-        <section>
-          <h2>Debugging output</h2>
-          <p><img src="debugging.png" /></p>
+          <p>Note: You'll see the output, but the test will fail</p>
         </section>
 
         <section>
@@ -575,10 +637,10 @@ class WebTest extends WebTestBase {
     ...
 
     $this->clickLink(t('Edit'));
-    $this->assertUrl($node->toUrl('edit-form', ['absolute' => TRUE]));
+    $this->assertSession()->addressEquals($node->toUrl('edit-form', ['absolute' => TRUE]));
 
     $link_text = 'Edit<span class="visually-hidden">(active tab)</span>';
-    $this->assertRaw($link_text, 'Edit tab found and marked active.');
+    $this->assertSession()->responseContains($link_text);
   }
           </code></pre>
         </section>
@@ -589,8 +651,8 @@ class WebTest extends WebTestBase {
   function testNodeCreate() {
     ...
 
-    $this->assertFieldByName('title[0][value]', $title, 'Title field displayed.');
-    $this->assertFieldByName('body[0][value]', $body, 'Body field displayed.');
+    $this->assertSession()->fieldValueEquals('Title', $title);
+    $this->assertSession()->fieldValueEquals('Body', $body);
   }
           </code></pre>
         </section>
@@ -639,15 +701,16 @@ class WebTest extends WebTestBase {
         </section>
 
         <section>
-          <h3>Run PHPUnit tests from the CLI</h3>
+          <h3>Eek a failure</h3>
           <pre><code class="hljs">
-    $ export SIMPLETEST_BASE_URL=http://mysite.local/
-    $ export SIMPLETEST_DB=mysql://user:pass@localhost/dbname
-
-    $ cd web/
-    $ ../vendor/bin/phpunit -c ./core/phpunit.xml.dist modules/one_two
+    $ ../vendor/bin/phpunit modules/custom/one_two/tests/src/Kernel/
+    
+    There was 1 error:
+    
+    1) Drupal\Tests\one_two\Kernel\KernelTest::testBlockCreation
+    NoCorrespondingEntityClassException: The Drupal\block_content\Entity\BlockContentType
+    class does not correspond to an entity type.
           </code></pre>
-          <p>See <a href="https://www.drupal.org/node/2116263">Running PHPUnit tests</a></p>
         </section>
 
         <section>
@@ -658,7 +721,7 @@ class WebTest extends WebTestBase {
       /**
        * {@inheritdoc}
        */
-      public static $modules = ['system', 'block', 'block_content'];
+      public static $modules = ['system', 'block', 'block_content', 'user'];
 
       /**
        * {@inheritdoc}
@@ -666,6 +729,7 @@ class WebTest extends WebTestBase {
       public function setUp() {
         parent::setUp();
         $this->installEntitySchema('block_content');
+        $this->installEntitySchema('user');
       }
 
     }
@@ -701,8 +765,8 @@ class WebTest extends WebTestBase {
       public function testBlockCreation() {
         // ...
 
-        $this->assertEquals($info, $block->label(), 'The label was set correctly.');
-        $this->assertEquals($bundle, $block->bundle(), 'The bundle was set correctly.');
+        $this->assertEquals($info, $block->label());
+        $this->assertEquals($bundle, $block->bundle());
       }
 
     }
