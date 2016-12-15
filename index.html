@@ -439,7 +439,7 @@
     drupal.db.name = vrt-demo
     drupal.db.user = root
     drupal.db.password = hunter2
-    
+
     # The base URL. Used for functional tests.
     drupal.base_url = http://vrt-demo.local
           </div></pre>
@@ -505,9 +505,9 @@
           <pre><code class="hljs">
   &lt;?php
   namespace Drupal\Tests\one_two\Functional;
-  
+
   use Drupal\Tests\BrowserTestBase;
-  
+
   /**
    * Example functional test.
    *
@@ -520,6 +520,7 @@
     }
   }
           </code></pre>
+          <p>Test function names start with 'test'</p>
         </section>
 
         <section>
@@ -527,7 +528,12 @@
           <pre><code class="hljs">
    $ cd web/
    $ ../vendor/bin/phpunit
+
+   Time: 12.34 seconds, Memory: 4.00MB
+
+   OK (1 tests, 1 assertion)
           </code></pre>
+          <p>PHPUnit tests are run from the Drupal root folder</p>
         </section>
 
         <section>
@@ -704,9 +710,9 @@ class BrowserTest extends BrowserTestBase {
           <h3>Eek a failure</h3>
           <pre><code class="hljs">
     $ ../vendor/bin/phpunit modules/custom/one_two/tests/src/Kernel/
-    
+
     There was 1 error:
-    
+
     1) Drupal\Tests\one_two\Kernel\KernelTest::testBlockCreation
     NoCorrespondingEntityClassException: The Drupal\block_content\Entity\BlockContentType
     class does not correspond to an entity type.
@@ -714,25 +720,23 @@ class BrowserTest extends BrowserTestBase {
         </section>
 
         <section>
-          <h3>Install schema</h3>
+          <h3>Install schemas</h3>
           <pre><code class="hljs">
-    class KernelTest extends KernelTestBase {
+  class KernelTest extends KernelTestBase {
 
-      /**
-       * {@inheritdoc}
-       */
-      public static $modules = ['system', 'block', 'block_content', 'user'];
+    public static $modules = ['system', 'block', 'block_content', 'user'];
 
-      /**
-       * {@inheritdoc}
-       */
-      public function setUp() {
-        parent::setUp();
-        $this->installEntitySchema('block_content');
-        $this->installEntitySchema('user');
-      }
+    protected $entityTypeManager;
 
+    public function setUp() {
+      parent::setUp();
+      $this->installEntitySchema('block_content');
+      $this->installEntitySchema('user');
+
+      $this->entityTypeManager = $this->container->get('entity_type.manager');
     }
+
+  }
           </code></pre>
         </section>
 
@@ -760,16 +764,18 @@ class BrowserTest extends BrowserTestBase {
         <section>
           <h3>Check the block</h3>
           <pre><code class="hljs">
-    class KernelTest extends KernelTestBase {
+  class KernelTest extends KernelTestBase {
 
-      public function testBlockCreation() {
-        // ...
+    public function testBlockCreation() {
+      // ...
 
-        $this->assertEquals($info, $block->label());
-        $this->assertEquals($bundle, $block->bundle());
-      }
-
+      // Load the block from storage and check if the values were saved correctly.
+      $this->entityTypeManager->getStorage('block_content')->loadUnchanged($block->id());
+      $this->assertEquals($info, $block->label());
+      $this->assertEquals($bundle, $block->bundle());
     }
+
+  }
           </code></pre>
         </section>
 
@@ -779,16 +785,16 @@ class BrowserTest extends BrowserTestBase {
           <pre><code class="hljs">
     &lt;?php
 
-namespace Drupal\Tests\one_two\Unit;
+    namespace Drupal\Tests\one_two\Unit;
 
-use Drupal\Component\Utility\UrlHelper;
-use Drupal\Tests\UnitTestCase;
+    use Drupal\Component\Utility\UrlHelper;
+    use Drupal\Tests\UnitTestCase;
 
-/**
- * @coversDefaultClass \Drupal\Component\Utility\UrlHelper
- */
-class UnitTest extends UnitTestCase {
-}
+    /**
+     * @coversDefaultClass \Drupal\Component\Utility\UrlHelper
+     */
+    class UnitTest extends UnitTestCase {
+    }
           </code></pre>
         </section>
 
@@ -837,25 +843,6 @@ class UnitTest extends UnitTestCase {
         </section>
 
         <section>
-          <h3>Run tests with code coverage</h3>
-          <pre><code class="hljs">
-    $ export SIMPLETEST_BASE_URL=http://mysite.local/
-    $ export SIMPLETEST_DB=mysql://user:pass@localhost/dbname
-
-    $ ../vendor/bin/phpunit \
-      -c ./core/phpunit.xml.dist \
-      --coverage-xml=result.xml \
-      modules/one_two
-          </code></pre>
-        </section>
-
-        <section>
-          <h3>Run coverage tests in PHPStorm</h3>
-          <p><a href="https://www.drupal.org/node/2288559">https://www.drupal.org/node/2288559</a></p>
-          <p><img src="phpstorm-coverage.png" /></p>
-        </section>
-
-        <section>
           <h3>Mocking</h3>
           <ul>
             <li>Allows to test classes in isolation</li>
@@ -874,57 +861,50 @@ class UnitTest extends UnitTestCase {
           <ul>
             <li>Uses EntityManagerInterface and PasswordInterface</li>
             <li>We need to provide mocks for both</li>
+            <li>Test correct, incorrect, missing input</li>
           </ul>
         </section>
 
         <section>
-          <h3>MockingTest</h3>
-          <p>tests/src/Unit/MockingTest.php</p>
+          <h3>The code we're going to test</h3>
           <pre><code class="hljs">
-    &lt;?php
+  public function authenticate($username, $password) {
+    $uid = FALSE;
+    if (!empty($username) && strlen($password) > 0) {
+      $account_search = $this->entityManager->getStorage('user')->loadByProperties(array('name' => $username));
+      if ($account = reset($account_search)) {
+        if ($this->passwordChecker->check($password, $account->getPassword())) {
+          $uid = $account->id();
 
+          if ($this->passwordChecker->needsRehash($account->getPassword())) {
+            $account->setPassword($password);
+            $account->save();
+          }
+        }
+      }
+    }
+    return $uid;
+  }
+          </code></pre>
+        </section>
+
+        <section>
+          <h3>Test class</h3>
+          <pre><code class="hljs">
 namespace Drupal\Tests\one_two\Unit;
-
-use Drupal\user\UserAuth;
-use Drupal\Tests\UnitTestCase;
 
 /**
  * @coversDefaultClass \Drupal\user\UserAuth
  */
 class MockingTest extends UnitTestCase {
 
-  protected $userStorage;
-  protected $passwordService;
-  protected $testUser;
-  protected $userAuth;
-  protected $username = 'test_user';
-  protected $password = 'password';
-
-}
-          </code></pre>
-        </section>
-
-        <section>
-          <h3>Test user authentication</h3>
-          <pre><code class="hljs">
-class MockingTest extends UnitTestCase {
-
-  public function testAuthenticateWithCorrectPassword() {
-    $this->testUser->expects($this->once())
-      ->method('id')
-      ->will($this->returnValue(1));
-
-    $this->userStorage->expects($this->once())
-      ->method('loadByProperties')
-      ->with(array('name' => $this->username))
-      ->will($this->returnValue(array($this->testUser)));
-
-    $this->passwordService->expects($this->once())
-      ->method('check')
-      ->with($this->password, $this->testUser->getPassword())
-      ->will($this->returnValue(TRUE));
-
-    $this->assertSame(1, $this->userAuth->authenticate($this->username, $this->password));
+  /**
+   * @covers ::authenticate
+   * @dataProvider authenticationProvider
+   */
+  public function testAuthenticate($user_id, $username, $password, $correct_password, $expected) {
+    $user_auth = new UserAuth($this->entityManager->reveal(), $this->passwordChecker->reveal());
+    $this->assertEquals($expected, $user_auth->authenticate($username, $password));
   }
 
 }
@@ -932,141 +912,131 @@ class MockingTest extends UnitTestCase {
         </section>
 
         <section>
-          <h3>The setUp()</h3>
+          <h3>Mocking dependencies</h3>
           <pre><code class="hljs">
-class MockingTest extends UnitTestCase {
+  /**
+   * @var \Drupal\Core\Entity\EntityManagerInterface|\Prophecy\Prophecy\ObjectProphecy
+   */
+  protected $entityManager;
 
-  protected function setUp() {
-    $this->userStorage = $this->getMock('Drupal\Core\Entity\EntityStorageInterface');
+  /**
+   * @var \Drupal\Core\Password\PasswordInterface|\Prophecy\Prophecy\ObjectProphecy
+   */
+  protected $passwordChecker;
 
-    $entity_manager = $this->getMock('Drupal\Core\Entity\EntityManagerInterface');
-    $entity_manager->expects($this->any())
-      ->method('getStorage')
-      ->with('user')
-      ->will($this->returnValue($this->userStorage));
+  /**
+   * @var \Drupal\Core\Entity\EntityStorageInterface|\Prophecy\Prophecy\ObjectProphecy
+   */
+  protected $entityStorage;
 
-    $this->passwordService = $this->getMock('Drupal\Core\Password\PasswordInterface');
-
-    $this->testUser = $this->getMockBuilder('Drupal\user\Entity\User')
-      ->disableOriginalConstructor()
-      ->setMethods(array('id', 'setPassword', 'save', 'getPassword'))
-      ->getMock();
-
-    $this->userAuth = new UserAuth($entity_manager, $this->passwordService);
-  }
-
-}
-          </code></pre>
-        </section>
-
-        <section>
-          <h3>BrowserTestBase</h3>
-          <p>tests/src/Functional/BrowserTest.php</p>
-          <pre><code class="hljs">
-    &lt;?php
-
-    namespace Drupal\one_two\Tests;
-
-    use Drupal\KernelTests\AssertLegacyTrait;
-    use Drupal\simpletest\AssertContentTrait;
-    use Drupal\simpletest\BrowserTestBase;
-
-    class BrowserTest extends BrowserTestBase {
-    }
-          </code></pre>
-        </section>
-
-        <section>
-          <h3>setUp()</h3>
-          <p>tests/src/Functional/BrowserTest.php</p>
-          <pre><code class="hljs">
-class BrowserTest extends BrowserTestBase {
-
-  use AssertContentTrait;
-  use AssertLegacyTrait;
-
-  public static $modules = ['node'];
-  protected $entityTypeManager;
+  /**
+   * @var \Drupal\user\UserInterface|\Prophecy\Prophecy\ObjectProphecy
+   */
+  protected $user;
 
   public function setUp() {
     parent::setUp();
 
-    $this->entityTypeManager = $this->container->get('entity_type.manager');
-
-    $user = $this->drupalCreateUser(['administer content types']);
-    $this->drupalLogin($user);
+    $this->entityManager = $this->prophesize(EntityManagerInterface::class);
+    $this->passwordChecker = $this->prophesize(PasswordInterface::class);
+    $this->entityStorage = $this->prophesize(EntityStorageInterface::class);
+    $this->user = $this->prophesize(UserInterface::class);
   }
-
-}
           </code></pre>
         </section>
 
         <section>
-          <h3>Create content type through UI</h3>
-          <p>tests/src/Functional/BrowserTest.php</p>
+          <h3>Setting expectations</h3>
           <pre><code class="hljs">
-class BrowserTest extends BrowserTestBase {
-  // ...
+  public function testAuthenticate($user_id, $username, $password, $correct_password, $expected) {
+    $this->entityManager->getStorage('user')
+      ->willReturn($this->entityStorage->reveal());
 
-  public function testCreateContentType() {
-    $edit = [
-      'name' => 'My Content Type',
-      'type' => 'mytype',
-      'options[sticky]' => TRUE,
-    ];
-    $this->drupalGet('admin/structure/types/add');
-    $this->submitForm($edit, t('Save content type'));
-    $this->assertSession()->statusCodeEquals(200);
-  }
+    $this->entityStorage->loadByProperties(['name' => $username])
+      ->willReturn([$this->user->reveal()]);
 
-}
-          </code></pre>
-        </section>
+    $this->user->getPassword()
+      ->willReturn($correct_password);
 
-        <section>
-          <h3>Assert the content type</h3>
-          <p>tests/src/Functional/BrowserTest.php</p>
-          <pre><code class="hljs">
-  public function testCreateContentType() {
+    $this->user->id()
+      ->willReturn($user_id);
+
     // ...
-
-    $this->content = $this->drupalGet('admin/structure/types/manage/mytype');
-    $this->assertFieldChecked('edit-options-sticky');
-
-    // Check if we can load the content type from the database.
-    $storage = $this->entityTypeManager->getStorage('node_type');
-    $entities = $storage->loadByProperties(['type' => 'mytype']);
-    $this->assertEquals(1, count($entities['mytype']));
   }
           </code></pre>
         </section>
 
         <section>
-          <h3>Debugging BrowserTestBase</h3>
-          <p>tests/src/Functional/BrowserTest.php</p>
+          <h3>Setting more expectations</h3>
           <pre><code class="hljs">
-  public function testCreateContentType() {
-    $this->submitForm($edit, t('Save content type'));
-    $html = $this->getSession()->getPage()->getContent();
-    file_put_contents('/home/pieter/v/joinup/web/test.html', $html);
+  public function testAuthenticate($user_id, $username, $password, $correct_password, $expected) {
+    $this->passwordChecker->check($password, $correct_password)
+      ->willReturn($password === $correct_password);
 
-    $this->content = $this->drupalGet('admin/structure/types/manage/mytype');
-    file_put_contents('/home/pieter/v/joinup/web/test2.html', $this->content);
-  }
+    // We're not testing the password rehashing here.
+    $this->passwordChecker->needsRehash($password)
+      ->willReturn(FALSE);
+
+    if (empty($username) || empty($password)) {
+      $this->entityStorage->loadByProperties(['name' => $username])
+        ->shouldNotBeCalled();
+    }
+
+    // ...
+}
           </code></pre>
         </section>
 
         <section>
-          <h3>Debugging BrowserTestBase</h3>
-          <p>tests/src/Functional/BrowserTest.php</p>
+          <h3>Providing test cases</h3>
           <pre><code class="hljs">
-  public function testCreateContentType() {
-    $this->submitForm($edit, t('Save content type'));
-    $html = $this->getSession()->getPage()->getContent();
-    file_put_contents('/home/pieter/v/joinup/web/test.html', $html);
+  public function authenticationProvider() {
+    return [
+      // A correct user name and password.
+      [
+        1,
+        'admin',
+        'hunter2',
+        'hunter2',
+        1,
+      ],
+      // Incorrect password, should return FALSE.
+      [
+        1,
+        'admin',
+        'pass',
+        'hunter2',
+        FALSE,
+      ],
+  }
+          </code></pre>
+        </section>
 
-    $this->content = $this->drupalGet('admin/structure/types/manage/mytype');
-    file_put_contents('/home/pieter/v/joinup/web/test2.html', $this->content);
+
+        <section>
+          <h3>A few more test cases</h3>
+          <pre><code class="hljs">
+  public function authenticationProvider() {
+    return [
+      // ...
+
+      // Missing username, should return FALSE.
+      [
+        1,
+        '',
+        'hunter2',
+        'hunter2',
+        FALSE,
+      ],
+      // Missing password, should return FALSE.
+      [
+        1,
+        'Donald Trump',
+        '',
+        'hunter2',
+        FALSE,
+      ],
+    ];
   }
           </code></pre>
         </section>
@@ -1106,73 +1076,13 @@ class ToolbarIntegrationTest extends JavascriptTestBase {
         </section>
 
         <section>
-          <h2>What is Behat?</h2>
-          <p>
-            Behat is a BDD framework for PHP
-          </p>
-        </section>
-
-        <section>
-          <h2>What is BDD?</h2>
-          <h3>Bridge between client and development team</h3>
-        </section>
-
-        <section>
-          <h2>Better communication</h2>
+          <h2>Behat is a BDD framework for PHP</h2>
           <ul>
-            <li>A shared language</li>
+            <li>Bridge between client and development team</li>
+            <li>Implementation of the Gherkin language</li>
+            <li>Human readable, machine readable</li>
             <li>Understandable by business and developers</li>
             <li>Focused on business value</li>
-          </ul>
-          <aside class="notes">
-            Business value: answer WHY?
-          </aside>
-        </section>
-
-        <section>
-          <h2>Better planning</h2>
-          <h3>Effective planning of development cycle</h3>
-          <ul>
-            <li>Based on Agile workflow</li>
-            <li>Similar to user stories</li>
-            <li>Provides specification (DoR)</li>
-            <li>Provides acceptance criteria (DoD)</li>
-          </ul>
-        </section>
-
-        <section>
-          <h2>Better documentation</h2>
-          <h3>Complete, always correct</h3>
-          <ul>
-            <li>Living documentation</li>
-            <li>Every feature is documented</li>
-            <li>Specification == documentation</li>
-            <li>Basis for writing user manuals</li>
-          </ul>
-        </section>
-
-        <section>
-          <h2>Improve software quality</h2>
-          <h3>Manual + automatic tests</h3>
-          <ul>
-            <li>Developer ensures specification is met</li>
-            <li>QA engineer can validate</li>
-            <li>Product owner can approve</li>
-          </ul>
-        </section>
-
-        <section>
-          <h1>Gherkin</h1>
-        </section>
-
-        <section>
-          <h2>Gherkin</h2>
-          <h3>A language understandable by everyone</h3>
-          <ul>
-            <li>Business readable</li>
-            <li>Developer readable</li>
-            <li>Machine readable</li>
-            <li>Domain specific</li>
           </ul>
         </section>
 
@@ -1237,45 +1147,6 @@ class ToolbarIntegrationTest extends JavascriptTestBase {
                 | Thomas   | thofpop@ec.europa.eu  |
                 | Roger    | sirfrodo@gmail.com    |
           </code></pre>
-        </section>
-
-        <section>
-          <h3>Behat configuration</h3>
-          <p>tests/behat.yml</p>
-          <pre><div class="hljs">
-default:
-  suites:
-    default:
-      contexts:
-        - FeatureContext
-        - Drupal\DrupalExtension\Context\DrupalContext
-        - Drupal\DrupalExtension\Context\DrushContext
-        - Drupal\DrupalExtension\Context\MessageContext
-        - Drupal\DrupalExtension\Context\MinkContext
-      filters:
-        tags: "~@wip"
-  extensions:
-    Behat\MinkExtension:
-      base-url: 'http://drupal-project.local'
-      files_path: '/home/pieter/drupal-project/tests/fixtures/files'
-      goutte: ~
-      javascript_session: 'selenium2'
-      selenium2: ~
-    Drupal\DrupalExtension:
-      api_driver: 'drupal'
-      blackbox: ~
-      drupal:
-        drupal_root: '/home/pieter/drupal-project/web'
-      selectors:
-        message_selector: '.messages'
-        error_message_selector: '.messages.messages--error'
-        success_message_selector: '.messages.messages--status'
-      subcontexts:
-        paths:
-          - '/home/pieter/drupal-project/web/modules'
-  formatters:
-    progress: ~
-          </div></pre>
         </section>
 
         <section>
@@ -1479,7 +1350,7 @@ Scenario Outline: Anonymous user cannot access site administration
         <section>
           <h2>Selenium</h2>
           <ul><li>Supported by Mink</li>
-          <li>Install selenium-server-standalone</li>
+          <li>Easy install with Docker</li>
           <li>Use tag `@javascript`</li></ul>
         </section>
 
