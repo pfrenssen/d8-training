@@ -40,15 +40,11 @@
 
       <!-- Any section element inside of this container is displayed as a slide -->
       <div class="slides">
-        <section>
-          <h1>Automated testing</h1>
-          <p>
-            <a href="https://drupal.org/u/pfrenssen">Pieter Frenssen</a> / <a href="http://twitter.com/pfrenssen">@pfrenssen</a>
-          </p>
-          <img src="./vrt-logo.png" style="width: auto; height: auto; border: none; box-shadow: none;">
+        <section data-background="front.jpg">
         </section>
-
-        <section>
+        <section data-background="sponsors.jpg">
+        </section>
+        <section data-background="#ffffff">
           <h1>About me</h1>
           <h2>Pieter Frenssen</h2>
           <p>
@@ -60,7 +56,149 @@
         <section>
           <h2>Slides</h2>
           <p><a href="https://github.com/pfrenssen/d8-training">https://github.com/pfrenssen/d8-training</a></p>
-          <p>branch: automated-testing-introduction-vrt-2h</p>
+          <p>branch: automated-testing-ddd2016</p>
+        </section>
+
+        <section>
+          <h2>First let's install Drupal</h2>
+          <p>... using a Composer based workflow</p>
+        </section>
+
+        <section>
+          <h2>Install Composer globally</h2>
+          <p><a href="https://getcomposer.org/download/">https://getcomposer.org/download/</a></p>
+          <pre class="hljs"><div>
+              $ mv composer.phar /usr/bin/
+              $ composer --version
+          </div></pre>
+        </section>
+
+        <section>
+          <h2>Download Drupal project fork</h2>
+          <pre class="hljs"><div>
+         $ git clone https://github.com/pfrenssen/drupal-project.git
+         $ cd drupal-project
+         $ composer install
+          </div></pre>
+          <p>Check out composer.json</p>
+          <p>Take a look at the folder structure</p>
+          <p>Point web server to site (in web/)</p>
+        </section>
+
+        <section>
+          <h2>Configure project</h2>
+          <pre class="hljs"><div>
+              $ vim build.properties.local
+          </div></pre>
+        </section>
+
+        <section>
+          <h2>Configure project</h2>
+          <p>build.properties.local</p>
+          <pre class="hljs"><div>
+    # The location of the Composer binary.
+    composer.bin = /usr/bin/composer
+
+    # Database settings.
+    drupal.db.name = drupalproject
+    drupal.db.user = root
+    drupal.db.password = tp5VBzRj
+
+    # Admin user.
+    drupal.admin.username = admin
+    drupal.admin.password = admin
+
+    # The base URL to use in Behat tests.
+    behat.base_url = http://drupal-project.local
+          </div></pre>
+          <p>Check `build.properties` for all available options.</p>
+        </section>
+
+        <section>
+          <h2>Install drupal</h2>
+          <pre class="hljs"><div>
+    $ ./vendor/bin/phing install-dev
+          </div></pre>
+          <p>Check if it works in the browser</p>
+        </section>
+        <section>
+          <h2>Fork it on Github</h2>
+          <p><img src="fork-drupal-project.png" /></p>
+          <p><a href="https://github.com/pfrenssen/drupal-project">https://github.com/pfrenssen/drupal-project</a></p>
+          <p>Note: for client projects, clone rather than fork</p>
+        </section>
+
+        <section>
+          <h2>Activate project on Travis CI</h2>
+          <p><img src="enable-testing-travis-ci.png" /></p>
+          <p><a href="https://travis-ci.org/">https://travis-ci.org/</a></p>
+          <p>Log in with your Github account</p>
+        </section>
+
+        <section>
+          <h2>Clone the project locally</h2>
+          <pre class="hljs"><div>
+         $ git clone https://github.com/myusername/drupal-project.git
+         $ cd drupal-project
+         $ composer install
+          </div></pre>
+          <p>Use your Github username for 'myusername'</p>
+        </section>
+
+        <section>
+          <h2>Configure the project</h2>
+          <p>build.properties</p>
+          <pre class="hljs"><div>
+    # The site name.
+    website.site.name = VRT Demo Project
+          </div></pre>
+          <p>Create the 'build.properties' file</p>
+          <p>Contains settings unique for the project</p>
+          <p>Commit this file</p>
+        </section>
+
+        <section>
+          <h2>Configure your dev environment</h2>
+          <p>build.properties.local</p>
+          <pre class="hljs"><div>
+    # Database settings.
+    drupal.db.name = vrt-demo
+    drupal.db.user = root
+    drupal.db.password = hunter2
+
+    # The base URL. Used for functional tests.
+    drupal.base_url = http://vrt-demo.local
+          </div></pre>
+          <p>Create the 'build.properties.local' file</p>
+          <p>Contains personal settings for local dev - don't commit!</p>
+          <p>Check 'build.properties.dist' for more options</p>
+        </section>
+
+        <section>
+          <h2>Build development environment</h2>
+          <pre class="hljs"><div>
+         $ ./vendor/bin/phing build-dev
+          </div></pre>
+          <p>Creates various configuration files</p>
+        </section>
+
+        <section>
+          <h2>Install development environment</h2>
+          <pre class="hljs"><div>
+         $ ./vendor/bin/phing install-dev
+          </div></pre>
+          <p>Installs Drupal, creates test users</p>
+          <p>Drupal is up and running now!</p>
+        </section>
+
+        <section>
+          <h2>Try out CI</h2>
+          <ul>
+            <li>Make a small change (e.g. update README)</li>
+            <li>$ git push</li>
+            <li>Tests start running on Travis</li>
+            <li>Test result visible on Github</li>
+          </ul>
         </section>
 
         <section>
@@ -217,7 +355,6 @@
             <li>Command line interface only</li>
           </ul>
         </section>
-
 
         <section>
           <h2>Writing tests in Drupal 8</h2>
@@ -386,93 +523,6 @@
         <section>
           <h1>Enough waffling</h1>
           <h1>Show us the code</h1>
-        </section>
-
-        <section>
-          <h2>Drupal project 'starterkit'</h2>
-          <p><a href="https://github.com/pfrenssen/drupal-project">https://github.com/pfrenssen/drupal-project</a></p>
-          <p>Fork of drupal-composer/drupal-project</p>
-          <p>Behat, PHP CodeSniffer, CI, Drush, Drupal Console, ...</p>
-        </section>
-
-        <section>
-          <h2>Fork it on Github</h2>
-          <p><img src="fork-drupal-project.png" /></p>
-          <p><a href="https://github.com/pfrenssen/drupal-project">https://github.com/pfrenssen/drupal-project</a></p>
-          <p>Note: for client projects, clone rather than fork</p>
-        </section>
-
-        <section>
-          <h2>Activate project on Travis CI</h2>
-          <p><img src="enable-testing-travis-ci.png" /></p>
-          <p><a href="https://travis-ci.org/">https://travis-ci.org/</a></p>
-          <p>Log in with your Github account</p>
-        </section>
-
-        <section>
-          <h2>Clone the project locally</h2>
-          <pre class="hljs"><div>
-         $ git clone https://github.com/myusername/drupal-project.git
-         $ cd drupal-project
-         $ composer install
-          </div></pre>
-          <p>Use your Github username for 'myusername'</p>
-        </section>
-
-        <section>
-          <h2>Configure the project</h2>
-          <p>build.properties</p>
-          <pre class="hljs"><div>
-    # The site name.
-    website.site.name = VRT Demo Project
-          </div></pre>
-          <p>Create the 'build.properties' file</p>
-          <p>Contains settings unique for the project</p>
-          <p>Commit this file</p>
-        </section>
-
-        <section>
-          <h2>Configure your dev environment</h2>
-          <p>build.properties.local</p>
-          <pre class="hljs"><div>
-    # Database settings.
-    drupal.db.name = vrt-demo
-    drupal.db.user = root
-    drupal.db.password = hunter2
-
-    # The base URL. Used for functional tests.
-    drupal.base_url = http://vrt-demo.local
-          </div></pre>
-          <p>Create the 'build.properties.local' file</p>
-          <p>Contains personal settings for local dev - don't commit!</p>
-          <p>Check 'build.properties.dist' for more options</p>
-        </section>
-
-        <section>
-          <h2>Build development environment</h2>
-          <pre class="hljs"><div>
-         $ ./vendor/bin/phing build-dev
-          </div></pre>
-          <p>Creates various configuration files</p>
-        </section>
-
-        <section>
-          <h2>Install development environment</h2>
-          <pre class="hljs"><div>
-         $ ./vendor/bin/phing install-dev
-          </div></pre>
-          <p>Installs Drupal, creates test users</p>
-          <p>Drupal is up and running now!</p>
-        </section>
-
-        <section>
-          <h2>Try out CI</h2>
-          <ul>
-            <li>Make a small change (e.g. update README)</li>
-            <li>$ git push</li>
-            <li>Tests start running on Travis</li>
-            <li>Test result visible on Github</li>
-          </ul>
         </section>
 
         <section>
@@ -843,6 +893,25 @@ class UnitTest extends UnitTestCase {
         </section>
 
         <section>
+          <h3>Run tests with code coverage</h3>
+          <pre><code class="hljs">
+    $ export SIMPLETEST_BASE_URL=http://mysite.local/
+    $ export SIMPLETEST_DB=mysql://user:pass@localhost/dbname
+
+    $ ../vendor/bin/phpunit \
+      -c ./core/phpunit.xml.dist \
+      --coverage-xml=result.xml \
+      modules/one_two
+          </code></pre>
+        </section>
+
+        <section>
+          <h3>Run coverage tests in PHPStorm</h3>
+          <p><a href="https://www.drupal.org/node/2288559">https://www.drupal.org/node/2288559</a></p>
+          <p><img src="phpstorm-coverage.png" /></p>
+        </section>
+
+        <section>
           <h3>Mocking</h3>
           <ul>
             <li>Allows to test classes in isolation</li>
@@ -1012,7 +1081,6 @@ class MockingTest extends UnitTestCase {
           </code></pre>
         </section>
 
-
         <section>
           <h3>A few more test cases</h3>
           <pre><code class="hljs">
@@ -1076,13 +1144,73 @@ class ToolbarIntegrationTest extends JavascriptTestBase {
         </section>
 
         <section>
-          <h2>Behat is a BDD framework for PHP</h2>
+          <h2>What is Behat?</h2>
+          <p>
+            Behat is a BDD framework for PHP
+          </p>
+        </section>
+
+        <section>
+          <h2>What is BDD?</h2>
+          <h3>Bridge between client and development team</h3>
+        </section>
+
+        <section>
+          <h2>Better communication</h2>
           <ul>
-            <li>Bridge between client and development team</li>
-            <li>Implementation of the Gherkin language</li>
-            <li>Human readable, machine readable</li>
+            <li>A shared language</li>
             <li>Understandable by business and developers</li>
             <li>Focused on business value</li>
+          </ul>
+          <aside class="notes">
+            Business value: answer WHY?
+          </aside>
+        </section>
+
+        <section>
+          <h2>Better planning</h2>
+          <h3>Effective planning of development cycle</h3>
+          <ul>
+            <li>Based on Agile workflow</li>
+            <li>Similar to user stories</li>
+            <li>Provides specification (DoR)</li>
+            <li>Provides acceptance criteria (DoD)</li>
+          </ul>
+        </section>
+
+        <section>
+          <h2>Better documentation</h2>
+          <h3>Complete, always correct</h3>
+          <ul>
+            <li>Living documentation</li>
+            <li>Every feature is documented</li>
+            <li>Specification == documentation</li>
+            <li>Basis for writing user manuals</li>
+          </ul>
+        </section>
+
+        <section>
+          <h2>Improve software quality</h2>
+          <h3>Manual + automatic tests</h3>
+          <ul>
+            <li>Developer ensures specification is met</li>
+            <li>QA engineer can validate</li>
+            <li>Product owner can approve</li>
+          </ul>
+        </section>
+
+        <section>
+          <h1>Gherkin</h1>
+        </section>
+
+        <section>
+          <h2>Gherkin</h2>
+          <h3>A language understandable by everyone</h3>
+          <ul>
+            <li>Business readable</li>
+            <li>Developer readable</li>
+            <li>Machine readable</li>
+            <li>Domain specific</li>
           </ul>
         </section>
 
@@ -1147,6 +1275,45 @@ class ToolbarIntegrationTest extends JavascriptTestBase {
                 | Thomas   | thofpop@ec.europa.eu  |
                 | Roger    | sirfrodo@gmail.com    |
           </code></pre>
+        </section>
+
+        <section>
+          <h3>Behat configuration</h3>
+          <p>tests/behat.yml</p>
+          <pre><div class="hljs">
+default:
+  suites:
+    default:
+      contexts:
+        - FeatureContext
+        - Drupal\DrupalExtension\Context\DrupalContext
+        - Drupal\DrupalExtension\Context\DrushContext
+        - Drupal\DrupalExtension\Context\MessageContext
+        - Drupal\DrupalExtension\Context\MinkContext
+      filters:
+        tags: "~@wip"
+  extensions:
+    Behat\MinkExtension:
+      base-url: 'http://drupal-project.local'
+      files_path: '/home/pieter/drupal-project/tests/fixtures/files'
+      goutte: ~
+      javascript_session: 'selenium2'
+      selenium2: ~
+    Drupal\DrupalExtension:
+      api_driver: 'drupal'
+      blackbox: ~
+      drupal:
+        drupal_root: '/home/pieter/drupal-project/web'
+      selectors:
+        message_selector: '.messages'
+        error_message_selector: '.messages.messages--error'
+        success_message_selector: '.messages.messages--status'
+      subcontexts:
+        paths:
+          - '/home/pieter/drupal-project/web/modules'
+  formatters:
+    progress: ~
+          </div></pre>
         </section>
 
         <section>
