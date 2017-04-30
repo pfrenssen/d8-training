@@ -40,37 +40,12 @@
 
       <!-- Any section element inside of this container is displayed as a slide -->
       <div class="slides">
-        <section data-background="front.jpg">
-        </section>
-        <section data-background="sponsors.jpg">
-        </section>
-        <section data-background="#ffffff">
-          <h1>About me</h1>
-          <h2>Pieter Frenssen</h2>
-          <p>
-            <a href="https://drupal.org/u/pfrenssen">https://drupal.org/u/pfrenssen</a><br />
-            <a href="http://twitter.com/pfrenssen">http://twitter.com/pfrenssen</a>
-          </p>
-        </section>
 
         <section>
-          <h2>Slides</h2>
-          <p><a href="https://github.com/pfrenssen/d8-training">https://github.com/pfrenssen/d8-training</a></p>
-          <p>branch: automated-testing-ddd2016</p>
-        </section>
-
-        <section>
-          <h2>First let's install Drupal</h2>
-          <p>... using a Composer based workflow</p>
-        </section>
-
-        <section>
-          <h2>Install Composer globally</h2>
-          <p><a href="https://getcomposer.org/download/">https://getcomposer.org/download/</a></p>
-          <pre class="hljs"><div>
-              $ mv composer.phar /usr/bin/
-              $ composer --version
-          </div></pre>
+          <h2>Fork it on Github</h2>
+          <p><img src="fork-drupal-project.png" /></p>
+          <p><a href="https://github.com/pfrenssen/drupal-project">https://github.com/pfrenssen/drupal-project</a></p>
+          <p>Note: for client projects, clone rather than fork</p>
         </section>
 
         <section>
@@ -121,12 +96,7 @@
           </div></pre>
           <p>Check if it works in the browser</p>
         </section>
-        <section>
-          <h2>Fork it on Github</h2>
-          <p><img src="fork-drupal-project.png" /></p>
-          <p><a href="https://github.com/pfrenssen/drupal-project">https://github.com/pfrenssen/drupal-project</a></p>
-          <p>Note: for client projects, clone rather than fork</p>
-        </section>
+
 
         <section>
           <h2>Activate project on Travis CI</h2>
@@ -254,17 +224,17 @@
         </section>
 
         <section>
-          <h2>Agile workflow</h2>
+          <h2>Agile workflow: tests</h2>
           <p><img src="workflow-tests.png" /></p>
         </section>
 
         <section>
-          <h2>Agile workflow</h2>
+          <h2>Agile workflow: branches</h2>
           <p><img src="workflow-branches.png" /></p>
         </section>
 
         <section>
-          <h2>Agile workflow</h2>
+          <h2>Agile workflow: tips</h2>
           <ul>
             <li>Create subtasks</li>
             <li>Work in separate branches</li>
@@ -362,7 +332,7 @@
             <li>UnitTestCase</li>
             <li>KernelTestBase</li>
             <li>BrowserTestBase</li>
-            <li>JavaScriptTestBase</li>
+            <li>JavascriptTestBase</li>
             <li>Behat</li>
           </ul>
         </section>
@@ -393,7 +363,7 @@
         </section>
 
         <section>
-          <h2>UnitTestCase</h2>
+          <h2>UnitTestCase use cases</h2>
           <h3>Useful for:</h3>
           <ul>
             <li>Services</li>
@@ -416,7 +386,7 @@
         </section>
 
         <section>
-          <h2>KernelTestBase</h2>
+          <h2>KernelTestBase use cases</h2>
           <h3>Useful for:</h3>
           <ul>
             <li>Entities</li>
@@ -440,7 +410,7 @@
         </section>
 
         <section>
-          <h2>BrowserTestBase</h2>
+          <h2>BrowserTestBase use cases</h2>
           <h3>Use it for:</h3>
           <ul>
             <li>User interaction</li>
@@ -462,7 +432,7 @@
         </section>
 
         <section>
-          <h2>JavascriptTestBase</h2>
+          <h2>JavascriptTestBase use cases</h2>
           <h3>Use it for:</h3>
           <ul>
             <li>Testing JS code in the live site</li>
@@ -482,7 +452,7 @@
         </section>
 
         <section>
-          <h2>Behat</h2>
+          <h2>Behat use cases</h2>
           <h3>Use it for:</h3>
           <ul>
             <li>Client projects!</li>
@@ -501,7 +471,7 @@
             <dd>modules/my_module/tests/src/Kernel/MyKernelTest.php</dd>
             <dt>BrowserTestBase</dt>
             <dd>modules/my_module/tests/src/Functional/MyBrowserTest.php</dd>
-            <dt>JavaScriptTestBase</dt>
+            <dt>JavascriptTestBase</dt>
             <dd>modules/my_module/tests/src/Functional/MyJSTest.php</dd>
           </dl>
         </section>
@@ -515,7 +485,7 @@
             <dd>\Drupal\Tests\my_module\Kernel</dd>
             <dt>BrowserTestBase</dt>
             <dd>\Drupal\Tests\my_module\Functional</dd>
-            <dt>JavaScriptTestBase</dt>
+            <dt>JavascriptTestBase</dt>
             <dd>\Drupal\Tests\my_module\Functional</dd>
           </dl>
         </section>
@@ -538,6 +508,7 @@
         </section>
 
         <section>
+          <h3>The module info file</h3>
           <p>one_two.info.yml</p>
           <pre><code class="hljs">
    name: One Two, One Two
@@ -1110,7 +1081,7 @@ class MockingTest extends UnitTestCase {
         </section>
 
         <section>
-          <h3>JavaScriptTestBase</h3>
+          <h3>JavascriptTestBase</h3>
           <ul>
             <li>Drupal 8.1.x</li>
             <li>PhantomJS</li>
